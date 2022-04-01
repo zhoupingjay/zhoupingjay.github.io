@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子计算会终结现在的密码体系吗？(5.3) 补充证明</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子计算会终结现在的密码体系吗？(5.3) 补充证明
+<br />
+<span class="subtitle">Ping Zhou, 2021-06-04</span>
+</h1>
+<p>
+在前文『<a href="shor_algorithm_5.2.html">(5.2) Shor算法详解</a>』中，我留了一个尾巴需要补充证明，今天就来填上这个坑，把补丁补上。
+</p>
+
+<p>
+在前文讨论概率的推导过程中，有一步看起来不起眼，就是我们需要保证 \(\alpha\) 在0到 \(\pi/2\) 之间（其中 \(\alpha = \frac{A+1}{2} |\theta|\) ）。
+</p>
+
+<p>
+但这一步其实很重要，为什么呢？因为只有保证 \(\alpha\) 在0到 \(\pi/2\) 之间，我们才能说 \(\sin \alpha \ge 2\alpha / \pi\) ：
+</p>
+
+
+<div id="org73171a5" class="figure">
+<p><img src="../images/sin_x.png" alt="sin_x.png" width="400px" />
+</p>
+</div>
+
+<p>
+如果 \(\alpha\) 超过了 \(\pi/2\) ，这个性质就不成立了。而这个不等式，是后面我们推导出 \(|\tilde f(y)|^2\) ，也就是Shor算法成功概率的前提。
+</p>
+
+<p>
+回顾一下， \(\theta = 2\pi \frac{ry \mod q}{q}\) ，并且y满足不等式 \(|ry \mod q| \le r/2\) 。
+</p>
+
+<p>
+我们想要的不等式是：
+</p>
+
+\begin{matrix}
+\alpha = \frac{A+1}{2} \vert \theta \vert \le \frac{\pi}{2}
+\end{matrix}
+
+<p>
+怎样才能证明这个不等式呢？
+</p>
+
+<p>
+我自己研究了一下，应该可以这样证明。
+</p>
+
+<p>
+首先来看一下A是怎么计算的。如果我们把 \(l, l+r, \dots, l+Ar\) 画在数轴上，大致是这样的：
+</p>
+
+
+<div id="org658db21" class="figure">
+<p><img src="../images/shor_l_Ar_q.png" alt="shor_l_Ar_q.png" width="400px" />
+</p>
+</div>
+
+<p>
+所以A的意义是在0到q-1之间，去掉开头的offset和最后的余数t，中间能容纳A个完整的周期（A+1个数据点）。不难得出： \(A=\lfloor \frac{q-l-1}{r} \rfloor - 1\)  。
+</p>
+
+<p>
+令 \(m=A+1\) ，即 \(m=\lfloor \frac{q-l-1}{r} \rfloor\) ，我们可以把 \(|\tilde f(y)|^2\) 改写成这样：
+</p>
+
+\begin{matrix}
+\vert \tilde f(y) \vert^2 = \frac{1}{qm} \cdot 1 \cdot |\sum_{j=0}^{m-1} e^{2\pi ijry/q}|^2 \\
+= \frac{1}{qm} |\frac{e^{2\pi imry/q}-1}{e^{2\pi iry}-1}|^2 \\
+= \frac{1}{qm} \frac{\sin^2 \pi mry/q}{\sin^2 \pi ry/q}
+\end{matrix}
+
+<p>
+我们已知y满足这个条件 \(|ry-kq| \le \frac{r}{2}\) ，也就是说， \(ry\) 在某个 \(kq\) 的 \(\pm \frac{r}{2}\) 范围内：
+</p>
+
+\begin{matrix}
+ry = kq + p & (-\frac{r}{2} \le p \le \frac{r}{2})
+\end{matrix}
+
+<p>
+因此可以推出：
+</p>
+
+\begin{matrix}
+\frac{ry}{q} = k + \frac{p}{q} & (-\frac{r}{2} \le p \le \frac{r}{2})
+\end{matrix}
+
+<p>
+显然这里面的p，就相当于前文中 \(\theta = 2\pi \frac{ry \mod q}{q}\) 里的 \(ry \mod q\) ，即 \(\theta = 2\pi \frac{p}{q}\) 。
+</p>
+
+<p>
+代入到前面的分子里：
+</p>
+
+\begin{matrix}
+(\sin \frac{\pi mry}{q})^2 = \left[ \sin \pi (mk + \frac{mp}{q}) \right]^2 \\
+= (\sin \pi \frac{mp}{q})^2 = (\sin \pi \frac{m|p|}{q})^2
+\end{matrix}
+
+<p>
+这里利用了正弦函数的性质： \(|\sin (n\pi+p)| = |\sin p|\) ，以及 \(\sin(-p) = -\sin p\) 
+</p>
+
+<p>
+然后我们来看 \(\frac{m|p|}{q}\) 这部分。根据前面的讨论我们知道：
+</p>
+
+\begin{matrix}
+(1) & |p| \le \frac{r}{2} \\
+(2) & m=\lfloor \frac{q-l-1}{r} \rfloor \lt \frac{q}{r}
+\end{matrix}
+
+<p>
+两者乘起来：
+</p>
+
+\begin{matrix}
+m|p| \le \frac{r}{2} \frac{q}{r} = \frac{q}{2}
+\end{matrix}
+
+<p>
+所以：
+</p>
+\begin{matrix}
+\frac{m|p|}{q} \le \frac{1}{2} \Rightarrow \pi\frac{m|p|}{q} \le \frac{\pi}{2}
+\end{matrix}
+
+<p>
+而我们之前定义的 \(\alpha\) ：
+</p>
+
+\begin{matrix}
+\alpha = \frac{A+1}{2} |\theta| = \frac{m}{2}|\theta| & (m=A+1) \\
+= \pi \frac{m|p|}{q}  & (\theta = 2\pi \frac{p}{q}) \\
+\Rightarrow \alpha \le \frac{\pi}{2}
+\end{matrix}
+
+<p>
+总算把前面的坑给填上了！ :-)
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

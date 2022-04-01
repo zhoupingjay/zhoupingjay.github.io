@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>聊聊量子搜索算法(Grover算法) - 2</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">聊聊量子搜索算法(Grover算法) - 2
+<br />
+<span class="subtitle">Ping Zhou, 2021-01-26</span>
+</h1>
+<p>
+在<a href="grovers_algorithm_1.html">上文</a>中我们讨论了量子搜索算法的实现，其中的关键是用G变换多次迭代，逐渐逼近答案，最后在输出端测量得到结果。
+那么为什么多次重复G变换能达到这样的效果呢？Grover算法的查询次数是\(O(\sqrt{N})\)，这个\(O(\sqrt{N})\)又是怎么来的呢？本文接着上一篇继续讨论这些问题。
+</p>
+
+<section id="outline-container-org729c91d" class="outline-2">
+<h2 id="org729c91d">Grover算法的图像化</h2>
+<div class="outline-text-2" id="text-org729c91d">
+<p>
+要理解Grover算法的原理，最直观的方法是把它图像化，从几何意义来理解。
+</p>
+
+<p>
+回顾一下上文的量子搜索电路：
+</p>
+
+
+<div id="orgd0b8e51" class="figure">
+<p><img src="../images/Quantum Search - Grover's Algorithm.png" alt="Quantum Search - Grover's Algorithm.png" width="480px" />
+</p>
+</div>
+
+<p>
+我们的电路有n个搜索用的量子比特，可以表示\(N=2^{n}\)个基态，对应搜索空间0到N-1的编号。为方便讨论，我们用\(|0\rangle, |1\rangle, |2\rangle, |3\rangle, \dots, |N-1\rangle\)来表示这些基态。
+</p>
+
+<p>
+假定在这N个编号中，有M个是符合条件的答案。在上文的讨论中我们假定M=1，也就是只有1个符合条件的编号，这里我们把它扩展到更普遍的情况，M可以大于1，也就是可以有多个符合条件的答案。因此不符合条件（也就是让判断函数f返回0）的编号有N-M个。
+</p>
+
+<p>
+我们把所有 <b><b>不符合条件</b></b> 的N-M个基态叠加在一起，组成一个叠加态的状态向量，把它记作\(|\alpha\rangle\)。
+</p>
+
+<p>
+类似的，把所有 <b><b>符合条件</b></b> 的M个状态叠加在一起，组成一个状态向量，把它记作\(|\beta\rangle\)。
+</p>
+
+<p>
+显然，上面这两个向量\(|\alpha\rangle\)，\(|\beta\rangle\)是正交的。因此我们可以用它们作轴，张成一个二维平面。
+</p>
+
+<p>
+然后我们在这个平面里，考察前面G变换公式里的\(|\psi\rangle\)，这是一个所有基态无差别叠加的状态，那么这个\(|\psi\rangle\)在这个二维平面里，可以写成：
+</p>
+
+\begin{matrix}
+|\psi\rangle=\sqrt{\frac{N-M}{N}}|\alpha\rangle + \sqrt{\frac{M}{N}}|\beta\rangle
+\end{matrix}
+
+<p>
+这个\(|\psi\rangle\)向量，和\(|\alpha\rangle\)轴之间的夹角，我们记作\(\frac{\theta}{2}\)，如下图所示：
+</p>
+
+<div id="org9ac6b5b" class="figure">
+<p><img src="../images/Quantum Search - Grover's Algorithm Visualized1.png" alt="Quantum Search - Grover's Algorithm Visualized1.png" width="480px" />
+</p>
+</div>
+
+<p>
+根据简单的三角函数，我们很容易得到：
+</p>
+
+\begin{matrix}
+\cos\frac{\theta}{2} = \sqrt{\frac{N-M}{N}} &&
+\sin\frac{\theta}{2} = \sqrt{\frac{M}{N}}
+\end{matrix}
+
+<p>
+继续分析G变换。从上文我们知道，G变换可以写成：
+</p>
+
+<p>
+\[
+G=(2|\psi\rangle \langle\psi|-I)O
+\]
+</p>
+
+<p>
+我们先从O（Oracle）变换看起。O变换干了什么呢？它是把输入的状态\(|x\rangle\)变成\((-1)^{f(x)} |x\rangle\)。如果f(x)=1，那么它就给输出加上一个-1的相位，否则不变。那么这个操作在二维平面图中，实际上就是把输入的向量对\(|\alpha\rangle\)轴做了一个 <b><b>反射</b></b> 。
+</p>
+
+<div id="org64e9655" class="figure">
+<p><img src="../images/Quantum Search - Grover's Algorithm Visualized2.png" alt="Quantum Search - Grover's Algorithm Visualized2.png" width="480px" />
+</p>
+</div>
+
+<p>
+所以，Oracle变换的作用，就是把输入向量对\(|\alpha\rangle\)轴做一个反射。
+</p>
+
+<p>
+然后继续看G变换后面的部分，\(2|\psi\rangle\langle\psi|-I\)，其中\(|\psi\rangle\)是所有基态的无差别叠加态。这个变换的效果是什么呢？我们来简单推导一下：
+</p>
+
+\begin{matrix}
+|\psi\rangle\langle\psi|=
+\begin{bmatrix}
+\frac{1}{\sqrt{N}} \\ \frac{1}{\sqrt{N}} \\ \vdots \\ \frac{1}{\sqrt{N}}
+\end{bmatrix}
+\begin{bmatrix}
+\frac{1}{\sqrt{N}} && \frac{1}{\sqrt{N}} && \dots && \frac{1}{\sqrt{N}}
+\end{bmatrix} \\
+=
+\begin{bmatrix}
+\frac{1}{N} && \frac{1}{N} && \dots && \frac{1}{N} \\
+\vdots && && && \vdots \\
+\frac{1}{N} && \frac{1}{N} && \dots && \frac{1}{N}
+\end{bmatrix}
+\end{matrix}
+
+<p>
+因此：
+</p>
+\begin{matrix}
+2|\psi\rangle\langle\psi|-I =
+\begin{bmatrix}
+(\frac{2}{N}-1) && \frac{2}{N} && \frac{2}{N} && \dots && \frac{2}{N} \\
+\frac{2}{N} && (\frac{2}{N}-1) && \frac{2}{N} && \dots && \frac{2}{N} \\
+\vdots && && && && \vdots \\
+\frac{2}{N} && \frac{2}{N} && \dots && \dots && (\frac{2}{N}-1)
+\end{bmatrix}
+\end{matrix}
+
+<p>
+这个矩阵作用于任意向量会起到什么效果呢？假设我们有个向量\(\sum_{k=0}^{N-1}\alpha_k|k\rangle\)，把这个矩阵作用于它：
+</p>
+
+\begin{matrix}
+\begin{bmatrix}
+\frac{2}{N}-1 && \frac{2}{N} && \frac{2}{N} && \dots && \frac{2}{N} \\
+\frac{2}{N} && \frac{2}{N}-1 && \frac{2}{N} && \dots && \frac{2}{N} \\
+\vdots && && && && \vdots \\
+\frac{2}{N} && \frac{2}{N} && \dots && \dots && \frac{2}{N}-1
+\end{bmatrix}
+\begin{bmatrix}
+\alpha_0 \\ \alpha_1 \\ \vdots \\ \alpha_{N-1}
+\end{bmatrix} \\
+=
+\begin{bmatrix}
+-\alpha_0+2\langle\alpha\rangle \\
+-\alpha_1+2\langle\alpha\rangle \\
+\vdots \\
+-\alpha_{N-1}+2\langle\alpha\rangle
+\end{bmatrix}
+=
+\begin{bmatrix}
+-\alpha_0 \\
+-\alpha_1 \\
+\vdots \\
+-\alpha_{N-1}
+\end{bmatrix}
++
+\begin{bmatrix}
+2\langle\alpha\rangle \\
+2\langle\alpha\rangle \\
+\vdots \\
+2\langle\alpha\rangle
+\end{bmatrix}
+\end{matrix}
+
+<p>
+其中的\(\langle\alpha\rangle\)是所有分量\(\alpha_k\)的平均值：\(\langle\alpha\rangle=\frac{1}{N}\sum_{k=0}^{N-1}\alpha_k\)
+</p>
+
+<p>
+上面这个式子，加号左边就是原向量乘-1，而加号右边的向量，所有分量都相同，都是\(2\langle\alpha\rangle\)，归一化后就是无差别叠加态\(|\psi\rangle\)。两者相加，得到的是什么？看下面的图就可以直观的理解了：
+</p>
+
+<div id="org520371d" class="figure">
+<p><img src="../images/Quantum Search - Grover's Algorithm Visualized3.png" alt="Quantum Search - Grover's Algorithm Visualized3.png" width="480px" />
+</p>
+</div>
+
+<p>
+所以，\(2|\psi\rangle\langle\psi|-I\)作用在任意向量上，其实就是把输入向量对\(|\psi\rangle\)做 <b><b>反射</b></b> ！
+</p>
+
+<p>
+总结一下，G变换实际上就是连续两个反射操作：
+</p>
+<ul class="org-ul">
+<li>首先对\(|\alpha\rangle\)轴做反射，即其中的Oracle变换</li>
+<li>然后对\(|\psi\rangle\)做反射，即其中的\(2|\psi\rangle\langle\psi|-I\)</li>
+</ul>
+
+<p>
+连续两步反射操作合在一起，其实就是把输入的向量进行了 <b><b>旋转</b></b> 。那么这个旋转角度是多少呢？我们在图里画一下就能明白了：
+</p>
+
+<div id="orga81a3e7" class="figure">
+<p><img src="../images/Quantum Search - Grover's Algorithm Visualized.png" alt="Quantum Search - Grover's Algorithm Visualized.png" width="480px" />
+</p>
+</div>
+
+<p>
+假设我们有个输入向量\(|\phi\rangle\)，它和\(|\alpha\rangle\)轴之间的夹角是\(\gamma/2\)。经过G变换的两次反射后，它和\(|\alpha\rangle\)轴的夹角变成了\(\theta/2+\theta/2+\gamma/2 = \theta+\gamma/2\)。也就是说，输入向量经过一次G变换后，朝着\(|\beta\rangle\)轴旋转了\(\theta\)。而\(|\beta\rangle\)轴意味着什么呢？它是所有 <b><b>正确答案</b></b> 的叠加态啊！如果系统的状态转到非常接近\(|\beta\rangle\)轴，测量就能得到正确答案！
+</p>
+
+<p>
+所以， <b><b>我们每做一次G变换，就让系统的状态朝着\(|\beta\rangle\)轴旋转了\(\theta\)</b></b> 。那么我们把这个过程重复多次，让系统非常接近\(|\beta\rangle\)轴，然后进行测量，就能以非常高的概率得到正确答案！
+</p>
+</div>
+</section>
+
+<section id="outline-container-orge32490b" class="outline-2">
+<h2 id="orge32490b">Grover算法的性能分析</h2>
+<div class="outline-text-2" id="text-orge32490b">
+<p>
+Grover算法需要试多少次能找到答案呢？这个问题实际上就是问，从初始状态\(|\psi\rangle\)出发，需要旋转多少次能接近\(|\beta\rangle\)轴？我们来做一个简要的分析。
+</p>
+
+<p>
+前面分析过，G变换就是将系统状态朝\(|\beta\rangle\)旋转\(\theta\)。因此G可以写成这样的矩阵：
+</p>
+\begin{bmatrix}
+\cos\theta && -\sin\theta \\
+\sin\theta && cos\theta
+\end{bmatrix}
+
+<ul class="org-ul">
+<li>一开始系统处于初始状态\(|\psi\rangle\)，和\(|\alpha\rangle\)轴的夹角是\(\theta/2\)。</li>
+<li>每次G变换，将状态向量朝着\(|\beta\rangle\)旋转\(\theta\)。</li>
+<li>经过k次G变换后，系统状态向量和\(|\alpha\rangle\)的夹角是\(\frac{2k+1}{2}\theta\)：
+\[
+ G^k|\psi\rangle = \cos(\frac{2k+1}{2}\theta)|\alpha\rangle + \sin(\frac{2k+1}{2}\theta)|\beta\rangle
+ \]</li>
+</ul>
+
+<p>
+我们的目标是尽可能接近\(|\beta\rangle\)轴，因此需要\(\sin(\frac{2k+1}{2}\theta)\)尽可能接近1，也就是\(\frac{2k+1}{2}\theta\)尽可能接近\(\pi/2\)。因此：
+\[
+\frac{2k+1}{2}\theta \approx \frac{\pi}{2}
+\]
+</p>
+
+<p>
+\[
+k \approx (\frac{\pi}{2\theta} - \frac{1}{2})
+\]
+</p>
+
+<p>
+又因为k是整数，所以有\(k=round(\frac{\pi}{2\theta} - \frac{1}{2})\)。
+</p>
+
+<p>
+我们知道
+\[
+\sin\frac{\theta}{2} = \sqrt{\frac{M}{N}}
+\]
+</p>
+
+<p>
+同时假设搜索空间很大，N远大于M，我们可以做这样的近似：
+\[
+\sin\frac{\theta}{2} \approx \frac{\theta}{2}
+\]
+</p>
+
+<p>
+连起来我们就有这样的近似：
+\[
+\frac{\theta}{2} \approx \sqrt{\frac{M}{N}}
+\]
+</p>
+
+<p>
+把这个近似代入到前面k的式子里：
+\[
+k=round(\frac{\pi}{2\theta} - \frac{1}{2}) \approx round(\frac{\pi}{4}\sqrt{\frac{N}{M}} - \frac{1}{2})
+\]
+</p>
+
+<p>
+可见需要旋转的次数k是\(O(\sqrt{\frac{N}{M}})\)。当M=1，也就是N个元素里只有1个正确答案的时候，k就是\(O(\sqrt{N})\)。所以，量子搜索算法相对于经典计算机，是\(O(N)\)到\(O(\sqrt{N})\)的加速。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgf5fec49" class="outline-2">
+<h2 id="orgf5fec49">特殊情况讨论：如果正确答案超过一半呢？</h2>
+<div class="outline-text-2" id="text-orgf5fec49">
+<p>
+想象一下，如果N个元素中有超过一半的正确答案，\(M>N/2\)，会发生什么？
+</p>
+
+<p>
+在这种情况下，Grover算法的性能反而会变差！为什么呢？其实用刚才的几何图像想象一下就明白了，因为每次旋转的角度太多了，转过头了！
+</p>
+
+<p>
+这种情况有两种解决办法：
+</p>
+<ol class="org-ol">
+<li>干脆不用量子搜索了，直接随机抽；</li>
+<li>把搜索空间扩大一倍，也就是N变成2N，这样正确答案不就少于一半了？实现方法也不难，给电路增加一个量子比特，规定如果它是\(|1\rangle\)，f(x)就返回0，否则就看其他的n位。这样就可以继续用Grover算法来搜索，这时旋转次数就变成了\(O(\sqrt{\frac{2N}{M}})\)，还是\(O(\sqrt{\frac{N}{M}})\)级别。</li>
+</ol>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

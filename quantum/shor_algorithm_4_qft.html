@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子计算会终结现在的密码体系吗？(4) 量子傅立叶变换</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子计算会终结现在的密码体系吗？(4) 量子傅立叶变换
+<br />
+<span class="subtitle">Ping Zhou, 2021-05-03</span>
+</h1>
+
+
+<section id="outline-container-orgd7bf9b3" class="outline-2">
+<h2 id="orgd7bf9b3">上文回顾：Shor算法初探</h2>
+<div class="outline-text-2" id="text-orgd7bf9b3">
+<p>
+用量子计算机求解Order Finding问题，其实就是要找到函数 \(f(x)=a^x \mod N\) 的周期。在上文中我们已经看到，如果我们把f(x)包装成量子变换 \(U_f\) ，然后把它的输入x制备成叠加态，在输出端就能得到 \(|l\rangle, |l+r\rangle, |l+2r\rangle, \dots\) 的叠加态。但是这个叠加态并不能直接告诉我们周期（r）是什么，我们还需要对它做更多的处理才能提取出有用的信息。这个处理过程，就是 <b>量子傅里叶变换</b> 。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org903684f" class="outline-2">
+<h2 id="org903684f">离散傅里叶变换（DFT）</h2>
+<div class="outline-text-2" id="text-org903684f">
+<p>
+先复习一下傅里叶变换…
+</p>
+
+<p>
+我们有一个N维的矢量 \(\{f(0), f(1), \dots, f(N-1)\}\) ， 其中每个分量f(j)都是复数。
+</p>
+
+<p>
+离散傅里叶变换会把它变成一个新的矢量： \(\{ \tilde{f}(0), \tilde{f}(1), \dots, \tilde{f}(N-1) \}\)
+</p>
+
+<p>
+其中每个分量 \(\tilde{f}(k)\) 是这样计算的：
+</p>
+
+\begin{matrix}
+\tilde{f}(k) = \frac{1}{\sqrt{N}} \sum_{j=0}^{N-1} e^{2\pi ijk/N}f(j)
+\end{matrix}
+
+<p>
+如果我们记 \(\omega = e^{2 \pi i/N}\) ，那么上面的定义可以简写成：
+</p>
+
+\begin{matrix}
+\tilde{f}(k) = \frac{1}{\sqrt{N}} \sum_{j=0}^{N-1} \omega^{jk}f(j)
+\end{matrix}
+
+<p>
+学过信号处理的朋友应该很熟悉这个吧！
+</p>
+
+<p>
+<b>其他相关性质</b> 也复习一下：
+</p>
+
+<p>
+根据定义， \(e^{ix} = \cos x + i\sin x\) 。
+</p>
+
+<p>
+所以 \(\omega^N = e^{2 \pi i} = \cos 2\pi + i\sin 2\pi = 1\) 。
+</p>
+
+<p>
+然后根据几何级数性质：
+</p>
+
+\begin{matrix}
+\sum_{j=0}^{N-1} a^j = \frac{a^N - 1}{a-1}
+\end{matrix}
+
+<p>
+把 \(\omega\) 代入，得到：
+</p>
+
+\begin{matrix}
+\sum_{j=0}^{N-1}\omega^j = \frac{\omega^N - 1}{\omega-1} = 0
+\end{matrix}
+
+<p>
+并且不难推导出，如果我们取 \(\omega\) 的m次幂 \(\alpha = \omega^m\) ， <b>并且m不能被N整除</b> ，那么 \(\alpha\) 同样有这样的性质：
+</p>
+
+\begin{matrix}
+\sum_{j=0}^{N-1}\alpha^j = 0, && \alpha=\omega^m
+\end{matrix}
+
+<p>
+反之如果m能够被N整除，那么显然 \(\alpha =1\) ，这种情况下 \(\sum_{j=0}^{N-1}\alpha^j = N\) 。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org08503c2" class="outline-2">
+<h2 id="org08503c2">量子傅里叶变换（QFT）</h2>
+<div class="outline-text-2" id="text-org08503c2">
+<p>
+傅里叶变换加上量子，听上去很炫的名字！其实干的事情是和离散傅里叶变换是一样的。:-)
+</p>
+
+<p>
+量子傅里叶变换的作用，可以从两个角度来理解。
+</p>
+</div>
+
+<div id="outline-container-org63e5bd9" class="outline-3">
+<h3 id="org63e5bd9">从基矢变换的角度理解</h3>
+<div class="outline-text-3" id="text-org63e5bd9">
+<p>
+假如我们的系统有n个量子位，那么计算基态computational basis有 \(2^n\) 个： \(|0\rangle, |1\rangle, \dots, |2^n-1\rangle\) 。
+</p>
+
+<p>
+注意，这里每个基态都是n个量子位组成的n位二进制数，用十进制数来表示。例如我们的系统由2个量子位组成，每个量子位有 \(|0\rangle, 1\rangle\) 两个基态，那么我们的系统就有4个基态，用二进制数表示的话就是 \(|00_2\rangle, |01_2\rangle, |10_2\rangle, |11_2\rangle\) 。如果量子位很多，这样表示就太繁琐了，所以我们把它们翻译成十进制数来表示： \(|0\rangle, |1\rangle, |2\rangle, |3\rangle\) 。
+</p>
+
+<p>
+量子傅里叶变换的作用，就是把原来的基态 \(|x\rangle\) 变成一组新的基态 \(|\tilde y\rangle\) ：
+</p>
+
+\begin{matrix}
+|\tilde y\rangle = QFT|x\rangle = \frac{1}{\sqrt{2^n}} \sum_{x=0}^{2^n-1}\omega^{xy} |x\rangle \\\
+(y = 0, 1, \dots, 2^n-1)
+\end{matrix}
+
+<p>
+QFT变换后的基态 \(|\tilde y\rangle\) ，用矩阵表示的话就是这样的：
+</p>
+
+\begin{matrix}
+|\tilde y\rangle=
+\frac{1}{\sqrt{2^n}}
+\begin{bmatrix}
+\omega^{0y} \\
+\omega^{1y} \\
+\vdots \\
+\omega^{(2^n-1)y} \\
+\end{bmatrix}
+\end{matrix}
+
+<p>
+<b>举个栗子</b>
+</p>
+
+<p>
+假如只有1个量子位，n=1，那么两个计算基态 \(|0\rangle, |1\rangle\) 经过QFT后就会变成
+\(\frac{1}{\sqrt 2}(|0\rangle+|1\rangle), \frac{1}{\sqrt 2}(|0\rangle-|1\rangle)\) 。
+</p>
+
+<p>
+不难验证，QFT变换后的基态也是正交归一的(orthonormial basis)：
+</p>
+
+\begin{matrix}
+\langle\tilde y|\tilde z\rangle =
+\frac{1}{N}
+\begin{bmatrix} \omega^{-0y} \omega^{-1y} \dots \omega^{-(N-1)y} \end{bmatrix}
+\begin{bmatrix}
+\omega^{0z} \\\ \omega^{1z} \\\ \vdots \\ \omega^{(N-1)z}
+\end{bmatrix} \\\
+= \frac{1}{N}\sum_{x=0}^{N-1}\omega^{x(z-y)} 
+= \left\{
+             \begin{array}{ll}
+             1 && z=y  \\
+             0 && z \ne y \\
+             \end{array} 
+\right.
+\end{matrix}
+</div>
+</div>
+
+<div id="outline-container-org4bc9613" class="outline-3">
+<h3 id="org4bc9613">从状态变换的角度理解</h3>
+<div class="outline-text-3" id="text-org4bc9613">
+<p>
+假如我们的系统处于某个任意状态：
+</p>
+
+\begin{matrix}
+|\psi\rangle = \sum_{j=0}^{2^n-1}f(j)|j\rangle
+\end{matrix}
+
+<p>
+对它做量子傅里叶变换后，我们得到一个新状态：
+</p>
+
+\begin{matrix}
+|\tilde\psi\rangle = QFT|\psi\rangle = \sum_{k=0}^{2^n-1}\tilde f(k)|k\rangle
+\end{matrix}
+
+<p>
+和前面的离散傅里叶变换类似，其中每个分量 \(\tilde f(k)\) ：
+</p>
+
+\begin{matrix}
+\tilde f(k) = \frac{1}{\sqrt{2^n}} \sum_{j=0}^{2^n-1} \omega^{jk} f(j)
+\end{matrix}
+
+<p>
+以上就是量子傅立叶变换的数学意义。
+</p>
+
+<p>
+&#x2014;
+</p>
+
+<p>
+你可能会问，这里面量子位的数量对QFT有什么影响？实际上，QFT得到的结果是傅里叶变换的近似，而它的精度就取决于使用的量子位的数量。量子位越多，变换的精度就越高。
+</p>
+
+<p>
+理解了量子傅立叶变换的作用，接下来我们就可以回到Shor算法，看看如何应用量子傅立叶变换来求解函数周期。
+</p>
+
+<p>
+关于量子傅里叶变换的电路和解读，将在后文讨论，不影响理解Shor算法。
+</p>
+
+<p>
+感谢阅读！
+</p>
+</div>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子傅里叶变换详解 (3) 电路实现</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子傅里叶变换详解 (3) 电路实现
+<br />
+<span class="subtitle">Ping Zhou, 2021-07-12</span>
+</h1>
+<p>
+今天来填个坑 :-) 前面Shor算法系列里大量用到的“量子傅立叶变换”，具体要怎么实现？这次来详细讨论一下。
+</p>
+
+<section id="outline-container-org17dd6e0" class="outline-2">
+<h2 id="org17dd6e0">量子傅立叶变换</h2>
+<div class="outline-text-2" id="text-org17dd6e0">
+<p>
+<a href="qft-1.html">前文</a>说过，量子傅立叶变换QFT是这么一块电路：
+</p>
+
+
+<div id="org7699c37" class="figure">
+<p><img src="../images/qft_box.jpg" alt="qft_box.jpg" width="560px" />
+</p>
+</div>
+
+<p>
+同样根据<a href="qft-1.html">前文</a>，当输入n个量子位的基态 \(|j\rangle\) 时，输出可以写成：
+</p>
+
+\begin{matrix}
+QFT|j\rangle = \\
+\frac{1}{\sqrt{2^n}} \otimes_{l=1}^n \left[ |0\rangle + e^{2\pi ij/2^l} |1\rangle \right] \\
+= \frac{1}{\sqrt{2^n}}
+\left( |0\rangle + e^{2\pi i 0.j_0}|1\rangle \right)
+\left( |0\rangle + e^{2\pi i 0.j_1j_0}|1\rangle \right)
+\dots
+\left( |0\rangle + e^{2\pi i 0.j_{n-1}j_{n-2}\dots j_0}|1\rangle \right) \\
+\end{matrix}
+
+<p>
+我们的任务是用基本量子电路门构造这样的变换。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org4470920" class="outline-2">
+<h2 id="org4470920">基本构件：受控旋转门</h2>
+<div class="outline-text-2" id="text-org4470920">
+<p>
+就像搭积木一样，量子傅立叶变换的电路是由很多基本组件构成的。其中最重要的一个组件是“受控旋转门” \(R_k\) ：
+</p>
+
+
+<div id="orgfb6c5cf" class="figure">
+<p><img src="../images/qft_rk.jpg" alt="qft_rk.jpg" width="160px" />
+</p>
+</div>
+
+<p>
+这个量子门和CNOT门差不多，有一个控制输入，当控制输入是 \(|0\rangle\) 的时候，输入状态原样输出；而如果控制输入是 \(|1\rangle\) ，就对输入状态绕Z轴旋转一定的角度。旋转多少角度呢？这是由门的参数k决定的，具体来说就是 \(2\pi/2^k\) 。换句话说， \(R_k\) 的作用就是当控制输入为 \(|1\rangle\) 时，给输入作这样的一个变换：
+</p>
+
+\begin{bmatrix}
+1 & 0 \\
+0 & e^{\frac{2\pi i}{2^k}}
+\end{bmatrix}
+</div>
+</section>
+
+<section id="outline-container-org6a1f336" class="outline-2">
+<h2 id="org6a1f336">量子傅立叶变换电路</h2>
+<div class="outline-text-2" id="text-org6a1f336">
+<p>
+有了受控旋转门 \(R_k\) ，接下来我们就可以来搭建量子傅里叶变换电路了！
+</p>
+
+<p>
+假设量子傅立叶变换的输入有n个量子位 \(|j_{n-1}\rangle, |j_{n-2}\rangle, \dots, |j_0\rangle\) ，我们首先制备一组前面说的可控旋转门： \(R_2, R_3, \dots, R_{n-1}\) （也就是 \(R_k\) 里的k从2到n-1）。
+</p>
+
+<p>
+然后把它们这样连接起来：
+</p>
+
+<div id="orga4f6908" class="figure">
+<p><img src="../images/qft_circuit.jpg" alt="qft_circuit.jpg" width="720px" />
+</p>
+</div>
+
+<p>
+每个输入量子位都先做一个H变换，然后分别加上一系列的受控旋转变换：
+</p>
+<ul class="org-ul">
+<li>对第n-1个输入量子位，加上 \(R_2, \dots, R_{n-1}, R_n\) ，分别由第n-2到第0个输入量子位控制；</li>
+<li>对第n-2个输入量子位，加上 \(R_2, \dots, R_{n-2}, R_{n-1}\) ，分别由第n-3到第0个输入量子位控制；</li>
+<li>以此类推 …</li>
+<li>对第1个输入量子位，加上 \(R_2\) ，由第0个输入量子位控制；</li>
+<li>对第0个输入量子位，不需要旋转。</li>
+</ul>
+
+<p>
+我们可以推导一下，这个电路的输出就是我们要的量子傅立叶变换的输出。
+</p>
+
+<p>
+例如对第n-1个输入量子位 \(|j_{n-1}\rangle\) ，首先经过一个H变换，变成：
+</p>
+
+\begin{matrix}
+\left\{
+\begin{array}{ll}
+\frac{1}{\sqrt 2}(|0\rangle + |1\rangle) & (j_{n-1}=0) \\
+\frac{1}{\sqrt 2}(|0\rangle - |1\rangle) & (j_{n-1}=1) \\
+\end{array}
+\right.
+\end{matrix}
+
+<p>
+这个状态又可以写成 \(\frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.j_{n-1}}|1\rangle)\) 。注意，e指数里的 \(0.j_{n-1}\) 是二进制小数点，所以 \(j_{n-1}=0\) 的话这个指数就是0，而 \(j_{n-1}=1\) 的话是二进制0.1，也就是十进制的二分之一，乘上 \(2\pi i\) 就是 \(\pi i\) ，而 \(e^{\pi i}=-1\) ，这就和上面的式子对上了。
+</p>
+
+<p>
+好， 然后这个量子位先后经过 \(R_2, R_3, \dots, R_{n}\) 变换，我们一个一个来看。这里的 \(R_2\) 控制输入是 \(|j_{n-2}\rangle\) ，所以当 \(|j_{n-2}\rangle\) 是 \(|1\rangle\) 的时候，才会对输入作旋转，旋转的角度是 \(2\pi / 2^2\) ，否则就不做旋转（即旋转角度是0）。我们如果把它想象成二进制小数点，这其实就是把 \(j_{n-2}\) 放到了小数点后的第2位，因此经过 \(R_2\) 后状态就变成了：
+</p>
+
+\begin{matrix}
+\frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.j_{n-1}j_{n-2}}|1\rangle)
+\end{matrix}
+
+<p>
+以此类推，经过 \(R_2, R_3, \dots, R_{n}\) 变换后，第n-1位的状态就变成了：
+</p>
+
+\begin{matrix}
+|x_{n-1}\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.j_{n-1}j_{n-2}\dots j_{0}}|1\rangle)
+\end{matrix}
+
+<p>
+再以此类推到其他各个输入量子位，我们可以得到这样的输出状态：
+</p>
+
+\begin{matrix}
+|x_{n-1}\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.j_{n-1}j_{n-2}\dots j_{0}}|1\rangle) \\
+|x_{n-2}\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.j_{n-2}j_{n-3}\dots j_{0}}|1\rangle) \\
+\cdots \\
+|x_{0}\rangle =\frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.j_{0}}|1\rangle) \\
+\end{matrix}
+
+<p>
+对比一下第一部分的量子傅立叶变换输出，这可不就是我们想要的输出状态？当然，实际使用的时候，输出状态 \(x_{n-1}, x_{n-2}, \dots, x_0\) 可能还要把顺序反一下，这个只需要再加n/2个量子交换门（SWAP）即可。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org008f30a" class="outline-2">
+<h2 id="org008f30a">复杂度</h2>
+<div class="outline-text-2" id="text-org008f30a">
+<p>
+实现这个量子傅立叶变换电路，需要多少个基本量子门？从前面的电路就可以看出，我们对每个输入量子位，需要制备一些受控旋转门 \(R_k\) ，总共需要的数量是 \(O(n^2)\) 级别。其余的辅助量子门，例如H门和SWAP门，数量是 \(O(n)\) 级别。所以量子傅立叶变换的总体复杂度（即需要的基本量子门数量）是 \(O(n^2)\) 。
+</p>
+
+<p>
+对比一下，用经典电路实现快速傅里叶变换FFT，其复杂度为 \(O(2^n)\) 。可见量子傅立叶变换相对经典计算机有指数级的加速！
+</p>
+
+<p>
+实际上，量子傅立叶变换也是很多量子算法能达到指数级加速的关键所在！
+</p>
+
+<p>
+QFT的这个坑填完了，感谢阅读！
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

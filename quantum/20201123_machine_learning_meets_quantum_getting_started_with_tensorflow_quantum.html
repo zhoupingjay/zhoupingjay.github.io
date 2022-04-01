@@ -1,0 +1,799 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Machine Learning Meets Quantum: Getting Started with TensorFlow Quantum</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Machine Learning Meets Quantum: Getting Started with TensorFlow Quantum
+<br />
+<span class="subtitle">Ping Zhou, 2020-11-23</span>
+</h1>
+<p>
+Source: <a href="https://github.com/zhoupingjay/quantum/blob/main/Getting-Started-With-TensorFlow-Quantum.ipynb">My notebook</a>
+</p>
+
+<section id="outline-container-orgd73e4d9" class="outline-2">
+<h2 id="orgd73e4d9">Introduction</h2>
+<div class="outline-text-2" id="text-orgd73e4d9">
+<p>
+Earlier this year, Google announced <a href="https://www.tensorflow.org/quantum">TensorFlow Quantum</a>. It&rsquo;s a framework for building <b>Hybrid Quantum-Classical Machine Learning models</b>. So now we are entering the era of <b>Quantum Machine Learning</b> - sounds exciting!
+</p>
+
+<p width="480px">
+<a href="https://github.com/tensorflow/quantum/blob/master/docs/images/logo/tf_quantum_circle.jpg?raw=true" width="480px">TensorFlow Quantum logo</a>
+</p>
+
+<p>
+You may wonder how these two very different worlds work together, and what these hybrid ML models look like.
+In this notebook, I&rsquo;m going to walk you through the &ldquo;<a href="https://www.tensorflow.org/quantum/tutorials/hello_many_worlds">Hello, many world</a>&rdquo; example to explain the basic ideas of building quantum-classical hybrid ML model and how it works on a real problem.
+</p>
+</div>
+</section>
+
+<section id="outline-container-org83bd705" class="outline-2">
+<h2 id="org83bd705">Concepts</h2>
+<div class="outline-text-2" id="text-org83bd705">
+<p>
+Before we start with the code, I&rsquo;m going to explain some basic concepts that are needed for understanding this example. Don&rsquo;t be scared by the math notations in this section - they are not as hard as they might appear!
+</p>
+
+<p>
+Please be noted that this notebook does not serve as a tutorial of quantum computing - if you need more comprehensive information, please refer to a textbook.
+</p>
+</div>
+
+<div id="outline-container-org41602e2" class="outline-3">
+<h3 id="org41602e2">Qubit, State Vector and Bloch Sphere</h3>
+<div class="outline-text-3" id="text-org41602e2">
+<p>
+Qubit: You might have already heard about the term &ldquo;qubit&rdquo;. Comparing to a classical bit that can be at either of the two states (e.g. 0 or 1) at any time, a qubit can be at a &ldquo;superposition&rdquo; of both states. The state of a qubit \(|\psi\rangle\) can be expressed as:
+</p>
+
+\begin{matrix}
+|\psi\rangle = \alpha|0\rangle + \beta|1\rangle
+\end{matrix}
+
+<p>
+Where \(\alpha\) and \(\beta\) are complex numbers that tell us the <b><b>probabilities</b></b> of measurement outcomes: If we measure the qubit, we have \(|\alpha|^2\) probability of getting \(|0\rangle\), and \(|\beta|^2\) probability of getting \(|1\rangle\) (and apparently we have \(|\alpha|^2+|\beta|^2=1\)).
+</p>
+
+<p>
+So a qubit can be represented as a <b><b>vector</b></b> with two complex numbers:
+</p>
+
+\begin{pmatrix}
+\alpha \\
+\beta
+\end{pmatrix}
+
+<p>
+Now we know how to describe a qubit. What about a quantum system? For a system with one or more qubits, we use <b><b>state vector</b></b> to describe the system&rsquo;s current state. The state vector of the system is the <b><b>tensor product</b></b> of all qubits in it. For example, if we have a system with two qubits
+\(\begin{pmatrix}\alpha_1 \\ \beta_1\end{pmatrix}\)
+and
+\(\begin{pmatrix}\alpha_2 \\ \beta_2\end{pmatrix}\), its state vector is their tensor product:
+</p>
+
+\begin{matrix}
+\begin{pmatrix}\alpha_1 \\ \beta_1\end{pmatrix}
+\otimes
+\begin{pmatrix}\alpha_2 \\ \beta_2\end{pmatrix} =
+\begin{pmatrix}
+\alpha_1\alpha_2 \\
+\alpha_1\beta_2 \\
+\beta_1\alpha_2 \\
+\beta_1\beta_2
+\end{pmatrix}
+\end{matrix}
+
+<p>
+If you have used <a href="https://github.com/quantumlib/Cirq">Cirq</a> (Google&rsquo;s Quantum framework), you&rsquo;ll notice a <code>final_state</code> member in simulation results &#x2013; That&rsquo;s the state vector of the system. You may refer to <a href="https://github.com/zhoupingjay/quantum/blob/main/Quantum-Teleportation.ipynb">this notebook</a> for an example usage of state vectors.
+</p>
+
+<p>
+Another useful way of representing qubit is using the <b><b>Bloch Sphere</b></b>. Every qubit can be represented as a vector on the surface of the Bloch Sphere.
+</p>
+
+
+<div id="orgd469db6" class="figure">
+<p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px" />
+</p>
+</div>
+
+<p>
+A qubit \(|\psi\rangle\) on Bloch sphere can also be written as:
+</p>
+
+\begin{matrix}
+|\psi\rangle = 
+\begin{pmatrix}
+\cos{\frac{\theta}{2}} \\
+e^{i\phi}\sin\frac{\theta}{2}
+\end{pmatrix}
+\end{matrix}
+</div>
+</div>
+
+<div id="outline-container-orgc2daa3f" class="outline-3">
+<h3 id="orgc2daa3f">Operators and Observables</h3>
+<div class="outline-text-3" id="text-orgc2daa3f">
+</div>
+<div id="outline-container-orgf5a5441" class="outline-4">
+<h4 id="orgf5a5441">Operators</h4>
+<div class="outline-text-4" id="text-orgf5a5441">
+<p>
+What are &ldquo;operators&rdquo;? In short, an operator tranform qubit(s) from one state to another. Since qubits can be written as vectors, the operators are essentially matrices.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb73e64f" class="outline-4">
+<h4 id="orgb73e64f">Observables</h4>
+<div class="outline-text-4" id="text-orgb73e64f">
+<p>
+Suppose we have a quantum system. How do we know about its state? The only way is through measurements.
+Physical quantities that can be measured are called <a href="https://en.wikipedia.org/wiki/Observable">Observables</a>.
+For example, position and momentum are observables.
+</p>
+
+<p>
+In quantum world, every observable correspond to a <a href="https://en.wikipedia.org/w/index.php?title=Hermitian_operator&amp;redirect=no">Hermitian Operator</a> - they are a set of operators with special properties (e.g. they equal to their conjugate transpose). In this example, we&rsquo;ll use <b><b>Z operator</b></b> as the observable. The matrix of Z operator is like this:
+</p>
+
+\begin{matrix}
+Z=
+\begin{bmatrix}
+1 & 0 \\
+0 & -1
+\end{bmatrix}
+\end{matrix}
+
+<p>
+If you apply Z operator on a qubit \(\begin{pmatrix}\alpha \\ \beta\end{pmatrix}\), you&rsquo;ll get this \(\begin{pmatrix}\alpha \\ -\beta\end{pmatrix}\).
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org55b7b16" class="outline-3">
+<h3 id="org55b7b16">Expectation Values</h3>
+<div class="outline-text-3" id="text-org55b7b16">
+<p>
+Being able to get state vectors of your system is nice - it means you know everything of your system.
+Unfortunately this is only available in simulator.
+In real world, it&rsquo;s usually impossible to get the state vector of your system.
+Instead, what you&rsquo;ll get is the <b><b>expectation value</b></b> of your system.
+</p>
+
+<p>
+Expectation value is actually a concept from probability theory.
+Imagine you are throwing a dice which gives you a number between 1 and 6 each time.
+The expectation value of your dice is the <b><b>sum of all possible outcomes weighted by their probabilities</b></b>.
+Assuming your dice is perfect (i.e. each of the 6 outcomes has equal probability),
+the expectation value of your dice is:
+</p>
+
+\begin{matrix}
+\frac{1}{6}\times 1 + \frac{1}{6}\times 2 + ... + \frac{1}{6}\times 6 = 3.5
+\end{matrix}
+
+<p>
+When we talk about an expectation value in quantum world, we need to specify both the <b><b>state</b></b> and the <b><b>operator (observable)</b></b>.
+</p>
+
+<p>
+For example, we won&rsquo;t say
+</p>
+<blockquote>
+<p>
+&ldquo;Expecation value of this state vector is 0.5&rdquo;
+</p>
+</blockquote>
+
+<p>
+Instead, we&rsquo;ll say
+</p>
+
+<blockquote>
+<p>
+&ldquo;Expectation value of this state vector <b><b>on Z operator</b></b> is 0.5&rdquo;*.
+</p>
+</blockquote>
+
+<p>
+Why? Because different observables will give different expectation values.
+As an analogy, think about projecting a vector onto an axis - choosing a different axis will give you different projection value.
+</p>
+
+<p>
+So what exactly is the <b><b>expectation value of a state vector on Z operator</b></b>? To save your time, I&rsquo;ll just write down the answer here:
+</p>
+<ul class="org-ul">
+<li>Expectation value of a state vector on Z observable is \(\cos\theta\), which is its projection on Z axis.</li>
+</ul>
+
+<p>
+If you are interested, you are welcome to work out the mathematics. It&rsquo;s actually pretty straightforward. :-)
+</p>
+
+<p>
+We can look at a few examples to validate this conclusion:
+</p>
+
+
+<div id="org18653eb" class="figure">
+<p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>If current state is at &ldquo;north pole&rdquo; of the Bloch Sphere, we get 100% chance of getting +Z from measurements. Expectation value is \(\cos 0 = 1\).</li>
+<li>If current state is at &ldquo;south pole&rdquo; of the Bloch Sphere, we get 100% chance of getting -Z from measurements. Expectation value is \(\cos\pi = -1\).</li>
+<li>If current state is at point D on Bloch Sphere, we get 50% chance of getting +Z and 50% chance of -Z from measurements. Expectation value is \(\cos\frac{\pi}{2}=0\).</li>
+</ul>
+
+<p>
+Things match up. Fantastic!
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org8e1df83" class="outline-2">
+<h2 id="org8e1df83">What Are We Trying to Solve?</h2>
+<div class="outline-text-2" id="text-org8e1df83">
+<p>
+To understand the hybrid model we are going to build, we need to first understand the problem we are trying to solve.
+</p>
+
+<p>
+Imagine we have a quantum circuit to run. The first thing we need to do is to prepare the initial qubits for the circuit (typically \(|0\rangle\) or \(|1\rangle\)).
+</p>
+
+<p>
+In simulations, we assume perfect qubits to be fed into our circuit.
+But in the real world, our system is <b><b>noisy</b></b>. Therefore the qubits we prepare are not perfect - they could deviate from the states we want. If you consider this on Bloch Sphere, it is as if a &ldquo;perfect&rdquo; qubit has been rotated in X/Y/Z directions with unknown angles, making it imperfect. This can be emulated as putting Rotation gates on the perfect qubit.
+</p>
+
+
+<div id="org8f30817" class="figure">
+<p><img src="../images/tfq-noisy-circuit.svg" alt="tfq-noisy-circuit.svg" class="org-svg" width="480px" />
+</p>
+</div>
+
+<p>
+The angles \(\beta_1\), \(\beta_2\), \(\beta_3\) caused by noise are unknown to us.
+</p>
+
+<p>
+In order for any quantum computing circuit to run properly, we need to <b><b>calibrate</b></b> our qubit to the target state we want. How do we do that? We simply rotate the qubit on X/Y/Z directions again to compensate for the noises. So basically we&rsquo;ll apply Rotation gates to the noisy qubit:
+</p>
+
+
+<div id="org0cb65a5" class="figure">
+<p><img src="../images/tfq-calibration-circuit.svg" alt="tfq-calibration-circuit.svg" class="org-svg" width="480px" />
+</p>
+</div>
+
+<p>
+<b><b>Our problem</b></b> is to determine the three parameters (\(\theta_1\), \(\theta_2\), \(\theta_3\)) for our calibration circuit. We&rsquo;ll build a quantum-classical hybrid machine learning model to solve this problem.
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgd9c3f6d" class="outline-2">
+<h2 id="orgd9c3f6d">Quantum-Classical Hybrid Machine Learning Model</h2>
+<div class="outline-text-2" id="text-orgd9c3f6d">
+<p>
+The original notebook has lot of details and may not be very straightforward. I find it a better way to look from a high level first.
+</p>
+
+<p>
+What we want to achieve is a model that calibrates noisy qubit:
+</p>
+
+
+<div id="org8cd8374" class="figure">
+<p><img src="../images/hello-tfq-circuit.svg" alt="hello-tfq-circuit.svg" class="org-svg" width="560px" />
+</p>
+</div>
+
+<p>
+Since we are building a Machine Learning model, we need to answer these important questions:
+</p>
+<ul class="org-ul">
+<li>What are the inputs (datasets)?</li>
+<li>What are the labels?</li>
+<li>What are the outputs?</li>
+</ul>
+
+<p>
+To help you understand the whole picture, I made an architectural diagram of our hybrid Quantum-Classical ML model. I&rsquo;ll explain the components in the following sections.
+</p>
+
+
+<div id="org6ca44b3" class="figure">
+<p><img src="../images/hello-tfq-1.svg" alt="hello-tfq-1.svg" class="org-svg" width="560px" />
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgeec609b" class="outline-3">
+<h3 id="orgeec609b">Datasets</h3>
+<div class="outline-text-3" id="text-orgeec609b">
+<p>
+Our dataset includes two parts: commands and the noisy circuit.
+</p>
+
+<p>
+<b><b>Commands</b></b>
+</p>
+
+<p>
+&ldquo;Commands&rdquo; correpond to the target states we want our qubits to achieve.
+In this example, command 0 means we want the circuit to prepare a qubit at the &ldquo;south pole&rdquo; (\(|0\rangle\)), and command 1 means &ldquo;north pole&rdquo; (\(|1\rangle\)).
+</p>
+
+<p>
+<b><b>Noisy input</b></b>
+</p>
+
+<p>
+This is the circuit that emulates the noisy qubit that needs to be calibrated. TensorFlow Quantum (TFQ) provides a function <code>tfq.convert_to_tensor</code> to convert circuit objects from Cirq into tensors:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">circuit_tensor</span> = tfq.convert_to_tensor<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>circuit<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org446f0c2" class="outline-3">
+<h3 id="org446f0c2">Labels</h3>
+<div class="outline-text-3" id="text-org446f0c2">
+<p>
+The labels are the <b><b>expecation values of the target states</b></b> we want our qubits to achieve.
+In this example, we want the qubit to be at \(|0\rangle\) (for input command 0) or \(|1\rangle\) (for input command 1). As we have seen earlier, expectation values at \(|0\rangle\) and \(|1\rangle\) are 1 and -1 respectively. Therefore our labels correspond to input commands are <code>[1, -1]</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7da4ed8" class="outline-3">
+<h3 id="org7da4ed8">Outputs</h3>
+<div class="outline-text-3" id="text-org7da4ed8">
+<p>
+The outputs of our hybrid model are the expecation values of the calibrated qubits.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc90260e" class="outline-3">
+<h3 id="orgc90260e">Model</h3>
+<div class="outline-text-3" id="text-orgc90260e">
+<p>
+Our model will include both classical and quantum parts.
+</p>
+<ul class="org-ul">
+<li>The <b><b>classical part</b></b> is the &ldquo;controller&rdquo; in the diagram. It&rsquo;s a normal DNN, nothing special. Its outputs are the parameters (\(\theta_1\), \(\theta_2\), \(\theta_3\)) for calibration circuit.</li>
+<li>The <b><b>quantum part</b></b> is the &ldquo;ControllPQC&rdquo; layer (we&rsquo;ll name it &ldquo;expection<sub>layer</sub>&rdquo;). It takes the parameters (\(\theta_1\), \(\theta_2\), \(\theta_3\)) from controller, uses them to run the calibration circuit (&ldquo;model<sub>circuit</sub>&rdquo;), and feeds back the outputs (expectation values) to the controller for training.</li>
+</ul>
+
+<p>
+So in summary, this is what we tell our model to do:
+</p>
+
+<blockquote>
+<p>
+Here is a nosiy qubit (circuit<sub>input</sub>) and two commands (0, 1). We want you to spit out the qubit with expectation value of 1 on command 0 and expection value of -1 on command 1.
+</p>
+</blockquote>
+
+<p>
+Does it make more sense now? :-)
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org6b6ec02" class="outline-2">
+<h2 id="org6b6ec02">Code Walkthrough</h2>
+<div class="outline-text-2" id="text-org6b6ec02">
+<p>
+Now we have a decent understanding of the problem and our model. Let&rsquo;s get to the code.
+</p>
+</div>
+
+<div id="outline-container-orgbb3a714" class="outline-3">
+<h3 id="orgbb3a714">Setup</h3>
+<div class="outline-text-3" id="text-orgbb3a714">
+<p>
+You&rsquo;ll need to install TensorFlow (2.3.1+) and TensorFlow Quantum on your computer. The easiest way is to use pip:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">pip install -q tensorflow==2.3.1
+pip install -q tensorflow-quantum
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge647c60" class="outline-3">
+<h3 id="orge647c60">Import modules</h3>
+<div class="outline-text-3" id="text-orge647c60">
+<p>
+Import TFQ and the dependency modules:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">import</span> tensorflow <span class="org-keyword">as</span> tf
+<span class="org-keyword">import</span> tensorflow_quantum <span class="org-keyword">as</span> tfq
+
+<span class="org-keyword">import</span> cirq
+<span class="org-keyword">import</span> sympy
+<span class="org-keyword">import</span> numpy <span class="org-keyword">as</span> np
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">visualization tools</span>
+%matplotlib inline
+<span class="org-keyword">import</span> matplotlib.pyplot <span class="org-keyword">as</span> plt
+<span class="org-keyword">from</span> cirq.contrib.svg <span class="org-keyword">import</span> SVGCircuit
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1e206f2" class="outline-3">
+<h3 id="org1e206f2">Prepare the Inputs</h3>
+<div class="outline-text-3" id="text-org1e206f2">
+<p>
+First we&rsquo;ll create a qubit and prepare the dataset.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">This creates a "perfect" qubit at |0&gt;.</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">It will be fed into the noisy preparation circuit to emulate a noisy qubit.</span>
+<span class="org-variable-name">qubit</span> = cirq.GridQubit<span class="org-rainbow-delimiters-depth-1">(</span>0, 0<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Dataset: commands_input (0 and 1)</span>
+<span class="org-variable-name">commands</span> = np.array<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span><span class="org-rainbow-delimiters-depth-3">[</span>0<span class="org-rainbow-delimiters-depth-3">]</span>, <span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">]</span>, dtype=np.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+Create a noisy circuit with randomly generated angles, and convert it into tensor so it can be used by TensorFlow.
+</p>
+
+<p>
+Note that we&rsquo;ll need two copies of the circuit because we have two entries in the dataset (command 0 and command 1).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Dataset: circuit_input (noisy preparation)</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">This emulates the noisy qubit by applying X/Y/Z rotations with random angles.</span>
+<span class="org-variable-name">random_rotations</span> = np.random.uniform<span class="org-rainbow-delimiters-depth-1">(</span>0, 2 * np.pi, 3<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">noisy_preparation</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>
+  cirq.rx<span class="org-rainbow-delimiters-depth-2">(</span>random_rotations<span class="org-rainbow-delimiters-depth-3">[</span>0<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
+  cirq.ry<span class="org-rainbow-delimiters-depth-2">(</span>random_rotations<span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
+  cirq.rz<span class="org-rainbow-delimiters-depth-2">(</span>random_rotations<span class="org-rainbow-delimiters-depth-3">[</span>2<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>
+<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Convert the circuit object to tensor.</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">Two copies of the circuit because we have two commands (0 and 1) to train.</span>
+<span class="org-variable-name">datapoint_circuits</span> = tfq.convert_to_tensor<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>
+  noisy_preparation
+<span class="org-rainbow-delimiters-depth-2">]</span> * 2<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+Print out the noisy circuit. We can see that the &ldquo;perfect&rdquo; qubit has been rotated on X, Y and Z axis with some random angles.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Print out the noisy qubit</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>random_rotations<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>noisy_preparation<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="orgbb50dc4">
+[3.84902356 3.3647054  3.03737137]
+(0, 0): ───Rx(1.23π)───Ry(1.07π)───Rz(0.967π)───
+</pre>
+
+<p>
+We&rsquo;ll then create the Keras input from the datasets.
+These will be used when we call tf.keras.Model() later.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Create keras inputs from the datasets</span>
+<span class="org-variable-name">circuits_input</span> = tf.keras.Input<span class="org-rainbow-delimiters-depth-1">(</span>shape=<span class="org-rainbow-delimiters-depth-2">()</span>,
+                                <span class="org-comment-delimiter"># </span><span class="org-comment">The circuit-tensor has dtype `tf.string` </span>
+                                dtype=tf.string,
+                                name=<span class="org-string">'circuits_input'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">commands_input</span> = tf.keras.Input<span class="org-rainbow-delimiters-depth-1">(</span>shape=<span class="org-rainbow-delimiters-depth-2">(</span>1,<span class="org-rainbow-delimiters-depth-2">)</span>,
+                                dtype=tf.dtypes.float32,
+                                name=<span class="org-string">'commands_input'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9b1289b" class="outline-3">
+<h3 id="org9b1289b">Prepare the Labels</h3>
+<div class="outline-text-3" id="text-org9b1289b">
+<p>
+The labels are the expectation values we want for each command. In this example, we want 1 for command 0 and -1 for command 1.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Labels: target expecation values (1 for command 0, -1 for command 1)</span>
+<span class="org-variable-name">expected_outputs</span> = np.array<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span><span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span>, <span class="org-rainbow-delimiters-depth-3">[</span>-1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">]</span>, dtype=np.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3e4804f" class="outline-3">
+<h3 id="org3e4804f">Build our model</h3>
+<div class="outline-text-3" id="text-org3e4804f">
+<p>
+Classical part of the model is a simple DNN. Since the problem is fairly small, a simple DNN with two layers will be good enough.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Classical part of our model - "controller".</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">Since the problem is fairly small, a simple DNN is enough.</span>
+<span class="org-variable-name">controller</span> = tf.keras.Sequential<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>
+    tf.keras.layers.Dense<span class="org-rainbow-delimiters-depth-3">(</span>10, activation=<span class="org-string">'elu'</span><span class="org-rainbow-delimiters-depth-3">)</span>,
+    tf.keras.layers.Dense<span class="org-rainbow-delimiters-depth-3">(</span>3<span class="org-rainbow-delimiters-depth-3">)</span>
+<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+Then the quantum part of our label. We first use the Cirq API to build our calibration circuit (``model<sub>circuit</sub>``) with three parameters (\(\theta_1\), \(\theta_2\), \(\theta_3\)).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Quantum part of our model - "model_circuit"</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">Parameters that the classical NN will feed values into.</span>
+<span class="org-variable-name">control_params</span> = sympy.symbols<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">'theta_1 theta_2 theta_3'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Create the parameterized circuit.</span>
+<span class="org-variable-name">qubit</span> = cirq.GridQubit<span class="org-rainbow-delimiters-depth-1">(</span>0, 0<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">model_circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>
+    cirq.rz<span class="org-rainbow-delimiters-depth-2">(</span>control_params<span class="org-rainbow-delimiters-depth-3">[</span>0<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
+    cirq.ry<span class="org-rainbow-delimiters-depth-2">(</span>control_params<span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
+    cirq.rx<span class="org-rainbow-delimiters-depth-2">(</span>control_params<span class="org-rainbow-delimiters-depth-3">[</span>2<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>model_circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+
+<div id="org6595c3d" class="figure">
+<p><img src="../images/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="480px" />
+</p>
+</div>
+
+<p>
+How do we incorporate this calibration circuit (<code>model_circuit</code>) into our model? We need to wrap it into a Keras layer so it can be connected with other layers.
+</p>
+
+<p>
+In this example we&rsquo;ll wrap our circuit with the &ldquo;Parameterized Quantum Circuit&rdquo; (PQC) layer: <code>tfq.layers.ControlledPQC</code>. We name it <code>expectation_layer</code> because it outputs the expection values.
+</p>
+
+<p>
+Also note the argument <code>operators</code> when we create the layer: Remember that we need to specify operator when we talk about expectation value. This is how we tell PQC that we&rsquo;ll take expectation values on Z operator.
+</p>
+
+<p>
+After <code>expectation_layer</code> is created, we then connect it with the noisy circuit (<code>circuits_input</code>) and calibration parameters (outputs from controller, which is <code>dense_2</code>).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">dense_2</span> = controller<span class="org-rainbow-delimiters-depth-1">(</span>commands_input<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">TFQ layer for classically controlled circuits.</span>
+<span class="org-variable-name">expectation_layer</span> = tfq.layers.ControlledPQC<span class="org-rainbow-delimiters-depth-1">(</span>model_circuit,
+                                             <span class="org-comment-delimiter"># </span><span class="org-comment">Observe Z</span>
+                                             operators = cirq.Z<span class="org-rainbow-delimiters-depth-2">(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">expectation</span> = expectation_layer<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>circuits_input, dense_2<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+We then build the model in Keras just as usual.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">model</span> = tf.keras.Model<span class="org-rainbow-delimiters-depth-1">(</span>inputs=<span class="org-rainbow-delimiters-depth-2">[</span>circuits_input, commands_input<span class="org-rainbow-delimiters-depth-2">]</span>,
+                       outputs=expectation<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+A little visualization of our model&#x2026;
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">tf.keras.utils.plot_model<span class="org-rainbow-delimiters-depth-1">(</span>model, show_shapes=<span class="org-constant">True</span>, dpi=70<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+
+<div id="org61789a6" class="figure">
+<p><img src="../images/output_35_0.png" alt="output_35_0.png" width="560px" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org51f15f3" class="outline-3">
+<h3 id="org51f15f3">Train our model</h3>
+<div class="outline-text-3" id="text-org51f15f3">
+<p>
+We then train our model just like a normal DNN, using Adam as optimizer and MSE as the loss function.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Now we can train the model...</span>
+<span class="org-variable-name">optimizer</span> = tf.keras.optimizers.Adam<span class="org-rainbow-delimiters-depth-1">(</span>learning_rate=0.05<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">loss</span> = tf.keras.losses.MeanSquaredError<span class="org-rainbow-delimiters-depth-1">()</span>
+model.<span class="org-builtin">compile</span><span class="org-rainbow-delimiters-depth-1">(</span>optimizer=optimizer, loss=loss<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">history</span> = model.fit<span class="org-rainbow-delimiters-depth-1">(</span>x=<span class="org-rainbow-delimiters-depth-2">[</span>datapoint_circuits, commands<span class="org-rainbow-delimiters-depth-2">]</span>,
+                    y=expected_outputs,
+                    epochs=30,
+                    verbose=0<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+Training history shows that we are doing good&#x2026;
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Plot the history - looks good!</span>
+plt.plot<span class="org-rainbow-delimiters-depth-1">(</span>history.history<span class="org-rainbow-delimiters-depth-2">[</span><span class="org-string">'loss'</span><span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+plt.title<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Learning to Control a Qubit"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+plt.xlabel<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Iterations"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+plt.ylabel<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Error in Control"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+plt.show<span class="org-rainbow-delimiters-depth-1">()</span>
+</pre>
+</div>
+
+
+<div id="org448a4e3" class="figure">
+<p><img src="../images/output_39_0.png" alt="output_39_0.png" width="480px" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org372cb33" class="outline-3">
+<h3 id="org372cb33">Verify our model</h3>
+<div class="outline-text-3" id="text-org372cb33">
+<p>
+We can verify our model by calling it with commands 0 and 1:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">model<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>datapoint_circuits, commands<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="orgd06109d">
+&lt;tf.Tensor: shape=(2, 1), dtype=float32, numpy=
+    array([[ 0.9891974],
+           [-0.9958328]], dtype=float32)&gt;
+</pre>
+
+<p>
+As we can see, our model has calibrated the qubit into pretty well:
+</p>
+<ul class="org-ul">
+<li>On command 0, it gave expectation value of 0.98114353</li>
+<li>On command 1, it gave expectation value of -0.9409604</li>
+</ul>
+
+<p>
+Both are very close to the target (1 and -1).
+</p>
+
+<p>
+Congratulations! You have successfully trained your first Hybrid Quantum-Classical Machine Learning Model!
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org67de50f" class="outline-2">
+<h2 id="org67de50f">Next Steps</h2>
+<div class="outline-text-2" id="text-org67de50f">
+<p>
+In the next step, I&rsquo;ll expand this example into a more generic case where we can calibrate qubit with expectation values on other operators.
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

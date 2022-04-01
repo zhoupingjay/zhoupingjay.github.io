@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子神经网络</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子神经网络
+<br />
+<span class="subtitle">Ping Zhou, 2020-12-13</span>
+</h1>
+<p>
+上次讨论了量子机器学习框架TensorFlow Quantum的Hello World，这次看一下另一个应用：量子神经网络。
+</p>
+
+<p>
+注：本文根据TensorFlow Quantum的MNIST示例整理：<a href="https://www.tensorflow.org/quantum/tutorials/mnist">https://www.tensorflow.org/quantum/tutorials/mnist</a>
+</p>
+
+<p>
+这个示例是基于谷歌在2018年发表的一篇论文&ldquo;Classification with Quantum Neural Networks on Near Term Processors&rdquo;。
+在这篇论文中，作者Farhi等人提出了将量子电路和神经网络的结合起来实现二元分类的一种方案，主要思路是这样：
+</p>
+<ul class="org-ul">
+<li>将训练输入看作是二进制的字串，把其中每个比特转换成量子比特，例如0对应 \(|0\rangle\) ，1对应 \(|1\rangle\) ；</li>
+<li>创建一个量子电路，输入端有N+1个量子比特，其中N个量子比特对应输入的字串长度，另有一个read out量子比特，用来输出分类结果；</li>
+<li>量子电路内部，用一组带参数的门连接起来，具体用什么门以及如何连接，似乎没有特别的要求，在文章里作者经过试验选用了带参数的XX和ZZ门。每个门带有一个控制参数（例如 \({XX}^\alpha\) ）。如果量子电路有32个这样的门，那么就有32个参数需要学习；</li>
+<li>把量子电路作为神经网络的一层，输入训练集和标签，学习控制参数。</li>
+</ul>
+
+<p>
+整个训练过程大致如下：
+</p>
+
+<p>
+把量子电路看作神经网络的一层，那么输入训练集里的字串，从它的read out那里读出分类结果，和训练标签比较，产生loss，然后反馈给神经网络进行梯度下降。经过训练，模型会学习到一组量子电路的参数，用这组参数控制量子电路，就能对未知的输入作出准确的分类预测。
+</p>
+
+
+<div id="orgd9b1ef2" class="figure">
+<p><img src="../images/2020/12/QNN-MNIST.png" alt="QNN-MNIST.png" width="500px" />
+</p>
+</div>
+
+<p>
+论文原文在这里：<a href="https://arxiv.org/pdf/1802.06002.pdf">https://arxiv.org/pdf/1802.06002.pdf</a>
+</p>
+
+<p>
+这个思路看起来不难，可以用TensorFlow Quantum实现，实际上整个示例，模型部分是很简单的，主要工作在于数据处理。
+</p>
+
+<p>
+因为目前的量子计算机和模拟器，对于量子比特的数量和量子电路的深度都有一定的限制，例如MNIST里的图片都是28x28，即使转换成黑白图像，也需要784个量子比特来代表输入，这显然是不现实的。所以在这个示例里，MNIST图像先要降低分辨率，然后要去掉重复，再去掉矛盾的标签，等等，经过一番处理，才能把输入送入模型进行训练。
+</p>
+
+<p>
+接下来我们来看一下具体的代码。首先还是先引入要用的包。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">import</span> tensorflow <span class="org-keyword">as</span> tf
+<span class="org-keyword">import</span> tensorflow_quantum <span class="org-keyword">as</span> tfq
+
+<span class="org-keyword">import</span> cirq
+<span class="org-keyword">import</span> sympy
+<span class="org-keyword">import</span> numpy <span class="org-keyword">as</span> np
+<span class="org-keyword">import</span> seaborn <span class="org-keyword">as</span> sns
+<span class="org-keyword">import</span> collections
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">visualization tools</span>
+%matplotlib inline
+<span class="org-keyword">import</span> matplotlib.pyplot <span class="org-keyword">as</span> plt
+<span class="org-keyword">from</span> cirq.contrib.svg <span class="org-keyword">import</span> SVGCircuit
+</pre>
+</div>
+
+<p>
+读入数据，把每个像素从0-255转换为0-1之间的浮点数：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-rainbow-delimiters-depth-1">(</span>x_train, y_train<span class="org-rainbow-delimiters-depth-1">)</span>, <span class="org-rainbow-delimiters-depth-1">(</span>x_test, y_test<span class="org-rainbow-delimiters-depth-1">)</span> = tf.keras.datasets.mnist.load_data<span class="org-rainbow-delimiters-depth-1">()</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Rescale the images from [0,255] to the [0.0,1.0] range.</span>
+<span class="org-variable-name">x_train</span>, <span class="org-variable-name">x_test</span> = x_train<span class="org-rainbow-delimiters-depth-1">[</span>..., np.newaxis<span class="org-rainbow-delimiters-depth-1">]</span>/255.0, x_test<span class="org-rainbow-delimiters-depth-1">[</span>..., np.newaxis<span class="org-rainbow-delimiters-depth-1">]</span>/255.0
+
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of original training examples:"</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>x_train<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of original test examples:"</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>x_test<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+Number of original training examples: 60000
+Number of original test examples: 10000
+</p>
+
+<p>
+这个示例是二元分类，因此我们只选取3和6两个数字的图像进行分类：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">filter_36</span><span class="org-rainbow-delimiters-depth-1">(</span>x, y<span class="org-rainbow-delimiters-depth-1">)</span>:
+    <span class="org-variable-name">keep</span> = <span class="org-rainbow-delimiters-depth-1">(</span>y == 3<span class="org-rainbow-delimiters-depth-1">)</span> | <span class="org-rainbow-delimiters-depth-1">(</span>y == 6<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-variable-name">x</span>, <span class="org-variable-name">y</span> = x<span class="org-rainbow-delimiters-depth-1">[</span>keep<span class="org-rainbow-delimiters-depth-1">]</span>, y<span class="org-rainbow-delimiters-depth-1">[</span>keep<span class="org-rainbow-delimiters-depth-1">]</span>
+    <span class="org-variable-name">y</span> = y == 3
+    <span class="org-keyword">return</span> x,y
+
+<span class="org-variable-name">x_train</span>, <span class="org-variable-name">y_train</span> = filter_36<span class="org-rainbow-delimiters-depth-1">(</span>x_train, y_train<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">x_test</span>, <span class="org-variable-name">y_test</span> = filter_36<span class="org-rainbow-delimiters-depth-1">(</span>x_test, y_test<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of filtered training examples:"</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>x_train<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of filtered test examples:"</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>x_test<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="org6b34150">
+Number of filtered training examples: 12049
+Number of filtered test examples: 1968
+</pre>
+
+
+<p>
+找一个图像画出来看一下：
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>y_train<span class="org-rainbow-delimiters-depth-2">[</span>0<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+plt.imshow<span class="org-rainbow-delimiters-depth-1">(</span>x_train<span class="org-rainbow-delimiters-depth-2">[</span>0, :, :, 0<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+plt.colorbar<span class="org-rainbow-delimiters-depth-1">()</span>
+</pre>
+</div>
+
+
+<div id="org30f9218" class="figure">
+<p><img src="../images/2020/12/output_9_2.png" alt="output_9_2.png" width="320px" />
+</p>
+</div>
+
+<p>
+我们的电路一共只有十几个量子比特，因此要把输入图像降低分辨率到4x4:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">x_train_small</span> = tf.image.resize<span class="org-rainbow-delimiters-depth-1">(</span>x_train, <span class="org-rainbow-delimiters-depth-2">(</span>4,4<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>.numpy<span class="org-rainbow-delimiters-depth-1">()</span>
+<span class="org-variable-name">x_test_small</span> = tf.image.resize<span class="org-rainbow-delimiters-depth-1">(</span>x_test, <span class="org-rainbow-delimiters-depth-2">(</span>4,4<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>.numpy<span class="org-rainbow-delimiters-depth-1">()</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>x_train_small.shape<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="org35e0f40">
+(12049, 4, 4, 1)
+</pre>
+
+<p>
+降低分辨率后，图像变成了这样：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>y_train<span class="org-rainbow-delimiters-depth-2">[</span>0<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+plt.imshow<span class="org-rainbow-delimiters-depth-1">(</span>x_train_small<span class="org-rainbow-delimiters-depth-2">[</span>0,:,:,0<span class="org-rainbow-delimiters-depth-2">]</span>, vmin=0, vmax=1<span class="org-rainbow-delimiters-depth-1">)</span>
+plt.colorbar<span class="org-rainbow-delimiters-depth-1">()</span>
+</pre>
+</div>
+
+
+<div id="orgd297aee" class="figure">
+<p><img src="../images/2020/12/output_13_2.png" alt="output_13_2.png" width="320px" />
+</p>
+</div>
+
+<p>
+接下来一步在经典的机器学习里可能不太见到：训练集里有些标签是互相矛盾的，即有些图像既被标成3也被标成6，这里要把这些矛盾的去掉。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">remove_contradicting</span><span class="org-rainbow-delimiters-depth-1">(</span>xs, ys<span class="org-rainbow-delimiters-depth-1">)</span>:
+    <span class="org-variable-name">mapping</span> = collections.defaultdict<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-builtin">set</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Determine the set of labels for each unique image:</span>
+    <span class="org-keyword">for</span> x,y <span class="org-keyword">in</span> <span class="org-builtin">zip</span><span class="org-rainbow-delimiters-depth-1">(</span>xs,ys<span class="org-rainbow-delimiters-depth-1">)</span>:
+       mapping<span class="org-rainbow-delimiters-depth-1">[</span><span class="org-builtin">tuple</span><span class="org-rainbow-delimiters-depth-2">(</span>x.flatten<span class="org-rainbow-delimiters-depth-3">()</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">]</span>.add<span class="org-rainbow-delimiters-depth-1">(</span>y<span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-variable-name">new_x</span> = <span class="org-rainbow-delimiters-depth-1">[]</span>
+    <span class="org-variable-name">new_y</span> = <span class="org-rainbow-delimiters-depth-1">[]</span>
+    <span class="org-keyword">for</span> x,y <span class="org-keyword">in</span> <span class="org-builtin">zip</span><span class="org-rainbow-delimiters-depth-1">(</span>xs, ys<span class="org-rainbow-delimiters-depth-1">)</span>:
+      <span class="org-variable-name">labels</span> = mapping<span class="org-rainbow-delimiters-depth-1">[</span><span class="org-builtin">tuple</span><span class="org-rainbow-delimiters-depth-2">(</span>x.flatten<span class="org-rainbow-delimiters-depth-3">()</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">]</span>
+      <span class="org-keyword">if</span> <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-1">(</span>labels<span class="org-rainbow-delimiters-depth-1">)</span> == 1:
+          new_x.append<span class="org-rainbow-delimiters-depth-1">(</span>x<span class="org-rainbow-delimiters-depth-1">)</span>
+          new_y.append<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-builtin">list</span><span class="org-rainbow-delimiters-depth-2">(</span>labels<span class="org-rainbow-delimiters-depth-2">)[</span>0<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+      <span class="org-keyword">else</span>:
+          <span class="org-comment-delimiter"># </span><span class="org-comment">Throw out images that match more than one label.</span>
+          <span class="org-keyword">pass</span>
+
+    <span class="org-variable-name">num_3</span> = <span class="org-builtin">sum</span><span class="org-rainbow-delimiters-depth-1">(</span>1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values<span class="org-rainbow-delimiters-depth-2">()</span> <span class="org-keyword">if</span> <span class="org-constant">True</span> <span class="org-keyword">in</span> value<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-variable-name">num_6</span> = <span class="org-builtin">sum</span><span class="org-rainbow-delimiters-depth-1">(</span>1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values<span class="org-rainbow-delimiters-depth-2">()</span> <span class="org-keyword">if</span> <span class="org-constant">False</span> <span class="org-keyword">in</span> value<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-variable-name">num_both</span> = <span class="org-builtin">sum</span><span class="org-rainbow-delimiters-depth-1">(</span>1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values<span class="org-rainbow-delimiters-depth-2">()</span> <span class="org-keyword">if</span> <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>value<span class="org-rainbow-delimiters-depth-2">)</span> == 2<span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of unique images:"</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>mapping.values<span class="org-rainbow-delimiters-depth-3">()</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of 3s: "</span>, num_3<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of 6s: "</span>, num_6<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of contradictory images: "</span>, num_both<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">()</span>
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Initial number of examples: "</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>xs<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Remaining non-contradictory examples: "</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>new_x<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-keyword">return</span> np.array<span class="org-rainbow-delimiters-depth-1">(</span>new_x<span class="org-rainbow-delimiters-depth-1">)</span>, np.array<span class="org-rainbow-delimiters-depth-1">(</span>new_y<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-variable-name">x_train_nocon</span>, <span class="org-variable-name">y_train_nocon</span> = remove_contradicting<span class="org-rainbow-delimiters-depth-1">(</span>x_train_small, y_train<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="org330ebf6">
+Number of unique images: 10387
+Number of 3s:  4961
+Number of 6s:  5475
+Number of contradictory images:  49
+
+Initial number of examples:  12049
+Remaining non-contradictory examples:  11520
+</pre>
+
+<p>
+然后进一步处理，要把图像的每个像素变成0和1。这里就用一个简单的阈值0.5，超过0.5的就是1，否则就是0。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">THRESHOLD</span> = 0.5
+
+<span class="org-variable-name">x_train_bin</span> = np.array<span class="org-rainbow-delimiters-depth-1">(</span>x_train_nocon &gt; THRESHOLD, dtype=np.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">x_test_bin</span> = np.array<span class="org-rainbow-delimiters-depth-1">(</span>x_test_small &gt; THRESHOLD, dtype=np.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+然后开始搭量子电路，首先是输入量子比特，根据像素是0还是1，准备对应的 \(|0\rangle\) 和 \(|1\rangle\) :
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">convert_to_circuit</span><span class="org-rainbow-delimiters-depth-1">(</span>image<span class="org-rainbow-delimiters-depth-1">)</span>:
+    <span class="org-doc">"""Encode truncated classical image into quantum datapoint."""</span>
+    <span class="org-variable-name">values</span> = np.ndarray.flatten<span class="org-rainbow-delimiters-depth-1">(</span>image<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-variable-name">qubits</span> = cirq.GridQubit.rect<span class="org-rainbow-delimiters-depth-1">(</span>4, 4<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-variable-name">circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">()</span>
+    <span class="org-keyword">for</span> i, value <span class="org-keyword">in</span> <span class="org-builtin">enumerate</span><span class="org-rainbow-delimiters-depth-1">(</span>values<span class="org-rainbow-delimiters-depth-1">)</span>:
+        <span class="org-keyword">if</span> value:
+            circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>cirq.X<span class="org-rainbow-delimiters-depth-2">(</span>qubits<span class="org-rainbow-delimiters-depth-3">[</span>i<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">return</span> circuit
+
+
+<span class="org-variable-name">x_train_circ</span> = <span class="org-rainbow-delimiters-depth-1">[</span>convert_to_circuit<span class="org-rainbow-delimiters-depth-2">(</span>x<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-keyword">for</span> x <span class="org-keyword">in</span> x_train_bin<span class="org-rainbow-delimiters-depth-1">]</span>
+<span class="org-variable-name">x_test_circ</span> = <span class="org-rainbow-delimiters-depth-1">[</span>convert_to_circuit<span class="org-rainbow-delimiters-depth-2">(</span>x<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-keyword">for</span> x <span class="org-keyword">in</span> x_test_bin<span class="org-rainbow-delimiters-depth-1">]</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">x_train_tfcirc</span> = tfq.convert_to_tensor<span class="org-rainbow-delimiters-depth-1">(</span>x_train_circ<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">x_test_tfcirc</span> = tfq.convert_to_tensor<span class="org-rainbow-delimiters-depth-1">(</span>x_test_circ<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+继续搭建电路，接下来要加入连接的XX门，每个XX门带一个参数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">class</span> <span class="org-type">CircuitLayerBuilder</span><span class="org-rainbow-delimiters-depth-1">()</span>:
+    <span class="org-keyword">def</span> <span class="org-function-name">__init__</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>, data_qubits, readout<span class="org-rainbow-delimiters-depth-1">)</span>:
+        <span class="org-keyword">self</span>.data_qubits = data_qubits
+        <span class="org-keyword">self</span>.readout = readout
+
+    <span class="org-keyword">def</span> <span class="org-function-name">add_layer</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>, circuit, gate, prefix<span class="org-rainbow-delimiters-depth-1">)</span>:
+        <span class="org-keyword">for</span> i, qubit <span class="org-keyword">in</span> <span class="org-builtin">enumerate</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>.data_qubits<span class="org-rainbow-delimiters-depth-1">)</span>:
+            <span class="org-variable-name">symbol</span> = sympy.Symbol<span class="org-rainbow-delimiters-depth-1">(</span>prefix + <span class="org-string">'-'</span> + <span class="org-builtin">str</span><span class="org-rainbow-delimiters-depth-2">(</span>i<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+            circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>gate<span class="org-rainbow-delimiters-depth-2">(</span>qubit, <span class="org-keyword">self</span>.readout<span class="org-rainbow-delimiters-depth-2">)</span>**symbol<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+例如，如果输入是2x2的图像，那么我们有5个输入，电路是这样：（第一行那个就是read out）
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">demo_builder</span> = CircuitLayerBuilder<span class="org-rainbow-delimiters-depth-1">(</span>data_qubits = cirq.GridQubit.rect<span class="org-rainbow-delimiters-depth-2">(</span>4,1<span class="org-rainbow-delimiters-depth-2">)</span>,
+                                   readout=cirq.GridQubit<span class="org-rainbow-delimiters-depth-2">(</span>-1,-1<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-variable-name">circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">()</span>
+demo_builder.add_layer<span class="org-rainbow-delimiters-depth-1">(</span>circuit, gate = cirq.XX, prefix=<span class="org-string">'xx'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+
+<div id="org8b3ad69" class="figure">
+<p><img src="../images/2020/12/output_24_0.svg" alt="output_24_0.svg" class="org-svg" width="480px" />
+</p>
+</div>
+
+<p>
+完整的电路有17个输入（4x4图像，加一个read out），作者用了16个XX门和16个ZZ门，因此一共有32个参数：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">create_quantum_model</span><span class="org-rainbow-delimiters-depth-1">()</span>:
+    <span class="org-doc">"""Create a QNN model circuit and readout operation to go along with it."""</span>
+    <span class="org-variable-name">data_qubits</span> = cirq.GridQubit.rect<span class="org-rainbow-delimiters-depth-1">(</span>4, 4<span class="org-rainbow-delimiters-depth-1">)</span>  <span class="org-comment-delimiter"># </span><span class="org-comment">a 4x4 grid.</span>
+    <span class="org-variable-name">readout</span> = cirq.GridQubit<span class="org-rainbow-delimiters-depth-1">(</span>-1, -1<span class="org-rainbow-delimiters-depth-1">)</span>         <span class="org-comment-delimiter"># </span><span class="org-comment">a single qubit at [-1,-1]</span>
+    <span class="org-variable-name">circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">()</span>
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Prepare the readout qubit.</span>
+    circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>cirq.X<span class="org-rainbow-delimiters-depth-2">(</span>readout<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>cirq.H<span class="org-rainbow-delimiters-depth-2">(</span>readout<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-variable-name">builder</span> = CircuitLayerBuilder<span class="org-rainbow-delimiters-depth-1">(</span>
+        data_qubits = data_qubits,
+        readout=readout<span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Then add layers (experiment by adding more).</span>
+    builder.add_layer<span class="org-rainbow-delimiters-depth-1">(</span>circuit, cirq.XX, <span class="org-string">"xx1"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    builder.add_layer<span class="org-rainbow-delimiters-depth-1">(</span>circuit, cirq.ZZ, <span class="org-string">"zz1"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Finally, prepare the readout qubit.</span>
+    circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>cirq.H<span class="org-rainbow-delimiters-depth-2">(</span>readout<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-keyword">return</span> circuit, cirq.Z<span class="org-rainbow-delimiters-depth-1">(</span>readout<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">model_circuit</span>, <span class="org-variable-name">model_readout</span> = create_quantum_model<span class="org-rainbow-delimiters-depth-1">()</span>
+</pre>
+</div>
+
+<p>
+电路图画出来有点大。。。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>model_circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+
+<div id="orgfe64f8f" class="figure">
+<p><img src="../images/2020/12/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="1024px" />
+</p>
+</div>
+
+<p>
+然后，把量子电路接入到TensorFlow的神经网络模型里。量子电路用TensorFlow Quantum的PQC (Parameterized Quantum Circuit)封装，前文说到过，PQC的输出是期望值（-1到1之间）。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Build the Keras model.</span>
+<span class="org-variable-name">model</span> = tf.keras.Sequential<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">The input is the data-circuit, encoded as a tf.string</span>
+    tf.keras.layers.Input<span class="org-rainbow-delimiters-depth-3">(</span>shape=<span class="org-rainbow-delimiters-depth-4">()</span>, dtype=tf.string<span class="org-rainbow-delimiters-depth-3">)</span>,
+    <span class="org-comment-delimiter"># </span><span class="org-comment">The PQC layer returns the expected value of the readout gate, range [-1,1].</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">model_readout is operator cirq.Z(readout)</span>
+    tfq.layers.PQC<span class="org-rainbow-delimiters-depth-3">(</span>model_circuit, model_readout<span class="org-rainbow-delimiters-depth-3">)</span>,
+<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+</pre>
+</div>
+
+<p>
+但是现在还不能编译模型，为什么呢？因为输入的标签（y<sub>train</sub><sub>nocon</sub>，y<sub>test</sub>）都是布尔值0或者1，而我们的电路输出的是-1到1之间的期望值。所以要把标签转换成hinge：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Labels in y_train_nocon/y_test are booleans, convert them to [-1,1]</span>
+<span class="org-variable-name">y_train_hinge</span> = 2.0*y_train_nocon-1.0
+<span class="org-variable-name">y_test_hinge</span> = 2.0*y_test-1.0
+</pre>
+</div>
+
+<p>
+我们也需要有对应hinge的accuracy函数（用作模型的metrics）：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">hinge_accuracy</span><span class="org-rainbow-delimiters-depth-1">(</span>y_true, y_pred<span class="org-rainbow-delimiters-depth-1">)</span>:
+    <span class="org-variable-name">y_true</span> = tf.squeeze<span class="org-rainbow-delimiters-depth-1">(</span>y_true<span class="org-rainbow-delimiters-depth-1">)</span> &gt; 0.0
+    <span class="org-variable-name">y_pred</span> = tf.squeeze<span class="org-rainbow-delimiters-depth-1">(</span>y_pred<span class="org-rainbow-delimiters-depth-1">)</span> &gt; 0.0
+    <span class="org-variable-name">result</span> = tf.cast<span class="org-rainbow-delimiters-depth-1">(</span>y_true == y_pred, tf.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-keyword">return</span> tf.reduce_mean<span class="org-rainbow-delimiters-depth-1">(</span>result<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+接下来就可以编译模型了，还是用常见的Adam优化器，注意这里用的loss是Hinge：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">model.<span class="org-builtin">compile</span><span class="org-rainbow-delimiters-depth-1">(</span>
+    loss=tf.keras.losses.Hinge<span class="org-rainbow-delimiters-depth-2">()</span>,
+    optimizer=tf.keras.optimizers.Adam<span class="org-rainbow-delimiters-depth-2">()</span>,
+    metrics=<span class="org-rainbow-delimiters-depth-2">[</span>hinge_accuracy<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>model.summary<span class="org-rainbow-delimiters-depth-2">()</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="orgb975f8f">
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+pqc (PQC)                    (None, 1)                 32        
+=================================================================
+Total params: 32
+Trainable params: 32
+Non-trainable params: 0
+_________________________________________________________________
+None
+</pre>
+
+<p>
+模型搭建完成，接下来就可以训练了！（注：训练时间较长，3个epoch在笔记本上大概要十几分钟）
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">EPOCHS</span> = 3
+<span class="org-variable-name">BATCH_SIZE</span> = 32
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Previously defined:</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">x_train_circ = [convert_to_circuit(x) for x in x_train_bin]</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">x_test_circ = [convert_to_circuit(x) for x in x_test_bin]</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">Each pixel is a qubit, and if pixel is 0 it's |0&gt; or else it's |1&gt; (by applying X gate)</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">x_train_tfcirc = tfq.convert_to_tensor(x_train_circ)</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">x_test_tfcirc = tfq.convert_to_tensor(x_test_circ)</span>
+
+<span class="org-variable-name">NUM_EXAMPLES</span> = <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-1">(</span>x_train_tfcirc<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Use a smaller subset for shorter training, for example:</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">NUM_EXAMPLES = 500</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">x_train_tfcirc_sub</span> = x_train_tfcirc<span class="org-rainbow-delimiters-depth-1">[</span>:NUM_EXAMPLES<span class="org-rainbow-delimiters-depth-1">]</span>
+<span class="org-variable-name">y_train_hinge_sub</span> = y_train_hinge<span class="org-rainbow-delimiters-depth-1">[</span>:NUM_EXAMPLES<span class="org-rainbow-delimiters-depth-1">]</span>
+
+<span class="org-variable-name">qnn_history</span> = model.fit<span class="org-rainbow-delimiters-depth-1">(</span>
+      x_train_tfcirc_sub, y_train_hinge_sub,
+      batch_size=32,
+      epochs=EPOCHS,
+      verbose=1,
+      validation_data=<span class="org-rainbow-delimiters-depth-2">(</span>x_test_tfcirc, y_test_hinge<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-variable-name">qnn_results</span> = model.evaluate<span class="org-rainbow-delimiters-depth-1">(</span>x_test_tfcirc, y_test<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="org3563890">
+Epoch 1/3
+360/360 [==============================] - 260s 724ms/step - loss: 0.5884 - hinge_accuracy: 0.7721 - val_loss: 0.3951 - val_hinge_accuracy: 0.8135
+Epoch 2/3
+360/360 [==============================] - 269s 746ms/step - loss: 0.3551 - hinge_accuracy: 0.8803 - val_loss: 0.3362 - val_hinge_accuracy: 0.8579
+Epoch 3/3
+360/360 [==============================] - 281s 781ms/step - loss: 0.3343 - hinge_accuracy: 0.8709 - val_loss: 0.3402 - val_hinge_accuracy: 0.9068
+62/62 [==============================] - 5s 86ms/step - loss: 0.3402 - hinge_accuracy: 0.9068
+</pre>
+
+<p>
+可以看到，我们的量子神经网路经过3个epoch的训练，达到了90%的准确率。
+</p>
+
+<p>
+<b><b>那么这个量子神经网络，如何同经典神经网络比较呢？</b></b>
+</p>
+
+<p>
+首先量子神经网络只有32个参数，如果我们拿它去和几百万个参数的神经网络相比，显然是不公平的。所以这里我们构建一个37个参数的神经网络来做比较：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">create_fair_classical_model</span><span class="org-rainbow-delimiters-depth-1">()</span>:
+    <span class="org-comment-delimiter"># </span><span class="org-comment">A simple model based off LeNet from https://keras.io/examples/mnist_cnn/</span>
+    <span class="org-variable-name">model</span> = tf.keras.Sequential<span class="org-rainbow-delimiters-depth-1">()</span>
+    model.add<span class="org-rainbow-delimiters-depth-1">(</span>tf.keras.layers.Flatten<span class="org-rainbow-delimiters-depth-2">(</span>input_shape=<span class="org-rainbow-delimiters-depth-3">(</span>4,4,1<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    model.add<span class="org-rainbow-delimiters-depth-1">(</span>tf.keras.layers.Dense<span class="org-rainbow-delimiters-depth-2">(</span>2, activation=<span class="org-string">'relu'</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    model.add<span class="org-rainbow-delimiters-depth-1">(</span>tf.keras.layers.Dense<span class="org-rainbow-delimiters-depth-2">(</span>1<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">return</span> model
+
+
+<span class="org-variable-name">model</span> = create_fair_classical_model<span class="org-rainbow-delimiters-depth-1">()</span>
+model.<span class="org-builtin">compile</span><span class="org-rainbow-delimiters-depth-1">(</span>loss=tf.keras.losses.BinaryCrossentropy<span class="org-rainbow-delimiters-depth-2">(</span>from_logits=<span class="org-constant">True</span><span class="org-rainbow-delimiters-depth-2">)</span>,
+              optimizer=tf.keras.optimizers.Adam<span class="org-rainbow-delimiters-depth-2">()</span>,
+              metrics=<span class="org-rainbow-delimiters-depth-2">[</span><span class="org-string">'accuracy'</span><span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+model.summary<span class="org-rainbow-delimiters-depth-1">()</span>
+</pre>
+</div>
+
+<pre class="example" id="org28a8aa9">
+Model: "sequential_2"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+flatten_1 (Flatten)          (None, 16)                0         
+_________________________________________________________________
+dense_2 (Dense)              (None, 2)                 34        
+_________________________________________________________________
+dense_3 (Dense)              (None, 1)                 3         
+=================================================================
+Total params: 37
+Trainable params: 37
+Non-trainable params: 0
+_________________________________________________________________
+</pre>
+
+<div class="org-src-container">
+<pre class="src src-python">model.fit<span class="org-rainbow-delimiters-depth-1">(</span>x_train_bin,
+          y_train_nocon,
+          batch_size=128,
+          epochs=20,
+          verbose=0,
+          validation_data=<span class="org-rainbow-delimiters-depth-2">(</span>x_test_bin, y_test<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-variable-name">fair_nn_results</span> = model.evaluate<span class="org-rainbow-delimiters-depth-1">(</span>x_test_bin, y_test<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="orgd695be2">
+62/62 [==============================] - 0s 511us/step - loss: 0.2666 - accuracy: 0.9141
+</pre>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">qnn_accuracy</span> = qnn_results<span class="org-rainbow-delimiters-depth-1">[</span>1<span class="org-rainbow-delimiters-depth-1">]</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">cnn_accuracy = cnn_results[1]</span>
+<span class="org-variable-name">fair_nn_accuracy</span> = fair_nn_results<span class="org-rainbow-delimiters-depth-1">[</span>1<span class="org-rainbow-delimiters-depth-1">]</span>
+
+sns.barplot<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span><span class="org-string">"Quantum"</span>, <span class="org-string">"Classical, fair"</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+            <span class="org-rainbow-delimiters-depth-2">[</span>qnn_accuracy, fair_nn_accuracy<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+
+<div id="org551f347" class="figure">
+<p><img src="../images/2020/12/output_45_1.png" alt="output_45_1.png" width="480px" />
+</p>
+</div>
+
+<p>
+和类似规模的经典神经网络相比，准确率差不多。
+</p>
+
+<p>
+总的来说，我感觉这个方案是量子计算在神经网络里的direct drop-in，很直观，但是如作者在论文中讨论的，应该有能够更好发挥量子计算内在并行性的方法。
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子计算会终结现在的密码体系吗？(1) RSA公钥算法</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子计算会终结现在的密码体系吗？(1) RSA公钥算法
+<br />
+<span class="subtitle">Ping Zhou, 2021-04-20</span>
+</h1>
+
+
+<section id="outline-container-org44a9c86" class="outline-2">
+<h2 id="org44a9c86">公钥加密系统</h2>
+<div class="outline-text-2" id="text-org44a9c86">
+<p>
+关于量子计算，很多人可能都听说过这个耸人听闻的说法：有了量子计算机之后，现在的密码就都不安全了，因为量子计算机可以轻易破解它们。真的有这么夸张吗？实际上，量子计算机威胁的主要是基于『大数分解』的一类加密算法，其中最广泛使用的就是RSA。
+</p>
+
+<p>
+RSA (Rivest–Shamir–Adleman) 是目前广泛使用的一种公钥加密系统（RSA是三位设计者的名字首字母的组合）。所谓公钥加密系统，就是说它里面的密码是分为可以公开的『公钥』和必须保密的『私钥』。公钥和私钥是成对的，用一个公钥加密的信息，只能用它对应的私钥来解密。为什么要这么设计呢？
+</p>
+
+<p>
+我们知道，两个人之间要实现保密通信，最简单直接的办法是互相约定一个密码，用这个密码来加密他们之间传递的信息，甲方用它来加密，乙方用同样的密码来解密。这种密码又叫做『对称密码』，因为加密和解密使用相同的密码。但是问题来了，甲方和乙方怎样才能『约定』这个共享的通信密码呢？如果直接把这个通信密码发过去，中间被人窃听了，别人知道了通信密码，那后面的通信岂不就是在网上裸奔了吗？
+</p>
+
+<p>
+这时候就需要公钥加密算法来帮忙了：
+</p>
+<ol class="org-ol">
+<li>甲方生成一对公钥和私钥，然后把公钥发给乙方。</li>
+<li>乙方生成要共享的通信密码，用甲方提供的公钥来加密，然后把这个加密后的通信密码发回给甲方。</li>
+<li>甲方收到乙方的回复，用它的私钥来解密，得到共享的通信密码。</li>
+<li>甲方和乙方都有了通信密码，就可以放心的通信了。</li>
+</ol>
+
+<p>
+这个过程中，即使有人在中间窃听，因为信息是用甲方的公钥加密的，只有拥有私钥的甲方能解密，窃听的人就是截获了信息也无法得到通信密码，所以不用担心通信密码泄露的问题。
+</p>
+
+<p>
+可见，公钥加密系统保证了通信双方『约定通信密码』这个步骤的安全。没有这个保证，通信的双方就无法安全的建立联系，更不用说安全的通信了。除此之外，公钥加密系统还是电子签名，电子证书等许多网络安全技术的基础。这也是为什么说以RSA为代表的公钥加密系统是当前网络通信和安全的基石之一。如果RSA的安全性受到量子计算机的挑战，那么基于RSA的很多通信协议，认证服务等等都会变得不安全，这个影响还是挺大的。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgf02f208" class="outline-2">
+<h2 id="orgf02f208">RSA的工作原理</h2>
+<div class="outline-text-2" id="text-orgf02f208">
+<p>
+为什么量子计算机被认为会威胁到RSA公钥加密体系呢？要回答这个问题，需要先了解一下RSA的工作原理。
+</p>
+</div>
+
+<div id="outline-container-orgb2f33fe" class="outline-3">
+<h3 id="orgb2f33fe">生成公钥私钥</h3>
+<div class="outline-text-3" id="text-orgb2f33fe">
+<p>
+RSA生成公钥和私钥的流程大致是这样：
+</p>
+
+<div id="orgf686d3f" class="figure">
+<p><img src="../images/RSA.png" alt="RSA.png" width="480px" />
+</p>
+</div>
+
+<p>
+首先随机选两个很大的质数（p, q），然后用它们计算两个乘积：
+</p>
+<ul class="org-ul">
+<li>\(N=pq\)</li>
+<li>\(\phi(N)=(p-1)(q-1)\)</li>
+</ul>
+
+<p>
+其中的 \(\phi(N)\) 也被称为『欧拉函数』，它的意思是“小于等于N并且与N互质的正整数的个数”。例如，如果某个数p是质数，那么显然有 \(\phi(p)=p-1\) 。为什么要用这个欧拉函数，后面会看到。
+</p>
+
+<p>
+然后，随机选一个与 \(\phi(N)\) 互质的奇数e，计算它对于 \(\phi(N)\) 的『模逆』d，也就是找到某个正整数d，使得\(ed = 1 \mod \phi(N)\) ，这个数d可以用欧几里德算法高效计算出来。
+</p>
+
+<p>
+最后，把e和N拼在一起，组成公钥P，而d和N拼在一起，组成私钥S。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbc0cb31" class="outline-3">
+<h3 id="orgbc0cb31">加密和解密过程</h3>
+<div class="outline-text-3" id="text-orgbc0cb31">
+<p>
+有了公钥和私钥后，可以用公钥加密，然后用对应的私钥解密（下图左边是加密过程，右边是解密过程）：
+</p>
+
+
+<div id="org08ccc71" class="figure">
+<p><img src="../images/RSA2.png" alt="RSA2.png" width="640px" />
+</p>
+</div>
+
+<p>
+我们把要加密的消息看作是一个固定长度的二进制数M，加密的时候，我们用公钥里的e和N，对M求e次幂，然后对N取模，得到加密后的消息E(M)：
+</p>
+
+<p>
+\[
+M^e \mod N \to E(M)
+\]
+</p>
+
+<p>
+解密的方式和加密类似，但使用的是私钥里的d和N，对收到的消息E(M)求d次幂，然后对N取模，就能解密出原来的消息M。
+</p>
+
+<p>
+\[
+E(M)^d \mod N \to M
+\]
+</p>
+
+<p>
+如果你对RSA算法的数学原理感兴趣，可以参阅本文最后的分析。
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-orgebfdd1b" class="outline-2">
+<h2 id="orgebfdd1b">RSA安全性的关键：因式分解</h2>
+<div class="outline-text-2" id="text-orgebfdd1b">
+<p>
+RSA如何保证加密后信息的安全性？或者说，它安全性的关键点在哪里？从上面的过程不难看出，RSA安全性的关键点在于N是否被分解。想象一下：假如我们能够把N分解回p和q，那么就可以知道 \(\phi(N)=(p-1)(q-1)\) ，再加上公钥里的e，用欧几里德算法把d也算出来，这样私钥也有了，整个加密过程就被攻破了！
+</p>
+
+<p>
+好在，因式分解问题目前在经典计算机上还没有找到高效的算法（现有的算法都是指数级时间复杂度），因此只要N足够大，就可以保证加密后的消息无法在合理的时间内被破解，使得破解失去意义。
+</p>
+
+<p>
+量子计算机对RSA的威胁就在于，它能实现高效的因式分解（多项式时间复杂度），这就是为什么我们说量子计算机对现有网络通信和安全会构成一定的挑战。当然，凡事有矛必有盾，一方面现在的量子计算机还远远没有达到能破解RSA的程度，另一方面，也已经有不基于因式分解的公钥加密算法，以及抗量子计算的密码研究。因此可以说，挑战是存在的，但过于夸大量子计算的作用也没有必要。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgc3867e8" class="outline-2">
+<h2 id="orgc3867e8">总结</h2>
+<div class="outline-text-2" id="text-orgc3867e8">
+<p>
+现在我们理解了RSA的工作原理，以及为什么它的安全性取决于因式分解的难度。那么接下来的问题是，为什么量子计算能高效计算因式分解呢？实际上，量子计算机解决的是Order Finding问题（或者说函数周期求解问题），在下一篇里，我们来看看因式分解是如何转化为Order Finding/函数周期求解问题的。
+</p>
+
+<p>
+感谢阅读！
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgf1b1083" class="outline-2">
+<h2 id="orgf1b1083">附：RSA算法的数学原理</h2>
+<div class="outline-text-2" id="text-orgf1b1083">
+</div>
+<div id="outline-container-org42b66a2" class="outline-3">
+<h3 id="org42b66a2">加密和解密</h3>
+<div class="outline-text-3" id="text-org42b66a2">
+<p>
+考虑M和N是否互质，分两种情况讨论。
+</p>
+
+<ol class="org-ol">
+<li><p>
+M和N互质：
+</p>
+
+<p>
+假设我们拿到了加密后的信息E(M)，根据RSA的工作原理，解密的过程是对E(M)取d次幂：
+</p>
+
+<p>
+\[
+   E(M)^d \mod N = M^{ed} \mod N
+   \]
+</p>
+
+<p>
+因为d是e对 \(\phi(N)\) 的模逆， \(ed = 1 \mod \phi(N)\) ，也就是说存在某个整数k，使得 \(ed = 1 + k\phi(N)\) 。把这个代入上面的公式，得到：
+</p>
+
+<p>
+\[
+   E(M)^d \mod N = M^{ed} \mod N = M^{1+k\phi(N)} \mod N = MM^{k\phi(N)} \mod N
+   \]
+</p>
+
+<p>
+而根据欧拉函数的性质，有 \(M^{\phi(N)} = 1 \mod N\) ，因此对任意整数k，有 \(M^{k\phi(N)} = 1 \mod N\) ，代入上面的公式，解密后的消息就变成了：
+</p>
+
+<p>
+\[
+   E(M)^d \mod N = M^{ed} \mod N = MM^{k\phi(N)} \mod N = M \mod N 
+   \]
+</p>
+
+<p>
+解密成功，我们得到了原来的消息M。
+</p></li>
+
+<li><p>
+M和N不互质：
+</p>
+
+<p>
+因为N是两个质数p和q的乘积，如果M和N不互质的话，p和q必有一个能整除M。假设p能整除M，即 \(M=0 \mod p\) ，因此 \(M^{ed} = 0 \mod p\) 。
+接下来我们先假设q不能整除M （否则N也能整除M，这个特殊情况需要对M作预处理，后面再讨论），于是根据费马小定理有 \(M^{q-1}=1 \mod q\) 。
+然后我们看到， \(M^{\phi(N)} = M^{(p-1)(q-1)}\) ，根据费马小定理已知 \(M^{q-1}=1 \mod q\) ，因此 \(M^{\phi(N)} = 1 \mod q\) 。
+再用类似情况1中的推导（注意这里用的是模q）：
+</p>
+
+<p>
+\[
+   E(M)^d = M^{ed} = MM^{k\phi(N)} = M \mod q
+   \]
+</p>
+
+<p>
+最后应用中国余数定理，可知：
+</p>
+
+<p>
+\[
+   E(M)^d = M^{ed} = M \mod (pq) = M \mod N
+   \]
+</p>
+
+<p>
+p和q都整除M的特殊情况：这样的话N也能整除M， \(M=0 \mod N\) ，这样加密后的信息E(M)就变成了0，解密后也还是0。这种情况下，只需要对消息M作一些简单的预处理，例如加上一些padding，使得它不能被N整除即可。
+</p></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org290520e" class="outline-3">
+<h3 id="org290520e">费马小定理</h3>
+<div class="outline-text-3" id="text-org290520e">
+<p>
+假设p是质数，a是任意整数，则 1) \(a^{p} = a \mod p\)  ；2) 并且如果a不能被p整除，则 \(a^{p-1} = 1 \mod p\) 。
+</p>
+
+<p>
+证明：
+</p>
+
+<p>
+先看一个引理：假设有质数p，任何小于p的正整数k，\({p \choose k}\) 必然能被p整除。为什么呢？其实很简单，  \({p \choose k}=\frac{p!}{(p-k)!k!}\) ，因此下面的乘积可以写成：
+</p>
+
+<p>
+\[
+p(p-1)\dots(p-k+1)={p \choose k}k(k-1)\dots1
+\]
+</p>
+
+<p>
+然后因为k是正整数，上面这个公式左边必定能被p整除，而公式右边，因为k小于p， \(k(k-1)\dots1\) 这部分必定不能被p整除，这样一来， \({p \choose k}\) 必须能被p整除才能让左右两边相等。
+</p>
+
+<p>
+接下来分别证明费马小定理及其推论。
+</p>
+
+<ol class="org-ol">
+<li><p>
+假设a是正整数（负整数的情况可类似推导），用推理法证明。
+首先a=1的话，显然满足 \(a^{p} = a \mod p\) ；然后假设a满足条件 \(a^{p} = a \mod p\) ，考虑a+1的情况：
+</p>
+
+<p>
+\[
+   (a+1)^p = \sum_{k=0}^{p}{p \choose k}a^k
+   \]
+</p>
+
+<p>
+注：参考二项式展开公式：
+</p>
+
+\begin{matrix}
+(x+y)^n={n \choose 0}x^ny^0 + {n \choose 1}x^{n-1}y^1+\dots+{n \choose n-1}x^1y^{n-1}+{n \choose n}x^0y^n \\
+=\sum^{n}_{k=0}{n \choose k}x^{n-k}y^k
+\end{matrix}
+
+<p>
+根据前面的引理， \(\sum_{k=0}^{p}{p \choose k}a^k\) 这串东西里面，如果 \(1 \leq k \leq p-1\) ，那么 \({p \choose k}\) 必然能被p整除，对p取模后这些项都变成了0，只剩下两项分别是k=0和k=p：
+</p>
+
+<p>
+\[ 
+   (a+1)^p = \sum_{k=0}^{p}{p \choose k}a^k = {p \choose 0}a^0 + {p \choose p}a^p = (1+a^p) \mod p
+   \]
+</p>
+
+<p>
+最后应用推理的假设 \(a^{p} = a \mod p\) ，可导出 \((a+1)^p=(a+1) \mod p\) ，证明完成。
+</p></li>
+
+<li>其实是 1) 的简单推论。如果a不能被p整除，那么a肯定有对p的模逆 \(a^{-1}\) ，于是：
+\[
+   a^{p-1} = a^{-1}a^p = a^{-1}a = 1 \mod p
+   \]</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org3fd1c18" class="outline-3">
+<h3 id="org3fd1c18">欧拉函数</h3>
+<div class="outline-text-3" id="text-org3fd1c18">
+<p>
+欧拉函数 \(\phi(n)\)  的意思是“小于等于n并且与N互质的正整数的个数”。根据这个定义，任何质数p的欧拉函数显然就是p-1（从1到p-1都与p互质）。进一步，如果某个数n是质数p的a次幂，那么它的欧拉函数 \(\phi(p^a)\) 可以这样计算：
+</p>
+
+<p>
+\[
+\phi(p^a) = (p^a - 1) - (p^{a-1} - 1) = p^{a-1}(p-1)
+\]
+</p>
+
+<p>
+这个公式怎么来的呢？我们知道 \(n=p^a\) 这个数，它的因子（除去它本身以外）其实就这些：
+</p>
+
+<p>
+\[
+p, 2p, 3p, \dots, (p^{a-1}-1)p
+\]
+</p>
+
+<p>
+所以它一共有 \(p^{a-1}-1\) 个小于它本身的因子。那么从1到 \(p^a-1\) 这些数里面，去掉这 \(p^{a-1}-1\) 个 \(p^a\) 的因子，剩下的就都是和 \(p^a\) 互质的数。这些数总共有 \((p^a-1) - (p^{a-1}-1)\) 个，即 \(p^{a-1}(p-1)\) 个。
+</p>
+
+<p>
+再进一步，如果两个数a和b互质，利用中国余数定理，我们还可以证明 \(\phi(ab) = \phi(a)\phi(b)\)  。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge6b9685" class="outline-3">
+<h3 id="orge6b9685">中国余数定理</h3>
+<div class="outline-text-3" id="text-orge6b9685">
+<p>
+假设我们有一组两两互质的正整数 \(m_1, m_2, \dots, m_n\) ，另有一组 \(a_1, a_2, \dots, a_n\) ，列出这样一个方程组：
+</p>
+
+\begin{matrix}
+x = a_1 \mod m_1 \\
+x = a_2 \mod m_2 \\
+\dots \\
+x = a_n \mod m_n \\
+\end{matrix}
+
+<p>
+令 \(M=m_1m_2 \dots m_n\) ，这个方程组有解，并且任何两个解，都对模M相等。
+</p>
+
+<p>
+证明：
+</p>
+
+<p>
+我们用构造解的办法来证明。定义 \(M_i = M/m_i\) （也就是 \(M\) 缺了 \(m_i\) ），显然 \(m_i\) 和 \(M_i\) 是互质的，因此 \(M_i\) 对 \(m_i\) 存在模逆，我们记作 \(N_i\) 。然后我们定义 \(x = \sum_i a_iM_iN_i\) ，接下来证明这个x是上面方程组的解。
+</p>
+
+<p>
+我们注意到， \(M_iN_i = 1 \mod m_i\) ，并且 \(M_iN_i = 0 \mod m_j\) (\(j \ne i\))。所以对x中的每一项 \(a_iM_iN_i\) ，只有对 \(m_i\) 取模的时候是 \(a_i\) ，对其他 \(m_j\) 取模都是0。
+</p>
+
+\begin{equation}
+a_iM_iN_i =
+\begin{cases}
+a_i \mod m_i & \\ 
+0 \mod m_j, & j \ne i
+\end{cases}
+\end{equation}
+
+<p>
+例如方程组的第一个方程 \(x = a_1 \mod m_1\) ，x对 \(m_1\) 取模，x所有相加的项中只有 \(a_1M_1N_1\) 这一项对 \(m_1\) 取模是\(a_1\) ，其他项都是0，所以x满足该方程 ，以此类推，可知x是该方程组的解。
+</p>
+
+<p>
+然后再假设这个方程组有另一个解y，也满足方程组的所有方程，那么如果我们把它们相减：
+</p>
+
+\begin{matrix}
+x-y = (a_1 - a_1) = 0 \mod m_1 \\
+x-y = (a_2 - a_2) = 0 \mod m_2 \\
+\dots \\
+x-y = (a_n - a_n) = 0 \mod m_n \\
+\end{matrix}
+
+<p>
+就是说x-y可以被 \(m_1, m_2, \dots, m_n\) 每一个整除，再加上 \(m_1, m_2, \dots, m_n\) 两两互质，可知x-y必然能被 \(M=m_1m_2\dots m_n\) 整除，因此 \(y = x \mod M\) ，即y和x两个解对M取模相等。
+</p>
+</div>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

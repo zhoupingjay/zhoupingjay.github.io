@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子算法之Simon问题</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子算法之Simon问题
+<br />
+<span class="subtitle">Ping Zhou, 2021-07-07</span>
+</h1>
+<p>
+随手翻到一个Simon问题，今天就来聊聊它。Simon问题和之前讨论的Deutsch问题有点类似，也是一个用量子计算机能够达到指数级加速的问题。
+</p>
+
+<section id="outline-container-org2f62db0" class="outline-2">
+<h2 id="org2f62db0">什么是Simon问题？</h2>
+<div class="outline-text-2" id="text-org2f62db0">
+<p>
+和Deutsch问题类似，假设有人给我们一个函数f(x)，内部实现未知，只知道它输入n位二进制数，输出也是n位二进制数。用数学语言描述就是这样：
+</p>
+
+\begin{matrix}
+f: \{ 0,1 \}^n \rightarrow \{ 0,1 \}^n
+\end{matrix}
+
+<p>
+然后又知道存在某个数a，使得 \(f(y)=f(x)\) 当且仅当 \(y=x \oplus a\) ，这个a也称作函数f(x)的周期。为方便讨论，假设a不是0。
+</p>
+
+<p>
+Simon问题要解决的，就是求解这个周期a的值。
+</p>
+
+<p>
+在经典计算机上，这是一个困难的问题。因为f(x)是未知的，我们能做的就是从0到 \(2^n-1\) 中，每次选一个数作为输入计算f(x)，直到发现重复的输出。最坏情况下，需要遍历超过一半的输入，即 \(2^{n-1}+1\) 次。根据Birthday Paradox，这个问题在经典计算机上需要的查询次数（时间复杂度）是 \(O(2^{n/2})\) 。
+</p>
+
+<p>
+而在量子计算机上，我们只需要运行电路 \(O(n)\) 次就能以任意高的成功率得到结果。相对经典计算机，这是 <b>指数级别</b> 的加速！
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgb279aeb" class="outline-2">
+<h2 id="orgb279aeb">Simon问题的量子算法</h2>
+<div class="outline-text-2" id="text-orgb279aeb">
+<p>
+和之前的其他量子算法一样，首先我们得把函数f(x)包装成可逆变换 \(U_f\) ：
+</p>
+
+
+<div id="orgbfd6b24" class="figure">
+<p><img src="../images/simon_uf.jpg" alt="simon_uf.jpg" width="240px" />
+</p>
+</div>
+
+<p>
+然后放到Simon问题的量子电路里：
+</p>
+
+<div id="org822dc40" class="figure">
+<p><img src="../images/simon_circuit.jpg" alt="simon_circuit.jpg" width="480px" />
+</p>
+</div>
+
+<p>
+接下来我们来详细分析一下这个量子算法的过程。
+</p>
+</div>
+
+<div id="outline-container-org022bfe3" class="outline-3">
+<h3 id="org022bfe3">t0时刻</h3>
+<div class="outline-text-3" id="text-org022bfe3">
+<p>
+第一个寄存器经过n位的H变换，变成 \(|0\rangle\) 到 \(|2^n-1\rangle\) 的叠加态，即 \(\frac{1}{2^{n/2}}\sum_{x=0}^{2^n-1}|x\rangle\) 。
+</p>
+
+<p>
+第二个寄存器状态是 \(|0\rangle\) 。
+</p>
+
+<p>
+所以合起来，t0时刻的状态是 \(\frac{1}{2^{n/2}}\sum_{x=0}^{2^n-1}|x\rangle|0\rangle\)
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdb1dd07" class="outline-3">
+<h3 id="orgdb1dd07">t1时刻</h3>
+<div class="outline-text-3" id="text-orgdb1dd07">
+<p>
+经过 \(U_f\) 变换，两个寄存器进入纠缠态，第一个寄存器还是 \(\frac{1}{2^{n/2}}\sum_{x=0}^{2^n-1}|x\rangle\) ，第二个寄存器变成了 \(|f(x)\rangle\) 。所以系统状态是：
+</p>
+
+<p>
+\(\frac{1}{2^{n/2}}\sum_{x=0}^{2^n-1}|x\rangle|f(x)\rangle\) 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc8967cd" class="outline-3">
+<h3 id="orgc8967cd">t2时刻</h3>
+<div class="outline-text-3" id="text-orgc8967cd">
+<p>
+对第二个寄存器进行测量，使它坍缩到某个值 \(z=f(x_0)\) 。
+</p>
+
+<p>
+因为两个寄存器之前处于纠缠态，那么这时候第一个寄存器处于所有使得 \(f(x)=z\) 的 \(|x\rangle\) 的叠加态。根据函数的性质，只有 \(x_0, x_0 \oplus a\) 这两个输入能够让 \(f(x)\) 的输出是z。所以第一个寄存器的状态必然是这两个基态的叠加：
+</p>
+
+<p>
+\(\frac{1}{\sqrt{2}} (|x_0\rangle + |x_0 \oplus a\rangle)\)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org37ac510" class="outline-3">
+<h3 id="org37ac510">t3时刻</h3>
+<div class="outline-text-3" id="text-org37ac510">
+<p>
+对第一个寄存器再作H变换。这里要讨论一下n位H变换的意义。
+</p>
+
+<p>
+我们知道，单量子位的H变换有这样的性质：
+</p>
+
+\begin{matrix}
+H|0\rangle = \frac{1}{\sqrt 2} (|0\rangle + |1\rangle) \\
+H|1\rangle = \frac{1}{\sqrt 2} (|0\rangle - |1\rangle) \\
+\end{matrix}
+
+<p>
+合起来可以写作这样的形式：
+</p>
+
+\begin{matrix}
+H|x\rangle = \frac{1}{\sqrt 2}\left( |0\rangle + (-1)^{x}|1\rangle \right) \\
+= \frac{1}{\sqrt 2} \left( \sum_{y=0}^1 (-1)^{xy} \right)
+\end{matrix}
+
+<p>
+所以n位H变换，也就是对n个量子位分别作H变换，整体状态可以写成这样：
+</p>
+
+\begin{matrix}
+H^{\otimes n}|x\rangle = \prod_{i=1}^n \left[ \frac{1}{\sqrt 2} \sum_{y_i=0}^1 (-1)^{x_i y_i} |y_i\rangle \right]
+\end{matrix}
+
+<p>
+其中x, y都是n位二进制数：
+</p>
+
+\begin{matrix}
+x=x_1 x_2 \dots x_n \\
+y=y_1 y_2 \dots y_n
+\end{matrix}
+
+<p>
+上面这个式子的乘积展开后，可以进一步变成：
+</p>
+
+\begin{matrix}
+H^{\otimes n}|x\rangle = \frac{1}{2^{n/2}} \sum_{y=0}^{2^n-1} (-1)^{x \cdot y} |y\rangle
+\end{matrix}
+
+<p>
+其中 \(x \cdot y = x_1y_1 \oplus x_2y_2 \oplus \dots \oplus x_ny_n\) ，就是x和y两个二进制数，逐位相乘再异或。这个结果可以用推理法来证明（即假设n位成立，证明n+1位也成立），具体推导这里就不写了，不然篇幅太长。
+</p>
+
+<p>
+上面这个n位H变换的性质很重要，很多电路里都会用到。
+</p>
+
+<p>
+回到Simon问题。在t3时刻，我们对第一个寄存器作H变换，而第一个寄存器在H变换前的状态是
+</p>
+
+<p>
+\(\frac{1}{\sqrt{2}} (|x_0\rangle + |x_0 \oplus a\rangle)\)
+</p>
+
+<p>
+也就是 \(|x_0\rangle\) 和 \(|x_0 \oplus a\rangle\) 的叠加。把它放到n位H变换里：
+</p>
+
+\begin{matrix}
+H^{\otimes n} \frac{1}{\sqrt{2}} (|x_0\rangle + |x_0 \oplus a\rangle) = \\
+\frac{1}{2^{n/2}} \sum_{y=0}^{2^n-1} \left[ \frac{1}{\sqrt 2} \left( (-1)^{x_0 \cdot y} + (-1)^{(x_0 \oplus a) \cdot y} |y\rangle \right) \right] = \\
+\frac{1}{2^{(n+1)/2}} \sum_{y=0}^{2^n-1} \left[ (-1)^{x_0 \cdot y} + (-1)^{(x_0 \oplus a)\cdot y}\right]
+\end{matrix}
+
+<p>
+然后我们看求和项里的东西：
+</p>
+
+\begin{matrix}
+(-1)^{x_0 \cdot y} + (-1)^{(x_0 \oplus a)\cdot y} = \\
+(-1)^{x_0 \cdot y} + (-1)^{x_0 \cdot y \oplus a \cdot y}
+\end{matrix}
+
+<p>
+\(a \cdot y\) 是“逐位相乘再异或”，结果只可能是0或1，我们分情况来讨论。
+</p>
+
+<p>
+如果 \(a \cdot y = 1\) ，那么上面这个求和项就变成了：
+</p>
+
+\begin{matrix}
+(-1)^{x_0 \cdot y} + (-1)^{x_0 \cdot y \oplus 1} = 0
+\end{matrix}
+
+<p>
+这两个指数，右边那个比左边那个多了个 \(\oplus 1\) （与1异或），所以两个指数必然是0/1相反的，放到-1的指数上，必然一个是1，另一个是-1，所以两者之和必然是0。
+</p>
+
+<p>
+相反，如果 \(a\cdot y=0\) ，那么上面这个求和项，两个指数相等：
+</p>
+
+\begin{matrix}
+(-1)^{x_0 \cdot y} + (-1)^{x_0 \cdot y \oplus 0} = \\
+(-1)^{x_0 \cdot y} + (-1)^{x_0 \cdot y} = 2 \times (-1)^{x_0 \cdot y}
+\end{matrix}
+
+<p>
+所以在t3时刻，所有 \(a\cdot y \ne 0\) 的 \(|y\rangle\) ，其振幅都是0，剩下的都是使得 \(a \cdot y=0\) 的 \(|y\rangle\) 。因此t3时刻的状态，就是所有这样的 \(|y\rangle\) 的叠加态。这样的 \(|y\rangle\) 一共有多少个呢？简单的说，如果 \(a \ne 0\) ，那么使得 \(a \cdot y=0\) 的y有 \(2^{n-1}\) 个。那么t3时刻的状态可以写作：
+</p>
+
+\begin{matrix}
+\frac{1}{2^{(n-1)/2}} \sum_{a \cdot y = 0} (-1)^{x_0 \cdot y}|y\rangle
+\end{matrix}
+
+<p>
+现在，我们对第一个寄存器进行测量，会得到什么？
+</p>
+
+<p>
+我们会随机得到某个二进制数y，并且它满足 \(a \cdot y = 0\) 。重复运行这个电路多次，我们可以得到一组y值 \(y_1, y_2, \dots, y_n\) ，它们都满足 \(a \cdot y_i = 0\) 。那么这些y值和未知的变量a，就可以组成一个方程组：
+</p>
+
+\begin{matrix}
+\left\{
+\begin{array}{l}
+a \cdot y_1 = 0 \\
+a \cdot y_2 = 0 \\
+\vdots \\
+a \cdot y_n = 0
+\end{array}
+\right.
+\end{matrix}
+
+<p>
+如果我们有n个互相线性独立的y值，就可以从这个方程组解出a的值！
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org128ab65" class="outline-2">
+<h2 id="org128ab65">性能分析</h2>
+<div class="outline-text-2" id="text-org128ab65">
+<p>
+我们需要重复运行这个量子电路的次数，取决于我们什么时候能得到需要的线性独立的y值。
+</p>
+
+<p>
+简单估算一下概率：
+</p>
+<ul class="org-ul">
+<li>第1次运行，得到 \(y_1\) ，我们需要它不为0（是0的话就没意义了），得到这样的y值概率是 \(1-\frac{1}{2^{n-1}}\) ；</li>
+<li>第2次运行，得到 \(y_2\) ，我们需要它与 \(y_1\) 互相线性独立，得到这样的y值概率是 \(1-\frac{2}{2^{n-1}}\) ；</li>
+<li>第3次运行，得到 \(y_3\) ，我们需要它与 \(y_1, y_2\) 互相线性独立，得到这样的y值概率是 \(1-\frac{4}{2^{n-1}}\) ，为什么这么算，详细的就不展开了 :-)；</li>
+<li>第4次运行，得到 \(y_4\) ，我们需要它与 \(y_1, y_2, y_3\) 互相线性独立，得到这样的y值概率是 \(1-\frac{8}{2^{n-1}}\) ；</li>
+<li>……</li>
+<li>第n-1次运行，以此类推，得到符合条件的y值的概率是 \(1-\frac{2^{n-2}}{2^{n-1}}\) 。</li>
+</ul>
+
+<p>
+所以，运行n-1次，得到n-1个线性独立的y值，概率是
+</p>
+
+\begin{matrix}
+(1-\frac{1}{2}) (1-\frac{1}{4}) (1-\frac{1}{8}) \dots (1-\frac{1}{2^{n-1}}) \\
+\gt \prod_{k=1}^{\infty}(1-\frac{1}{2^k}) \approx 0.29
+\end{matrix}
+
+<p>
+所以，连续运行n-1次电路，得到符合条件的一组y值的概率大于四分之一，换句话说，失败的概率小于3/4。那么如果我们重复运行电路4mn次，失败的概率小于 \((1-\frac{1}{4})^{4m} < e^{-m}\) 。
+</p>
+
+<p>
+因此，我们重复运行电路 \(O(n)\) 次，就能以任意高的成功率得到符合条件的一组y值，从而求解出函数的周期a。
+</p>
+
+<p>
+Simon算法就聊到这里，感谢阅读！
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

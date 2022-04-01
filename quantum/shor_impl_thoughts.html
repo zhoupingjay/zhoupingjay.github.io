@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>聊聊量子因式分解算法的实现</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">聊聊量子因式分解算法的实现
+<br />
+<span class="subtitle">Ping Zhou, 2021-06-22</span>
+</h1>
+<p>
+在前面的Shor算法系列中，我讨论了用量子计算进行因式分解的思路。但是这些基本上都是理论上的推导，实际要实现量子因式分解，有哪些难点？解决的思路又是什么？今天就来聊聊我的实现方法。
+</p>
+
+<section id="outline-container-org611c750" class="outline-2">
+<h2 id="org611c750">Shor算法实现的难点：指数取模</h2>
+<div class="outline-text-2" id="text-org611c750">
+<p>
+在Shor算法中，我们用量子计算来寻找函数 \(f(x)=a^x \mod N\) 的周期（order），并且这一步也是Shor算法中唯一的『量子』部分。
+</p>
+
+
+<div id="org57464e8" class="figure">
+<p><img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="400px" />
+</p>
+</div>
+
+<p>
+为什么Shor算法这么设计？因为“order finding”这一步目前还没有找到高效的经典算法，而量子计算机则可以用多项式代价求解。
+</p>
+
+<p>
+问题来了，这个电路看起来也太『简单』了吧！这么难的一个问题，这样几个电路块就解决了？
+</p>
+
+<p>
+实际上，为了方便讨论算法，上面的这个电路图作了大量的抽象，其中关键的一步，就是把函数 \(f(x)\) 包装成了一个计算『指数取模』的可逆变换 \(U_f\) 。有了这样一个可逆变换，我们才能给它输入 \(2^n\) 个基态的叠加态，实现对经典算法的指数级加速。
+</p>
+
+<p>
+这个 \(U_f\) 变换有2个寄存器，分别都是n个量子位：
+</p>
+<ul class="org-ul">
+<li>第一个是寄存器 \(|x\rangle\) ，就是要对a取的指数，</li>
+<li>第二个是寄存器是辅助的 \(|1\rangle\) （注意，这也是个n量子位的寄存器）。</li>
+</ul>
+
+<p>
+在另一端， \(U_f\) 输出 \(|x\rangle\) ，以及 \(|a^x \mod N\rangle\) 。
+</p>
+
+<p>
+那这个『指数取模』可逆变换 \(U_f\) 怎么实现呢？
+</p>
+
+<p>
+一个偷懒的方法是，用经典电路实现这样一个变换，把它接入到量子电路里。但是，我们给它的输入是 \(2^n\) 个基态的叠加态，而这个经典电路一次只能计算一个f(x)值，遇到这种叠加态的输入就傻眼了：这不还是 \(O(2^n)\) 的时间复杂度么？运行这样的电路，等于只是用经典电路模拟了Shor算法而已。
+</p>
+
+<p>
+所以，这个『指数取模』可逆变换 \(U_f\) 必须是『量子』的，不能用经典电路来实现。这也是Shor算法实现中的一个主要的挑战和难点。
+</p>
+
+<p>
+接下来，我会用自顶向下的方式，逐个分解讨论。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgcfb653a" class="outline-2">
+<h2 id="orgcfb653a">量子指数取模</h2>
+<div class="outline-text-2" id="text-orgcfb653a">
+<p>
+这个『量子指数取模』变换的实现，其实方法不止一种，这里结合我对相关论文的理解，提出我的一个实现方法。
+</p>
+
+<p>
+首先， \(a^x \mod N\) 里面，N是给定的数，a是每次运行电路前随机选定的一个数，所以运行时候也是已知的，这两个都可以看作是已知的常量。
+</p>
+
+<p>
+然后，变量x是n位二进制数，而我们知道n位二进制数可以表示成这样的形式：
+</p>
+
+\begin{matrix}
+x = \left( x_{n-1} x_{n-2} \dots x_0 \right)_2  \\
+ = x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0 \\
+\end{matrix}
+
+<p>
+其中的 \(x_{n-1}, x_{n-2}, \dots x_0\) 都是0或1。因为x是用在a的指数上， \(a^x \mod N\) 也可以写成：
+</p>
+
+\begin{matrix}
+a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
+= \left( a^{x_{n-1}2^{n-1}} \mod N \right) \\
+   \left( a^{x_{n-2}2^{n-2}} \mod N \right) \\
+   \dots \\
+   \left( a^{x_02^0} \mod N \right)
+\end{matrix}
+
+<p>
+这里用到了乘积取模的性质： \(ab \mod N = (a \mod N)(b \mod N)\)
+</p>
+
+<p>
+这样，『指数取模』 \(a^x \mod N\) 可以分解成n个项的『乘积取模』变换。每个项里面， \(a^{x_k2^k}\) 其实就两种可能：如果第k位 \(x_k\) 是0，那么这一项就是1，否则这一项就是 \(a^{2^k}\) 。那么这n项相乘，用程序语言来描述的话就是这样的过程：
+</p>
+<ol class="org-ol">
+<li>初始乘积B=1</li>
+<li>扫描x的每一位：
+<ul class="org-ul">
+<li>如果第k位是0，那么B不变</li>
+<li>如果第k位是1，那么给B乘上 \(a^{2^k}\) （注：这里是取模的乘法）</li>
+<li>继续下一位</li>
+</ul></li>
+<li>所有n位都扫描过，得到的B就是 \(a^x \mod N\)</li>
+</ol>
+
+<p>
+我们可以用同样的思路，来实现这个『指数取模』变换！
+</p>
+
+<p>
+首先，我们需要一个n位的辅助量子寄存器，把它初始化为 \(|1\rangle\) ，也就是上面的第1步。
+</p>
+
+<p>
+然后，第2步需要根据x的每一位，选择性的给这个辅助寄存器作『乘积取模』运算。这一步怎么实现呢？
+</p>
+
+<p>
+还记得我们之前经常用到的 CNOT『受控非门』吗？这个门除了正常的输入外，还有一个控制输入，只有当控制输入为 \(|1\rangle\) 的时候，才对输入取反，否则输入不变。
+</p>
+
+<p>
+假设我们已经有了一个『乘积取模』的变换（后面会讨论），我们可以再给它加上一个类似CNOT的控制输入，把它变成『受控乘积取模』，也就是说只有当这个控制输入是 \(|1\rangle\) 的时候，才对输入作乘积取模，否则输入不变（相当于乘1）。这不就是上面第2步里所需要的？
+</p>
+
+<p>
+而因为a是每次运行电路前选定的，也就是说a在这里是已知的，所以我们可以给x的每一位构造一个『受控乘积取模』变换V：
+</p>
+<ul class="org-ul">
+<li>第0位，受控变换 \(V_0\) ，在控制输入是 \(|1\rangle\) 的时候，给输入乘上 \(a^{2^0}\) ，否则输入不变；</li>
+<li>第1位，受控变换 \(V_1\) ，在控制输入是 \(|1\rangle\) 的时候，给输入乘上 \(a^{2^1}\) ，否则输入不变；</li>
+<li>&#x2026;</li>
+<li>第n-1位，受控变换 \(V_{n-1}\) ，在控制输入是 \(|1\rangle\) 的时候，给输入乘上 \(a^{2^{n-1}}\) ，否则输入不变。</li>
+</ul>
+
+<p>
+把这些变换 \(V_0, V_1, \dots, V_{n-1}\) 接起来，就实现了上面的指数取模算法：
+</p>
+
+
+<div id="org0141c6d" class="figure">
+<p><img src="../images/mod_exp.jpg" alt="mod_exp.jpg" width="400px" />
+</p>
+</div>
+
+<p>
+这里面，每一个V变换还带一个辅助量子寄存器（就是图中最下面一行，初始状态为 \(|0\rangle\) ）。 这是因为量子电路里的变换必须是可逆的，像这样的运算必须带相应的辅助寄存器来保证它的可逆性，在量子电路里这是常见的套路。这些变换一共有n个，可以在每次运行电路前，根据a的值构造好，然后放到电路里去。
+</p>
+
+<p>
+有了这个总体电路，接下来我们看里面的『乘积取模』变换。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org1f42d59" class="outline-2">
+<h2 id="org1f42d59">乘积取模</h2>
+<div class="outline-text-2" id="text-org1f42d59">
+<p>
+乘积取模，就是计算 \(ax \mod N\) （x是输入，a和N都是已知的数），这方面其实已经有不少论文讨论它的实现，例如 Vedral 等的 Quantum Networks for Elementary Arithmetic Operations 。考虑到篇幅，这里不做详细的展开了，总之我们可以从基本的量子电路门出发，构造这样一个『乘积取模』的变换 \(U_g\) ：
+</p>
+
+
+<div id="org0467346" class="figure">
+<p><a href="../images/multiply_modulo.jpg" width="280px"><img src="../images/multiply_modulo.jpg" alt="multiply_modulo.jpg" width="280px" /></a>
+</p>
+</div>
+
+<p>
+但是，我们的指数取模电路，需要把多个乘积取模变换连接起来，上面这个 \(U_g\) 变换并不能直接用，不信你可以试试，把多个这样的变换接起来，会变成啥样 :-)
+</p>
+
+<p>
+实际上，我们在指数取模电路里需要的『乘积取模』变换（也就是电路里的一堆V变换 ），是这样的：
+</p>
+
+
+<div id="org03172da" class="figure">
+<p><img src="../images/ax_mod_n.jpg" alt="ax_mod_n.jpg" width="240px" />
+</p>
+</div>
+
+<p>
+例如第k位对应的V变换，就是给输入乘上 \(g=a^{2^k}\) （取模乘法）。
+</p>
+
+<p>
+怎么把前面的这个『乘积取模』 \(U_g\) ，包装成我们要的样子 \(V_g\) 呢？
+</p>
+
+<p>
+既然有了 \(U_g\) ，那自然有它的逆变换 \(U_k^{-1}\) ，简单画一下就知道，这个逆变换是这样子的：
+</p>
+
+
+<div id="org533737c" class="figure">
+<p><a href="../images/multiply_modulo1.jpg" width="280px"><img src="../images/multiply_modulo1.jpg" alt="multiply_modulo1.jpg" width="280px" /></a>
+</p>
+</div>
+
+<p>
+如果这个逆变换里的k，取值 \(k=g^{-1} \mod N\) ，然后把它和 \(U_g\) ，中间用一个SWAP门连起来，会得到什么？
+</p>
+
+
+<div id="org9cddc86" class="figure">
+<p><img src="../images/multiply_modulo2.jpg" alt="multiply_modulo2.jpg" width="480px" />
+</p>
+</div>
+
+<p>
+在最后这个逆变换 \(U_k^{-1}\) 里， \(k=g^{-1} \mod N\) ，第一个输入 \(|u\rangle = |gx\mod N\rangle\) ，第二个输入 \(|x\rangle\) ，所以这个逆变换的两个输出，第一个还是 \(|u\rangle = |gx\mod N\rangle\) ，第二个是 \(|x-(ku \mod N)\rangle\) 。把 \(|u\rangle = |gx\mod N\rangle\) 和 \(k=g^{-1} \mod N\) 代入进去，第二个输出就变成了：
+</p>
+
+\begin{matrix}
+|x-(ku \mod N)\rangle = |x - (g^{-1}gx \mod N)\rangle \\
+= |x - x \mod N\rangle = |0\rangle
+\end{matrix}
+
+<p>
+所以这3个变换合起来，就是我们在指数取模电路里所需要的乘积取模 \(V_g\) ：
+</p>
+
+
+<div id="orga1a9b6b" class="figure">
+<p><img src="../images/multiply_modulo3.jpg" alt="multiply_modulo3.jpg" width="480px" />
+</p>
+</div>
+
+<p>
+所以整个过程是这样：
+</p>
+<ol class="org-ol">
+<li>在每次运行Shor算法前，我们需要随机选一个与N互质的数a；</li>
+<li>根据这个a，计算g值： \(g_0=a^{2^0}, g_1=a^{2^1}, \dots, g_{n-1}=a^{2^{n-1}}\) ，一共需要计算n个；</li>
+<li>对每个g值，构造相应的『受控乘积取模』变换，也就是 \(V_{g_0}, V_{g_1}, \dots, V_{g_{n-1}}\) ，一共也是n个；</li>
+<li>给每个受控乘积变换，接上相应的控制输入，第k个就接x的第k位；</li>
+<li>把这n个受控乘积变换连起来，两个输入分别初始化为 \(|1\rangle\) 和 \(|0\rangle\) ，那么在输出端就能得到所需的 \(a^x \mod N\) 结果。</li>
+</ol>
+
+
+<div id="org0cd38ac" class="figure">
+<p><img src="../images/mod_exp2.jpg" alt="mod_exp2.jpg" width="480px" />
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org91c19ab" class="outline-2">
+<h2 id="org91c19ab">量子加法器和乘法器</h2>
+<div class="outline-text-2" id="text-org91c19ab">
+<p>
+乘积取模变换，内部还可以分解成乘法和加法。这些也都可以用基本的量子电路门构造出来，例如量子加法器可以这么实现：
+</p>
+
+
+<div id="org9c56695" class="figure">
+<p><img src="../images/adder.png" alt="adder.png" width="200px" />
+</p>
+</div>
+
+<p>
+量子乘法器和加法器，很多论文和课本里也都有详细的讨论，这里就不重复了。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org1b6171a" class="outline-2">
+<h2 id="org1b6171a">复杂度</h2>
+<div class="outline-text-2" id="text-org1b6171a">
+<p>
+简单聊一下这个电路的复杂度，我不是这方面的专家，只能大致估算一下，如有不对的地方请指教。
+</p>
+
+<ul class="org-ul">
+<li>首先是需要多少量子位，这里用到了3个n位的寄存器，因此一共是3n个量子位。n的选择取决于要分解的数N，一般的规则是 \(N^2 \le 2^n \le 2N^2\) ，所以 \(n \sim O(\log N)\) ；</li>
+
+<li>然后，我的实现里需要预先计算n个g值（ \(g_0=a^{2^0}, g_1=a^{2^1}, \dots, g_{n-1}=a^{2^{n-1}}\) ）；</li>
+
+<li>还需要根据计算好的g值，构造相应的受控乘积取模变换，也是n个；</li>
+
+<li>每个乘积取模变换操作2n个量子位，根据 Vedral 的论文，需要的量子电路门在 n 的多项式内。</li>
+</ul>
+
+<p>
+综合起来，整个指数取模电路的复杂度也应在n的多项式内。
+</p>
+
+<p>
+总算写完了，感谢阅读！
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

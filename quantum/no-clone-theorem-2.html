@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子信息的不可克隆性 (2)</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子信息的不可克隆性 (2)
+<br />
+<span class="subtitle">Ping Zhou, 2022-01-07</span>
+</h1>
+<p>
+接前文，继续聊量子信息的不可克隆性这个话题。在前文中，我们用最简单的CNOT门为例子，演示了为什么CNOT量子电路只能复制经典信息，而并不能复制处于一般态的量子位。今天把这个讨论扩展到一般的情况，来证明 <b><b>复制量子态的机器不可能存在</b></b> 。
+</p>
+
+<p>
+基本思路是用反证法。假设我们有个能复制一个量子位的机器，那么这个机器构成的系统，至少包含这些部分：
+</p>
+<ol class="org-ol">
+<li>被克隆的量子位， \(|\psi\rangle = \alpha|0\rangle + \beta|1\rangle\)</li>
+<li>辅助量子位， \(|\phi\rangle\)</li>
+<li>机器本身的状态 \(|A\rangle\) ，初始状态用 \(|A_i\rangle\) 表示</li>
+</ol>
+
+<p>
+既然这个机器是量子电路构成的，这个“克隆”过程也必然是一个幺正变换。把这个幺正变换记作U，那么我们要达到的是这样的一个变换过程：
+</p>
+
+\begin{matrix}
+U |\psi\rangle |\phi\rangle |A_i\rangle \rightarrow |\psi\rangle |\psi\rangle |A_{f\psi}\rangle
+\end{matrix}
+
+<p>
+也就是输入的 \(|\psi\rangle\) 被复制成了2个，而机器的状态由初始的 \(|A_i\rangle\) 变成了某个终态，这个终态必然是依赖于输入 \(|\psi\rangle\) ，所以记作 \(|A_{f\psi}\rangle\) 。
+</p>
+
+<p>
+显然，如果输入是 \(|0\rangle\) 或 \(|1\rangle\) 的话，我们有：
+</p>
+
+\begin{matrix}
+U |0\rangle |\phi\rangle |A_i\rangle \rightarrow |0\rangle |0\rangle |A_{f0}\rangle \\
+U |1\rangle |\phi\rangle |A_i\rangle \rightarrow |1\rangle |1\rangle |A_{f1}\rangle \\
+\end{matrix}
+
+<p>
+那么如果输入是一般的量子态呢？也就是
+</p>
+
+<p>
+\(|\psi\rangle = \alpha|0\rangle + \beta|1\rangle\) 
+</p>
+
+<p>
+把它代入到前面的变换过程里：
+</p>
+
+\begin{matrix}
+U |\psi\rangle |\phi\rangle |A_i\rangle \\
+= U (\alpha|0\rangle + \beta|1\rangle) |\phi\rangle |A_i\rangle \\
+\rightarrow \alpha U |0\rangle |\phi\rangle |A_{f0}\rangle + \beta U |1\rangle |\phi\rangle |A_{f1}\rangle \\
+= \alpha |0\rangle |0\rangle |A_{f0}\rangle + \beta |1\rangle |1\rangle |A_{f1}\rangle \\
+= \alpha |00\rangle |A_{f0}\rangle + \beta |11\rangle |A_{f1}\rangle \\
+\end{matrix}
+
+<p>
+但是，这是不是我们想要的“克隆”效果呢？显然不是啊！我们要的“克隆”变换，变换后的状态应该是这样的：
+</p>
+
+\begin{matrix}
+|\psi\rangle |\psi\rangle |A_{f\psi}\rangle \\
+= (\alpha|0\rangle + \beta|1\rangle) (\alpha|0\rangle + \beta|1\rangle) |A_{f\psi}\rangle \\
+= (\alpha^2 |00\rangle + \alpha\beta |10\rangle + \alpha\beta |01\rangle + \beta^2 |11\rangle) |A_{f\psi}\rangle \\
+\end{matrix}
+
+<p>
+和之前CNOT的例子类似，除非 \(\alpha\beta=0\) ，否则我们想要的目标状态，和U变换实际能给我们的，显然是不同的！
+</p>
+
+<p>
+这个推导告诉我们，这个我们假设的克隆电路，只能复制经典信息（也就是输入是 \(|0\rangle\) 或 \(|1\rangle\) 的情况），并不能复制处于一般态的量子位。所以， <b><b>这样的克隆机器不可能存在</b></b> 。
+</p>
+
+<p>
+另外如果量子克隆机存在的话，还会违背相对论的一个基本原理，即信息不能超光速传播，这又从另一个侧面证明了量子不可克隆性。这又是另一个话题了，以后有空讨论。
+</p>
+
+<p>
+感谢阅读！
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

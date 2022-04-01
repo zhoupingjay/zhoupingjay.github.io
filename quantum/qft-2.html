@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子傅里叶变换详解 (2) 逆傅里叶变换</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子傅里叶变换详解 (2) 逆傅里叶变换
+<br />
+<span class="subtitle">Ping Zhou, 2021-05-26</span>
+</h1>
+<p>
+既然有『量子傅立叶变换』，那么自然也有它的逆变换，今天就来聊聊这个话题。
+</p>
+
+<section id="outline-container-orge8d452c" class="outline-2">
+<h2 id="orge8d452c">量子傅立叶变换和逆变换</h2>
+<div class="outline-text-2" id="text-orge8d452c">
+<p>
+前文说过，对于任意状态 \(|\psi\rangle\) ：
+</p>
+
+\begin{matrix}
+|\psi\rangle = \sum_{j=0}^{N-1}f(j)|j\rangle & (N=2^n)
+\end{matrix}
+
+<p>
+对它进行量子傅立叶变换QFT后，会得到一个新状态：
+</p>
+
+\begin{matrix}
+|\tilde\psi\rangle = QFT|\psi\rangle = \sum_{k=0}^{N-1}\tilde f(k)|k\rangle, \\\
+\\\
+\tilde f(k) = \frac{1}{\sqrt{N}} \sum_{j=0}^{N-1} e^{2\pi ijk/N} f(j) \\\
+= \frac{1}{\sqrt{N}} \sum_{j=0}^{N-1} \omega^{jk} f(j) & (\omega=e^{2\pi i/N}) \\\
+\end{matrix}
+
+<p>
+那么量子傅里叶逆变换 \(QFT^{-1}\) 是什么样的？
+</p>
+
+<p>
+很简单，其实就是把e的指数加个负号：
+</p>
+
+\begin{matrix}
+|\phi\rangle = \sum_{k=0}^{N-1} \tilde f(k) |k\rangle \\\
+\\\
+QFT^{-1} |\phi\rangle = \sum_{j=0}^{N-1} g(j) |j\rangle \\\
+\\\
+g(j) = \frac{1}{\sqrt{N}} \sum_{k=0}^{N} \omega^{-jk} \tilde f(k) \\\
+\end{matrix}
+
+<p>
+可以看到，量子傅立叶逆变换和QFT非常相似，唯一的区别就是e的指数上多了个负号。
+</p>
+
+<p>
+为什么多个负号就变成逆变换了呢？下面我们来验证一下。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org3e5a773" class="outline-2">
+<h2 id="org3e5a773">量子傅立叶逆变换的验证</h2>
+<div class="outline-text-2" id="text-org3e5a773">
+<p>
+假如我们对一个状态 \(|\psi\rangle\) 作了QFT：
+</p>
+
+\begin{matrix}
+|\psi\rangle = \sum_{j=0}^{N-1}f(j)|j\rangle & (N=2^n)\\\
+\\\
+QFT|\psi\rangle = \sum_{k=0}^{N-1}\tilde f(k)|k\rangle \\\
+\tilde f(k) = \frac{1}{\sqrt{N}} \sum_{m=0}^{N-1} e^{2\pi imk/N} f(m) \\\
+= \frac{1}{\sqrt{N}} \sum_{m=0}^{N-1} \omega^{mk} f(m) & (\omega = e^{2\pi i/N})
+\end{matrix}
+
+<p>
+那么对它作逆变换的话：
+</p>
+
+\begin{matrix}
+QFT^{-1} QFT|\psi\rangle = \sum_{j=0}^{N-1} g(j) |j\rangle \\\
+\end{matrix}
+
+<p>
+所以我们验证的目标，是要证明 \(g(j) = f(j)\) ，也就是逆变换后回到最初的状态。
+</p>
+
+
+<div id="org2c8aab9" class="figure">
+<p><img src="../images/qft_inverse.png" alt="qft_inverse.png" width="320px" />
+</p>
+</div>
+
+<p>
+把 \(\tilde f(k)\) 代入到前面的公式里：
+</p>
+
+\begin{matrix}
+g(j) = \frac{1}{\sqrt{N}} \sum_{k=0}^{N-1} \omega^{-jk} \tilde f(k) \\\
+= \frac{1}{\sqrt{N}} \sum_{k=0}^{N-1} \omega^{-jk} \left[ \frac{1}{\sqrt{N}} \sum_{m=0}^{N-1} \omega^{mk} f(m) \right] \\\
+= \frac{1}{N} \sum_{k=0}^{N-1} \omega^{-jk} \sum_{m=0}^{N-1} \omega^{mk} f(m)
+\end{matrix}
+
+<p>
+这里面， \(j\) 是 \(g(j)\) 的参数，对每个 \(g(j)\) 来说是确定的，然后里面有2个嵌套的求和，分别遍历 \(k, m\) ，我们把两层求和项展开成二维的表就能看清楚：
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">&#xa0;</th>
+<th scope="col" class="org-left">m=0</th>
+<th scope="col" class="org-left">m=1</th>
+<th scope="col" class="org-left">&#x2026;</th>
+<th scope="col" class="org-left">m=N-1</th>
+</tr>
+
+<tr>
+<th scope="col" class="org-left">k=0</th>
+<th scope="col" class="org-left">\(\omega^{0(0-j)}\)</th>
+<th scope="col" class="org-left">\(\omega^{0(1-j)}\)</th>
+<th scope="col" class="org-left">&#x2026;</th>
+<th scope="col" class="org-left">\(\omega^{0(N-1-j)}\)</th>
+</tr>
+
+<tr>
+<th scope="col" class="org-left">k=1</th>
+<th scope="col" class="org-left">\(\omega^{1(0-j)}\)</th>
+<th scope="col" class="org-left">\(\omega^{1(1-j)}\)</th>
+<th scope="col" class="org-left">&#x2026;</th>
+<th scope="col" class="org-left">\(\omega^{1(N-1-j)}\)</th>
+</tr>
+
+<tr>
+<th scope="col" class="org-left">&#x2026;</th>
+<th scope="col" class="org-left">&#x2026;</th>
+<th scope="col" class="org-left">&#x2026;</th>
+<th scope="col" class="org-left">&#x2026;</th>
+<th scope="col" class="org-left">&#x2026;</th>
+</tr>
+
+<tr>
+<th scope="col" class="org-left">k=N-1</th>
+<th scope="col" class="org-left">\(\omega^{(N-1)(0-j)}\)</th>
+<th scope="col" class="org-left">\(\omega^{(N-1)(1-j)}\)</th>
+<th scope="col" class="org-left">&#x2026;</th>
+<th scope="col" class="org-left">\(\omega^{(N-1)(N-1-j)}\)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">f(0)</td>
+<td class="org-left">f(1)</td>
+<td class="org-left">&#x2026;</td>
+<td class="org-left">f(N-1)</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+这个二维表里面，每一列对应求和项里的一个 \(f(m)\) 的系数，而 \(g(j)\) 就是整个二维表之和。
+</p>
+
+<p>
+然后分清况讨论：
+</p>
+
+<p>
+如果某一列（例如第m列）有 \(m \ne j\) ，那么该列 \(f(m)\) 的系数就是：
+</p>
+
+\begin{matrix}
+\sum_{k=0}^{N-1} \omega^{k(m-j)} = \sum_{k=0}^{N-1} a^k && (a = \omega^{m-j} = e^{2\pi i(m-j)k/N}) \\\
+\end{matrix}
+
+<p>
+根据几何级数性质， \(\sum_{k=0}^{N-1} a^k=\frac{a^N-1}{a-1}\) ，以及 \(a^N = e^{2\pi i(m-j)}=1\) ，可知：
+</p>
+
+\begin{matrix}
+\sum_{k=0}^{N-1} \omega^{k(m-j)} = \sum_{k=0}^{N-1} a^k = 0
+\end{matrix}
+
+<p>
+所以当 \(m \ne j\) 的时候， \(f(m)\) 的系数是0。也就是说，这个二维表里面，除了第 \(j\) 列以外，其他的所有列系数之和都是0!
+</p>
+
+<p>
+接下来看，如果 \(m=j\) ，也就是第 \(j\) 列的系数之和：
+</p>
+
+\begin{matrix}
+\sum_{k=0}^{N-1} \omega^{k(m-j)} = \sum_{k=0}^{N-1} \omega^0 = N
+\end{matrix}
+
+<p>
+综上所述， \(g(j)\) 的这个二维表里面，只有第 \(j\) 列，对应 \(f(j)\) 的系数加起来是非0，所以：
+</p>
+
+\begin{matrix}
+g(j) = \frac{1}{N} N f(j) = f(j)
+\end{matrix}
+
+<p>
+因此经过逆变换后又回到了最初的状态 \(|\psi\rangle=\sum_{k=0}^{N-1} f(j)|j\rangle\) ，我们验证了量子傅立叶逆变换的作用。
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

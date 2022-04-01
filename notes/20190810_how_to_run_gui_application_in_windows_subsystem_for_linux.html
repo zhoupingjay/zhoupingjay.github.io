@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How to Run GUI Application in Windows Subsystem for Linux (WSL)</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">How to Run GUI Application in Windows Subsystem for Linux (WSL)
+<br />
+<span class="subtitle">Ping Zhou, 2019-08-10</span>
+</h1>
+
+<section id="outline-container-orgf8cbb2d" class="outline-2">
+<h2 id="orgf8cbb2d">Install WSL</h2>
+<div class="outline-text-2" id="text-orgf8cbb2d">
+<p>
+Basically you need to turn on WSL in Program Features. Refer to this document for the steps:
+<a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">https://docs.microsoft.com/en-us/windows/wsl/install-win10</a>
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgf03e98b" class="outline-2">
+<h2 id="orgf03e98b">Install Linux distribution in WSL</h2>
+<div class="outline-text-2" id="text-orgf03e98b">
+<p>
+Refer to same document for steps. I installed Ubuntu but there are other distributions available.
+<a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">https://docs.microsoft.com/en-us/windows/wsl/install-win10</a>
+</p>
+</div>
+</section>
+
+<section id="outline-container-org0f756c6" class="outline-2">
+<h2 id="org0f756c6">Install Dependencies</h2>
+<div class="outline-text-2" id="text-org0f756c6">
+<p>
+GUI applications may have additional dependencies (libraries, etc). An easy way to install proper libraries is by installing some GUI programs, which will automatically resolve and install needed libraries. For example:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">sudo apt install x11-apps
+</pre>
+</div>
+</div>
+</section>
+
+<section id="outline-container-orgcc0e251" class="outline-2">
+<h2 id="orgcc0e251">Configure X-Window Server</h2>
+<div class="outline-text-2" id="text-orgcc0e251">
+<p>
+There are several choices available. I used the X-Win server from Cygwin because I already have one installed.
+</p>
+
+<p>
+However, the default X-Win configuration doesn’t work for WSL. After some researching I found the reason is that it doesn’t listen on TCP port. So the solution is to add “–listen tcp” option to the X-Win shortcut:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">C:\cygwin64\bin\run.exe --quote /usr/bin/bash.exe -l -c <span class="org-string">"cd; exec /usr/bin/startxwin  -- -listen tcp"</span>
+</pre>
+</div>
+
+<p>
+Restart your X-Win server, and set DISPLAY environment in WSL:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span class="org-builtin">export</span> <span class="org-variable-name">DISPLAY</span>=:0
+</pre>
+</div>
+
+<p>
+Try running some GUI application from WSL. For example, “xeye”, or launching Emacs with GUI.
+</p>
+
+<p>
+If you see authorization error like this, it means need to configure xauth for WSL. See following section for steps.
+</p>
+
+<pre class="example" id="orgb4102b5">
+Authorization required, but no authorization protocol specified
+Error: Can't open display: :0
+</pre>
+</div>
+</section>
+
+<section id="outline-container-orgf254b93" class="outline-2">
+<h2 id="orgf254b93">Configure xauth</h2>
+<div class="outline-text-2" id="text-orgf254b93">
+<p>
+There are two options to solve this problem. First one is to copy the “.Xauthority” file from Cygwin to your WSL home folder.
+</p>
+
+<p>
+Source file:
+</p>
+<pre class="example" id="org8a23e6b">
+C:\cygwin64\home\&lt;CYGWIN_USER&gt;
+</pre>
+
+<p>
+Destination file:
+</p>
+<pre class="example" id="org52a814b">
+C:\Users\&lt;WINDOWS_USER&gt;\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\&lt;WSL_USER&gt;
+</pre>
+
+<p>
+Not finished yet! There is an extra step needed:
+</p>
+
+<p>
+You need to set correct owner/permssion on the “.Xauthority” file that was copied to your WSL home folder.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">sudo chown &lt;WSL_USER&gt; .Xauthority
+chmod +rwx .Xauthority
+</pre>
+</div>
+
+<p>
+The other (maybe easier) option is to disable xauth in your X-Win server startup script. Edit “startxwin” file in your Cygwin/bin folder, find the line with “enable<sub>xauth</sub>” and turn it off.
+</p>
+
+<p>
+Done! Now you should be able to run GUI applications in WSL. For example, Emacs running from WSL/Ubuntu:
+</p>
+
+
+<div id="orgd03c2ab" class="figure">
+<p><img src="../images/2019/08/image.png" alt="image.png" width="480px" />
+</p>
+</div>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

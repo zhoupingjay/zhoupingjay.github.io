@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>用Lisp可视化量子因式分解Shor算法的例子</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">用Lisp可视化量子因式分解Shor算法的例子
+<br />
+<span class="subtitle">Ping Zhou, 2021-06-11</span>
+</h1>
+<p>
+在前文中我初步尝试了Lisp的数值计算和绘图功能，本着“拿着锤子找钉子”的精神，这次我们来搞个实际的应用，用Lisp来演示和可视化量子因式分解算法（Shor​算法）。
+</p>
+
+<p>
+首先还是引用numcl和vgplot包：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>ql:quickload <span class="org-builtin">:numcl</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span>ql:quickload <span class="org-builtin">:vgplot</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+假设我们要分解的数是N（前文的例子中N=21），Shor算法需要先在1到N-1之间随机选一个与N互质的数a，然后用量子计算求解函数 \(f(x)=a^x \mod N\) 的周期r。要可视化这个求解的过程，我们得先知道r，所以先写个辅助函数：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">a-x-mod-N</span> <span class="org-rainbow-delimiters-depth-2">(</span>a x N<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span>mod <span class="org-rainbow-delimiters-depth-3">(</span>expt a x<span class="org-rainbow-delimiters-depth-3">)</span> N<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter">;; </span><span class="org-comment">Find order for function f(x)=a^x mod N</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">also returns the "modulo sequence" of the function.</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">E.g. a=11, N=21 -&gt; returns order r=6 and sequence (1 11 16 8 4 2)</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">shor-find-mods</span> <span class="org-rainbow-delimiters-depth-2">(</span>a N<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">labels</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>next-mod <span class="org-rainbow-delimiters-depth-5">(</span>a x N mods<span class="org-rainbow-delimiters-depth-5">)</span>
+             <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-6">(</span><span class="org-rainbow-delimiters-depth-7">(</span>r <span class="org-rainbow-delimiters-depth-8">(</span>a-x-mod-n a x N<span class="org-rainbow-delimiters-depth-8">)</span><span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span>
+               <span class="org-rainbow-delimiters-depth-6">(</span><span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-7">(</span>equal r <span class="org-rainbow-delimiters-depth-8">(</span>car mods<span class="org-rainbow-delimiters-depth-8">)</span><span class="org-rainbow-delimiters-depth-7">)</span>  <span class="org-comment">; check if the mod sequence is repeating</span>
+                   mods                  <span class="org-comment">; stop when mod sequence starts repeating</span>
+                   <span class="org-rainbow-delimiters-depth-7">(</span>next-mod a           <span class="org-comment">; otherwise continue with a^(x+1) mod N</span>
+                             <span class="org-rainbow-delimiters-depth-8">(</span>+ 1 x<span class="org-rainbow-delimiters-depth-8">)</span>
+                             N
+                             <span class="org-rainbow-delimiters-depth-8">(</span>append mods <span class="org-rainbow-delimiters-depth-9">(</span>list r<span class="org-rainbow-delimiters-depth-9">)</span><span class="org-rainbow-delimiters-depth-8">)</span><span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-rainbow-delimiters-depth-5">(</span>mod-seq <span class="org-rainbow-delimiters-depth-6">(</span>next-mod a 0 N nil<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+      <span class="org-comment-delimiter">;; </span><span class="org-comment">"values" returns multiple values</span>
+      <span class="org-comment-delimiter">;; </span><span class="org-comment">By default the first value is used, but caller can get other values using</span>
+      <span class="org-comment-delimiter">;; </span><span class="org-comment">multiple-value-bind:</span>
+      <span class="org-comment-delimiter">;; </span><span class="org-comment">(multiple-value-bind (a b) (foo))</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span>values <span class="org-rainbow-delimiters-depth-5">(</span>length mod-seq<span class="org-rainbow-delimiters-depth-5">)</span> mod-seq<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+<code>a-x-mod-N</code> 函数很简单，就是返回 \(a^x \mod N\) 的值。
+</p>
+
+<p>
+<code>shor-find-mods</code> 从x=0开始，逐个计算 \(a^x \mod N\) ，把结果记录到一个序列里，直到序列里发现重复，这时候序列的长度就是函数的周期r。另外序列本身也作为副产品返回给调用方。例如在前文的例子中，N=21，a=11 ，返回的序列就是 (1 11 16 8 4 2)，周期是6:
+</p>
+
+<pre class="example" id="org7602ee7">
+CL-USER&gt; (shor-find-mods 11 21)
+6 (3 bits, #x6, #o6, #b110)
+(1 11 16 8 4 2)
+</pre>
+
+<p>
+然后演示的核心函数：计算运行量子电路后，测量得到每个y的可能性。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">q: 2^n, determined by how many qubits we use (N^2 &lt;= Q &lt;= 2*N^2)</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">r: the period of function a^x mod N (e.g. N=21, a=11 -&gt; r=6)</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">l: the offset</span>
+<span class="org-comment-delimiter">;; </span><span class="org-comment">y: the "y" value for calculating its probability, from 0 to Q-1</span>
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">shor-qft-prob</span> <span class="org-rainbow-delimiters-depth-2">(</span>q r l y<span class="org-rainbow-delimiters-depth-2">)</span>
+   <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">let*</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>m <span class="org-rainbow-delimiters-depth-5">(</span>+ 1 <span class="org-rainbow-delimiters-depth-6">(</span>numcl:floor <span class="org-rainbow-delimiters-depth-7">(</span>/ <span class="org-rainbow-delimiters-depth-8">(</span>- q l 1<span class="org-rainbow-delimiters-depth-8">)</span> r<span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+          <span class="org-rainbow-delimiters-depth-4">(</span>qm-inv <span class="org-rainbow-delimiters-depth-5">(</span>/ 1 <span class="org-rainbow-delimiters-depth-6">(</span>* q m<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+     <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">cond</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-rainbow-delimiters-depth-5">(</span>= y 0<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-rainbow-delimiters-depth-5">(</span>/ m q<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+           <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-rainbow-delimiters-depth-5">(</span>&lt; y q<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-rainbow-delimiters-depth-5">(</span>* qm-inv
+                       <span class="org-rainbow-delimiters-depth-6">(</span>/ <span class="org-rainbow-delimiters-depth-7">(</span>expt <span class="org-rainbow-delimiters-depth-8">(</span>sin <span class="org-rainbow-delimiters-depth-9">(</span>/ <span class="org-rainbow-delimiters-depth-1">(</span>* pi m r y<span class="org-rainbow-delimiters-depth-1">)</span> q<span class="org-rainbow-delimiters-depth-9">)</span><span class="org-rainbow-delimiters-depth-8">)</span> 2<span class="org-rainbow-delimiters-depth-7">)</span>
+                          <span class="org-rainbow-delimiters-depth-7">(</span>expt <span class="org-rainbow-delimiters-depth-8">(</span>sin <span class="org-rainbow-delimiters-depth-9">(</span>/ <span class="org-rainbow-delimiters-depth-1">(</span>* pi r y<span class="org-rainbow-delimiters-depth-1">)</span> q<span class="org-rainbow-delimiters-depth-9">)</span><span class="org-rainbow-delimiters-depth-8">)</span> 2<span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+           <span class="org-rainbow-delimiters-depth-4">(</span>t <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-warning">error</span> <span class="org-string">"y must be integer between 0 and q-1"</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+这个函数 <code>shor-qft-prob</code> 有四个输入：
+</p>
+<ul class="org-ul">
+<li><code>q</code> 就是我们的量子位能表达的最大的二进制数，用n个量子位的话，q就是 \(2^n\)</li>
+<li><code>r</code> 就是前面求出的函数周期</li>
+<li><code>l</code> 就是前文中的“offset”，在0到r-1之间</li>
+<li><code>y</code> 在0到q-1之间，这个函数返回测量得到它的可能性</li>
+</ul>
+
+<p>
+然后，对y=0到q-1分别调用上面的函数 <code>shor-qft-prob</code> ，得到X和Y轴的序列，用于绘图：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">shor-compute-probs</span> <span class="org-rainbow-delimiters-depth-2">(</span>q r l<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">let*</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>Ys <span class="org-rainbow-delimiters-depth-5">(</span>numcl:arange q<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+         <span class="org-rainbow-delimiters-depth-4">(</span>Cy <span class="org-rainbow-delimiters-depth-5">(</span>mapcar <span class="org-rainbow-delimiters-depth-6">(</span><span class="org-keyword">lambda</span> <span class="org-rainbow-delimiters-depth-7">(</span>y<span class="org-rainbow-delimiters-depth-7">)</span>
+                       <span class="org-rainbow-delimiters-depth-7">(</span>shor-qft-prob q r l y<span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span>
+                     <span class="org-rainbow-delimiters-depth-6">(</span>coerce Ys 'list<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    Cy<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+可视化函数 <code>shor-compute-probs-vis</code> ，X轴是0到q-1，Y轴就是对应的概率。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">shor-compute-probs-vis</span> <span class="org-rainbow-delimiters-depth-2">(</span>q r l<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>x <span class="org-rainbow-delimiters-depth-5">(</span>vgplot:range q<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+        <span class="org-rainbow-delimiters-depth-4">(</span>y <span class="org-rainbow-delimiters-depth-5">(</span>shor-compute-probs q r l<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">progn</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span>vgplot:plot x y<span class="org-rainbow-delimiters-depth-4">)</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span>vgplot:axis <span class="org-rainbow-delimiters-depth-5">(</span>list 0 <span class="org-rainbow-delimiters-depth-6">(</span>- q 1<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span>vgplot:xlabel <span class="org-rainbow-delimiters-depth-5">(</span>format nil <span class="org-string">"y values (from 0 to ~a)"</span> <span class="org-rainbow-delimiters-depth-6">(</span>- q 1<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span>vgplot:ylabel <span class="org-string">"probabilities"</span><span class="org-rainbow-delimiters-depth-4">)</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span>vgplot:title <span class="org-rainbow-delimiters-depth-5">(</span>format nil <span class="org-string">"Probability distribution: Q=~a, r=~a, l=~a"</span> q r l<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+试试我们的可视化函数：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>shor-compute-probs-vis 512 6 2<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+
+<div id="orgeba9939" class="figure">
+<p><img src="../images/shor_example_prob_dist.png" alt="shor_example_prob_dist.png" width="480px" />
+</p>
+</div>
+
+<p>
+调整一下offset (l=0)：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>shor-compute-probs-vis 512 6 0<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+
+<div id="org08879e8" class="figure">
+<p><img src="../images/shor_example_prob_dist2.png" alt="shor_example_prob_dist2.png" width="480px" />
+</p>
+</div>
+
+<p>
+Lisp真有意思啊！
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子计算会终结现在的密码体系吗？(5.1) Shor算法详解</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子计算会终结现在的密码体系吗？(5.1) Shor算法详解
+<br />
+<span class="subtitle">Ping Zhou, 2021-05-27</span>
+</h1>
+<p>
+在前文“回到Shor算法”中我们用QFT提取函数周期信息，但是​这个过程的原理是什么？本文接着详解……
+</p>
+
+<section id="outline-container-org7428b95" class="outline-2">
+<h2 id="org7428b95">Shor算法关键：如何用QFT提取函数周期信息？</h2>
+<div class="outline-text-2" id="text-org7428b95">
+<p>
+用量子计算机求解Order Finding问题，实质上是要找到函数 \(f(x)=a^x \mod N\) 的周期。
+</p>
+
+<p>
+Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这里的 \(|x\rangle, |y\rangle\) 都是多个量子位组成的寄存器）：
+</p>
+
+
+<div id="orga5a412b" class="figure">
+<p><img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px" />
+</p>
+</div>
+
+<p>
+然后给它制备输入： 
+</p>
+
+
+<div id="org6c822b7" class="figure">
+<p><img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px" />
+</p>
+</div>
+
+<p>
+在输出端测量 \(|\beta\rangle\) ，使得它坍缩到某个值z，这时 \(\alpha\) 就会坍缩到 \(|l\rangle, |l+r\rangle, |l+2r\rangle, \dots, |l+Ar\rangle\) 的叠加态：
+</p>
+
+\begin{matrix}
+|\alpha\rangle = \frac{1}{\sqrt{A+1}} \sum_{j=0}^{A}|jr+l\rangle
+\end{matrix}
+
+<p>
+其中\(l\) 称为offset，是满足 \(a^l \mod N = z\) 的最小整数。假设 \(|\alpha\rangle\) 有n个量子位，那么A就是在0到 \(2^n-1\) 之间有多少个周期。
+</p>
+
+<p>
+这里面， \(l, j\) 都是未知的，并且每次运行这个电路都有可能不同，不能直接从中导出周期r。所以下一步我们要做的，就是用量子傅立叶变换从中提取出有用的周期信息。
+</p>
+
+<p>
+接下来关键一步： <b>如果我们对 \(|\alpha\rangle\) 做量子傅立叶变换，会发生什么？</b>
+</p>
+</div>
+</section>
+
+<section id="outline-container-org9bcb68a" class="outline-2">
+<h2 id="org9bcb68a">先考虑一个简化情况</h2>
+<div class="outline-text-2" id="text-org9bcb68a">
+<p>
+先考虑一个简化情况：
+</p>
+
+<p>
+如果 \(2^n\) 能被 \(r\) 整除，那么我们定义 \(m=2^n/r\) ，显然 \(A=m-1\) ，并且 \(A+1=m=\frac{2^n}{r}\) 。
+</p>
+
+<p>
+那么这时的 \(|\alpha\rangle\) 可以写成：
+</p>
+
+\begin{matrix}
+|\alpha\rangle = \frac{1}{\sqrt{A+1}}\sum_{j=0}^{A}|jr+l\rangle = \sqrt{\frac{r}{2^n}}\sum_{j=0}^{A}|jr+l\rangle
+\end{matrix}
+
+<p>
+然后对 \(|\alpha\rangle\) 做QFT。但是等一下，怎么 \(|\alpha\rangle\) 样子看起来和QFT里的“任意态”有点不一样？
+</p>
+
+<p>
+还记得上文中QFT是怎么作用在任意态 \(|\psi\rangle\) 上的吗？
+</p>
+
+\begin{matrix}
+|\psi\rangle = \sum_{j=0}^{2^n-1}f(j)|j\rangle
+\end{matrix}
+
+<p>
+在输出端会得到一个新状态：
+</p>
+
+\begin{matrix}
+|\tilde\psi\rangle = QFT|\psi\rangle = \sum_{k=0}^{2^n-1}\tilde f(k)|k\rangle, \\\
+\tilde f(k) = \frac{1}{\sqrt{2^n}} \sum_{j=0}^{2^n-1} \omega^{jk} f(j)
+\end{matrix}
+
+<p>
+因为 \(|\alpha\rangle\) 有n个量子位，我们要对它做QFT，也要先写成类似 \(\sum_{j=0}^{2^n-1}f(j)|j\rangle\) 的样子才行，也就是把它展开成\(|0\rangle \dots |2^n-1\rangle\) 所有基态叠加的形式。
+</p>
+
+<p>
+根据 \(|\alpha\rangle\) 的定义，它是 \(|l\rangle, |l+r\rangle, |l+2r\rangle, \dots, |l+Ar\rangle\) 的叠加态，也就是说在 \(|0\rangle \dots |2^n-1\rangle\) 之间，除了 \(|l\rangle, |l+r\rangle, |l+2r\rangle, \dots, |l+Ar\rangle\) 以外，所有的其他基态的分量都是0：
+</p>
+
+\begin{matrix}
+f(x) = \left\{
+             \begin{array}{ll}
+             \frac{1}{\sqrt{A+1}} & x \in \{l, l+r, \dots, l+Ar \} \\
+             0 & otherwise \\
+             \end{array} 
+\right.
+\end{matrix}
+
+<p>
+那么这个状态 \(|\alpha\rangle\) 经过QFT后，根据定义，会变成
+</p>
+
+\begin{matrix}
+|\tilde\alpha\rangle = QFT|\alpha\rangle = \sum_{y=0}^{2^n-1}\tilde f(y)|y\rangle
+\end{matrix}
+
+<p>
+其中的每个分量 \(\tilde f(y)\) 是：
+</p>
+
+\begin{matrix}
+\tilde f(y) = \frac{1}{\sqrt{2^n}} \sum_{x=0}^{2^n-1} \omega^{xy} f(x) \\\
+= \frac{1}{\sqrt{q}} \sum_{x=0}^{q-1} e^{\frac{2\pi i xy}{q}} f(x) & (q=2^n) \\\
+\end{matrix}
+
+<p>
+而f(x)的取值，只有当 \(x \in \{l, l+r, \dots, l+Ar\}\) ，或者说 \(x=jr+l, (j=0,\dots,A+1)\) 的时候才为 \(\frac{1}{\sqrt{A+1}}\) ，其他都情况为0，所以上面这 \(2^n\) 个求和项里面，只有其中的A+1项是非0：
+</p>
+
+\begin{matrix}
+\tilde f(y) = \frac{1}{\sqrt{q}} \sum_{x=0}^{q-1} e^{\frac{2\pi i xy}{q}} f(x) & (q=2^n)  \\\
+= \frac{1}{\sqrt{q}} \left[ \frac{1}{\sqrt{A+1}} \sum_{j=0}^{A} e^{\frac{2\pi i(jr+l)y}{q}} \right] & (1)  \\\
+\end{matrix}
+
+<p>
+继续往下推导: 因为 \(A+1=m=\frac{q}{r}\) ，代入上面的(1)得到：
+</p>
+
+\begin{matrix}
+\tilde f(y) = \frac{\sqrt{r}}{q} \sum_{j=0}^{A} e^{\frac{2\pi i(jr+l)y}{q}} & (q=2^n) \\\
+= \frac{\sqrt{r}}{q} e^{\frac{2\pi ily}{q}} \left[ \sum_{j=0}^{A} e^{\frac{2\pi ijry}{q}} \right]
+\end{matrix}
+
+<p>
+分析方括号里的东西：
+</p>
+
+<p>
+如果 \(\frac{ry}{q}\) 是整数，或者说y能整除 \(\frac{q}{r}\) ，存在某个整数k使得 \(y=k\frac{q}{r}\) ，那么方括号里的每个求和项 \(e^{\frac{2\pi ijry}{q}} = e^{2\pi ijk} = 1\) ，于是整个方括号的值就是A+1 (A+1个1之和）。在这种情况下 \(\tilde f(y)\) 就是：
+</p>
+
+\begin{matrix}
+\tilde f(y) = \frac{\sqrt{r}}{q} e^{\frac{2\pi ily}{q}} (A+1) && \gets (A+1 = \frac{q}{r}) \\\
+= \frac{1}{\sqrt{r}} e^{\frac{2\pi ily}{q}} && \gets (y=k\frac{q}{r}) \\\
+= \frac{1}{\sqrt{r}} e^{\frac{2\pi ilk}{r}} && \\\ 
+\end{matrix}
+
+<p>
+反之如果y不能整除 \(\frac{q}{r}\) ，那么方括号里的每个求和项就是 \(e^{\frac{2\pi ijry}{q}}\) 。前面我们定义了
+\(m=\frac{2^n-1}{r} = \frac{q}{r} = A+1\) ，因此每个求和项 \(e^{\frac{2\pi ijry}{q}} = e^{\frac{2\pi ijy}{m}}\) ，于是整个方括号就是这样的一个求和：
+</p>
+
+\begin{matrix}
+\sum_{j=0}^{A} e^{\frac{2\pi ijry}{q}}  && \gets (m=\frac{q}{r}=A+1) \\\
+= \sum_{j=0}^{m-1} e^{\frac{2\pi ijy}{m}} && \\\
+\end{matrix}
+
+<p>
+根据欧拉定理，这个求和的结果是0，所以这种情况下 \(\tilde f(y) = 0\) 。
+</p>
+
+<p>
+综合起来就是：
+</p>
+
+\begin{matrix}
+\tilde f(y) = \left\{
+             \begin{array}{ll}
+             \frac{1}{\sqrt{r}} e^{\frac{2\pi ilk}{r}} && (k=\frac{ry}{q}, \text{for some integer k})  \\
+             0 && otherwise \\
+             \end{array} 
+\right.
+\end{matrix}
+
+<p>
+因为 \(y=k\frac{q}{r}\) ，y是n位量子位，显然k的取值只能在0到r-1之间，所以量子傅立叶变换后 \(|\alpha\rangle\) 的状态就是：
+</p>
+
+\begin{matrix}
+QFT|\alpha\rangle = \frac{1}{\sqrt{r}} \sum_{k=0}^{r-1} e^{\frac{2\pi ilk}{r}} |k\frac{q}{r}\rangle
+\end{matrix}
+
+<p>
+正如前文『回到Shor算法』所提到的，如果我们这时对它测量，得到某个值 \(y=k\frac{q}{r}\) ，那么这个y值与 \(q=2^n\) 之间的比值，会非常接近（在这个简化条件里就是等于）某个整数k与周期r的比值，即 \(\frac{y}{q} = \frac{k}{r}\) 。这里y和q都是已知的，化简后得到的分数，其分母就是可能的r值。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org46303b6" class="outline-2">
+<h2 id="org46303b6">简化条件不成立？</h2>
+<div class="outline-text-2" id="text-org46303b6">
+<p>
+这个故事就长了，下次再说，免得把你绕晕了。:-)
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

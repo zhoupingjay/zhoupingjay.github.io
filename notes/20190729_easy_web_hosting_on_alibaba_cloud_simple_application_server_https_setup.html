@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Easy Web Hosting on Alibaba Cloud – Simple Application Server + HTTPS Setup</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Easy Web Hosting on Alibaba Cloud – Simple Application Server + HTTPS Setup
+<br />
+<span class="subtitle">Ping Zhou, 2019-07-29</span>
+</h1>
+<p>
+I’ve been thinking about creating a personal website for a while, and finally I put it into action!
+</p>
+
+<p>
+There are lots of ways to host a personal website on Alibaba Cloud, just like you will expect from other cloud providers. I picked Simple Application Server which is pretty much a lightweight virtual machine instance with pre-installed configurations (WordPress, Apache, etc). This gives me flexibility of a VM instance, but saves me from the initial setup. A good balance between their Web Hosting and Elastic Computing Service (ECS) in my opinion.
+</p>
+
+<p>
+I want the website to support HTTPS because it is more secure and looks more professional. It also helps SEO too. :-)
+</p>
+
+<p>
+Setting up basic web hosting is pretty straightforward:
+</p>
+
+<p>
+First, you’ll need an Alibaba Cloud account (of course…)
+Select a configuration for your Simple Application Service instance – I picked WordPress but there are other options as well. Once created, the instance will have the software pre-installed and configured, so you have a good start point instead of having to setup everything from scratch.
+Setup your WordPress – e.g. create admin user, select theme. Don’t mix this with your Alibaba account – it’s the admin user of your website. You may also consider adding regular users for writing posts etc.
+Buy a domain name – I bought domain from Alibaba Cloud because it’s convenient. I’m a lazy person..
+Bind the domain name to your Simple Application Service instance – again, I used Alibaba Cloud DNS because it’s more convenient.
+Test out your website – you should see the default welcome page of WordPress.
+Setting up HTTPS requires a little more work. First, you need SSL certificate associated with your website domain. You can buy it from Alibaba Cloud, but it turned out to be pretty expensive. Fortunately, there are some free SSL certificate services available. I used SSL For Free so I’ll take it as an example:
+</p>
+
+
+<div id="org4977252" class="figure">
+<p><img src="../images/2019/07/Screen-Shot-2019-07-29-at-10.44.10-PM.png" alt="Screen-Shot-2019-07-29-at-10.44.10-PM.png" width="480px" />
+</p>
+</div>
+
+<p>
+Generate SSL Certificate for your domain
+You need to validate your domain in order to generate the certificates – basically, you need to prove that you OWN the domain. There are several ways to prove your ownership.
+</p>
+
+<p>
+Automatic FTP Verification: If you are running a VM, you can setup an FTP server on it and enter the FTP account information here. SSL For Free can verify your ownership automatically with FTP.
+Manual Verification: You need to download two verification files to your local computer, and upload them to your website under folder named “.well-known/acme-challenge”. SSL For Free then tries to access these verification files at URLs like:
+</p>
+
+<pre class="example" id="orga3eedcd">
+http://&lt;your_domain&gt;/.well-known/acme-challenge/&lt;verification_file&gt;
+</pre>
+
+<p>
+On success, it proves your ownership of the domain.
+Manual Verification (DNS): You need access to your DNS server, which I don’t have. So I didn’t look at this option.
+Once you’ve validated your ownership of domain, you’ll be prompted to download the SSL Certificate file generated by SSL For Free.
+</p>
+
+<p>
+Note: The certificate is valid for 3 months. So remember to come back and renew your certificates every 3 months.
+</p>
+
+<p>
+Next step is to upload your SSL Certificate to Alibaba Cloud. This is done in their “SSL Certificates” service:
+</p>
+
+
+<div id="org11b752c" class="figure">
+<p><img src="../images/2019/07/Screen-Shot-2019-07-29-at-11.04.11-PM.png" alt="Screen-Shot-2019-07-29-at-11.04.11-PM.png" width="480px" />
+</p>
+</div>
+
+<p>
+Upload your certificate to Alibaba SSL Certificates service
+Once your SSL certificates are uploaded, you may be tempted to click on their “Deploy” links. No, they won’t work for your Simple Application Server instance from here.
+</p>
+
+<p>
+Instead, you should go back to your Simple Application Server console and configure HTTPS there:
+</p>
+
+
+<div id="org1b027fb" class="figure">
+<p><img src="../images/2019/07/Screen-Shot-2019-07-29-at-11.11.59-PM.png" alt="Screen-Shot-2019-07-29-at-11.11.59-PM.png" width="480px" />
+</p>
+</div>
+
+
+<p>
+HTTPS settings of Simple Application Server instance
+Click on the “HTTPS” link, and you’ll be able to choose SSL certificate you just uploaded.
+</p>
+
+<p>
+That’s pretty much you need to do on the Alibaba Cloud side!
+</p>
+
+<p>
+Now the remaining work is to enable HTTPS in your WordPress configuration. Typically you can install one of the SSL plugins to enable HTTPS on your website. For example, I used “Really Simple SSL” plugin. It’s very easy to setup – just install, activate the plugin and test with your browser. You should see the “lock” icon in address bar, showing that it’s using HTTPS.
+</p>
+
+<p>
+Congrats, you now have a personal website that supports HTTPS!
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

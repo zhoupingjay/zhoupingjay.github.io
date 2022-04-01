@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>超越时空的联系 – 量子纠缠是怎么回事</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">超越时空的联系 – 量子纠缠是怎么回事
+<br />
+<span class="subtitle">Ping Zhou, 2020-09-22</span>
+</h1>
+<p>
+所谓“遇事不决，量子力学”，“量子纠缠”是量子力学中的一个重要现象，也是科幻故事中经常用到的填坑大杀器。实际上，量子纠缠是真实的物理现象，也是实现量子通信的核心之一。今天我们就来聊聊量子纠缠是怎么回事。
+</p>
+
+<p>
+假设我们有2个量子比特A和B，初始状态都是$|0&rang;$，然后搭一个简单的电路：
+</p>
+
+
+
+<div id="orgc2018ca" class="figure">
+<p><img src="../images/2020/09/image-8.png" alt="image-8.png" width="480px" />
+</p>
+</div>
+
+<p>
+只需要一个H门和一个CNOT门，就能让A和B之间形成量子纠缠！
+</p>
+
+<p>
+不信？我们来分析一下。
+</p>
+
+<p>
+t0时刻，两个量子比特都是 \(|0\rangle\) ，整个系统的状态是 \(|00\rangle\) 。
+</p>
+
+<p>
+t1时刻，A经过H门后变成了相干态 \(\frac{1}{\sqrt{2}}(|0\rangle + |1\rangle)\) ，而B不变还是 \(|0\rangle\) ，整个系统状态变成 \(\frac{1}{\sqrt{2}}(|00\rangle + |10\rangle)\) 。
+</p>
+
+<p>
+t2时刻，经过一个CNOT门。CNOT意思是“Controlled NOT”，就是说当A是1的话，B就取反，否则B不变。因为这里A已经是相干态（ \(|0\rangle\) 和 \(|1\rangle\) 的叠加），那么经过这个CNOT门以后，A如果是 \(|0\rangle\) ，那么B不变还是 \(|0\rangle\) ，而A如果是 \(|1\rangle\) ，那么B就从 \(|0\rangle\) 变成 \(|1\rangle\) 。所以整个系统经过这个CNOT门后，就变成了这样一个状态：
+</p>
+
+<p>
+\(\frac{1}{\sqrt{2}}(|00\rangle + |11\rangle)\)
+</p>
+
+<p>
+看出什么没有？在这个状态下，A和B要么都是 \(|0\rangle\) ，要么都是 \(|1\rangle\) ！也就是说，如果我们测量A得到0，那么我们知道B测量得到肯定也是0，反之如果我们测量A得到1，那么B肯定也是1。通过这个电路，我们把A和B两个量子比特的状态“纠缠”在了一起，这个状态就叫做“ <b>纠缠态</b> ”。
+</p>
+
+<p>
+这时候，如果我们把A和B分开，A和B之间还会处于纠缠态吗？答案是肯定的，只要它们没有退相干，A和B仍然处于会量子纠缠状态。即使我们把B送到银河系的另一端，它们仍然会“纠缠”在一起。甚至，如果我们对其中之一做进一步的量子变换，只要不导致退相干，它们之间仍然会保持纠缠态！
+</p>
+
+<p>
+这就是量子纠缠的原理，是不是挺简单的？:-)
+</p>
+
+<p>
+<b><b>常见误解：量子纠缠能实现超光速通信？</b></b>
+</p>
+
+<p>
+信息的传递不可能超光速，否则会导致因果律的崩溃。表面上看，一端的测量会导致另一端的状态坍缩，这个作用是“瞬时”的，但是实际上这个动作没有在两端之间传递任何信息，因为测量得到0和1完全是随机的。
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

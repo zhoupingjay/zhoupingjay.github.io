@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子傅里叶变换详解 (1) 输入输出解读</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子傅里叶变换详解 (1) 输入输出解读
+<br />
+<span class="subtitle">Ping Zhou, 2021-05-17</span>
+</h1>
+<p>
+之前的Shor算法系列，讲了利用量子傅立叶变换QFT来提取函数周期信息。这次歪个楼，聊聊量子傅立叶变换。
+</p>
+
+<p>
+假如我们用n个量子位搭了一个QFT电路（后文会讲到如何实现），如何解读它的输入和输出呢？
+</p>
+
+
+<div id="org2c34aa7" class="figure">
+<p><img src="../images/qft_nbit.png" alt="qft_nbit.png" width="520px" />
+</p>
+</div>
+
+<p>
+假设我们的电路输入状态是某个基态 \(|j\rangle\) ，它是由n个量子位组成的，我们把它展开成二进制表示的话：
+</p>
+
+\begin{matrix}
+|j\rangle = |j_{n-1}j_{n-2}\dots j_0\rangle \\\
+j = j_{n-1}2^{n-1} + j_{n-2}2^{n-2} + \dots + j_0 2^0
+\end{matrix}
+
+<p>
+经过QFT，我们得到一个新的状态：
+</p>
+
+\begin{matrix}
+QFT|j\rangle = \frac{1}{\sqrt{2^n-1}} \sum_{k=0}^{2^n-1} \omega^{jk} |k\rangle \\\
+= \frac{1}{\sqrt{2^n}} \sum_{k=0}^{2^n-1} e^{2\pi ijk/2^n} |k\rangle
+\end{matrix}
+
+<p>
+其中每个分量k的相位  \(e^{2\pi ijk/2^n}\) 。而因为其中的 \(k\) 也是一个n位二进制数，也就是说：
+</p>
+
+\begin{matrix}
+k = k_{n-1}2^{n-1} + k_{n-2}2^{n-2} + \dots + k_0 2^0
+\end{matrix}
+
+<p>
+那么这个相位里，是把k除以 \(2^n\) ，我们把k的二进制展开代入进去就变成了这样：
+</p>
+
+\begin{matrix}
+k / 2^n = \frac{k_{n-1}}{2^1} + \frac{k_{n-2}}{2^2} + \dots + \frac{k_0}{2^n}
+\end{matrix}
+
+<p>
+等一下，这个式子是不是似曾相识？
+</p>
+
+<p>
+这不就是二进制小数点表示嘛！
+</p>
+
+\begin{matrix}
+k / 2^n = 0.k_{n-1}k_{n-2}\dots k_0 = \sum_{l=1}^n \frac{k_{n-l}}{2^l}
+\end{matrix}
+
+<p>
+所以，QFT后的状态，可以写成这样：
+</p>
+
+\begin{matrix}
+QFT|j\rangle = \frac{1}{\sqrt{2^n}} \sum_{k=0}^{2^n-1} e^{2\pi ijk/2^n} |k\rangle \\\
+= \frac{1}{\sqrt{2^n}} \sum_{k=0}^{2^n-1} e^{2\pi ij \sum_{l=1}^n \frac{k_{n-l}}{2^l}} |k_{n-1}k_{n-2}\dots k_0\rangle
+\end{matrix}
+
+<p>
+进一步分析， \(\sum_{k=0}^{2^n-1}(\dots)\) 这东西，就是用 k 把n位二进制数全部遍历一遍。如果我们看 k 的二进制数表示，它的每一位可能的选择是0和1，这样的遍历其实就是把每一位的0/1选择都遍历一遍。所以这个求和也可以展开成：
+</p>
+
+\begin{matrix}
+\sum_{k=0}^{2^n-1} (\dots)= \sum_{k_{n-1}=0}^1 \sum_{k_{n-2}=0}^1 \dots \sum_{k_0=0}^1 (\dots)
+\end{matrix}
+
+<p>
+好，接下来看后面的东西。
+</p>
+
+<p>
+\(e^{2\pi ij \sum_{l=1}^n \frac{k_{n-l}}{2^l}} |k_{n-1}k_{n-2}\dots k_0\rangle\) 是n个量子位，它们的相位是指数之和，把它们分别展开：
+</p>
+
+\begin{matrix}
+e^{2\pi ij \sum_{l=1}^n \frac{k_{n-l}}{2^l}} |k_{n-1}k_{n-2}\dots k_0\rangle = \\\
+= e^{2\pi ij \frac{k_{n-1}}{2^1}}  e^{2\pi ij \frac{k_{n-2}}{2^2}} \dots e^{2\pi ij \frac{k_{0}}{2^n}} |k_{n-1}\rangle |k_{n-2}\rangle \dots |k_0\rangle \\\
+= \left( e^{2\pi ij \frac{k_{n-1}}{2^1}}|k_{n-1}\rangle \right) \otimes \left( e^{2\pi ij \frac{k_{n-2}}{2^2}}|k_{n-2}\rangle \right) \otimes \dots \otimes \left( e^{2\pi ij \frac{k_{0}}{2^n}}|k_0\rangle \right) \\\
+= \otimes_{l=1}^n \left( e^{2\pi ij \frac{k_{n-l}}{2^l}}|k_{n-l}\rangle \right)
+\end{matrix}
+
+<p>
+前后两个式子合起来：
+</p>
+
+\begin{matrix}
+QFT|j\rangle = \\\
+\frac{1}{\sqrt{2^n}} \sum_{k_{n-1}=0}^1 \dots \sum_{k_0=0}^1 \left[\otimes_{l=1}^n e^{2\pi ij \frac{k_{n-l}}{2^l}} |k_{n-l}\rangle\right]
+\end{matrix}
+
+<p>
+我们注意到，这个式子的前面一串求和，其实也是对 \(k_{n-l}\) 的遍历（ \(l\) 从1到n），所以这个式子里的 \(\otimes_{l=0}^n\) 可以提到前面去，变成：
+</p>
+
+\begin{matrix}
+QFT|j\rangle = \\\
+\frac{1}{\sqrt{2^n}} \sum_{k_{n-1}=0}^1 \dots \sum_{k_0=0}^1 \left[\otimes_{l=1}^n e^{2\pi ij \frac{k_{n-l}}{2^l}} |k_{n-l}\rangle\right] & (1)\\\
+= \frac{1}{\sqrt{2^n}} \otimes_{l=1}^n \left[ \sum_{k_{n-l}=0}^1 e^{2\pi ij \frac{k_{n-l}}{2^l}} |k_{n-l}\rangle \right] & (2) \\\
+\end{matrix}
+
+<p>
+车速有点快？我们来验证一下上面两个式子(1)和(2)是等价的。
+</p>
+
+<p>
+(1)前面的一串求和，是对n位二进制数的遍历，k从 0 到 \(2^n-1\) ，每次确定一个n位二进制数k，送到 \(\otimes\) 里去，出来一个n位量子位组成的状态，这样搞 \(2^n\) 次，最后把遍历的结果叠加起来。
+</p>
+
+<p>
+所以(1)的结果，是n个量子位所有 \(2^n\) 个状态的叠加：
+</p>
+
+\begin{matrix}
+|0\rangle & = |00\dots00_2\rangle \\\
+|1\rangle & = |00\dots01_2\rangle \\\
+|2\rangle & = |00\dots10_2\rangle \\\
+|3\rangle & = |00\dots11_2\rangle \\\
+\dots & \dots \\\
+|2^n-1\rangle & = |11\dots11_2\rangle \\\
+\end{matrix}
+
+<p>
+而其中每个状态的 <b>相位</b> ，取决于该状态下各个量子位的0/1状态，即  \(e^{2\pi ij \frac{k_{n-1}}{2^1}}  e^{2\pi ij \frac{k_{n-2}}{2^2}} \dots e^{2\pi ij \frac{k_{0}}{2^n}}\) （左边是状态，右边是它的相位）：
+</p>
+
+\begin{matrix}
+|00\dots00_2\rangle & e^{2\pi ij \frac{0}{2^1}} e^{2\pi ij \frac{0}{2^2}} \dots e^{2\pi ij \frac{0}{2^(n-1)}} e^{2\pi ij \frac{0}{2^n}} \\\
+|00\dots01_2\rangle & e^{2\pi ij \frac{0}{2^1}} e^{2\pi ij \frac{0}{2^2}} \dots e^{2\pi ij \frac{0}{2^(n-1)}} e^{2\pi ij \frac{1}{2^n}} \\\
+|00\dots10_2\rangle & e^{2\pi ij \frac{0}{2^1}} e^{2\pi ij \frac{0}{2^2}} \dots e^{2\pi ij \frac{1}{2^(n-1)}} e^{2\pi ij \frac{0}{2^n}} \\\
+|00\dots11_2\rangle & e^{2\pi ij \frac{0}{2^1}} e^{2\pi ij \frac{0}{2^2}} \dots e^{2\pi ij \frac{1}{2^(n-1)}} e^{2\pi ij \frac{1}{2^n}} \\\
+\dots & \dots \\\
+\end{matrix}
+
+<p>
+在(2)中， \(\otimes\) 被提到了前面，变成遍历每个量子位，然后对每个量子位，遍历它的两个基态的相位：
+</p>
+
+\begin{matrix}
+l=1: & (k_{n-1}) & \left[ e^{2\pi ij \frac{0}{2^1}}|0\rangle + e^{2\pi ij \frac{1}{2^1}}|1\rangle \right] \\\
+l=2: & (k_{n-2}) & \left[ e^{2\pi ij \frac{0}{2^2}}|0\rangle + e^{2\pi ij \frac{1}{2^2}}|1\rangle \right] \\\
+l=3: & (k_{n-3}) & \left[ e^{2\pi ij \frac{0}{2^3}}|0\rangle + e^{2\pi ij \frac{1}{2^3}}|1\rangle \right] \\\
+\dots && \\\
+l=n: & (k_{0}) & \left[ e^{2\pi ij \frac{0}{2^n}}|0\rangle + e^{2\pi ij \frac{1}{2^n}}|1\rangle \right] \\\
+\end{matrix}
+
+<p>
+这一串方括号里的东西乘起来（其实是张量积），就是对所有n个量子位的状态的张量积：
+</p>
+<ul class="org-ul">
+<li>每个方括号里有2项，n个方括号相乘，一共产生 \(2^n\) 项；</li>
+<li>乘出来的每一项都是n位量子位组成的状态，而它的相位就是各个量子位的相位的乘积。</li>
+</ul>
+
+<p>
+还是从简单的例子看，例如2个量子位：
+</p>
+
+\begin{matrix}
+(\alpha_0|0\rangle + \beta_0|1\rangle) \otimes (\alpha_1|0\rangle + \beta_1|1\rangle) = \\\
+\alpha_0\alpha_1|00\rangle + \alpha_0\beta_1|01\rangle + \beta_0\alpha_1|10\rangle + \beta_0\beta_1|11\rangle \\\
+\end{matrix}
+
+<p>
+这可不就是(1)的结果？所以(1)和(2)是等价的。
+</p>
+
+<p>
+好，继续往下推导：
+</p>
+
+\begin{matrix}
+QFT|j\rangle = & \\\
+\frac{1}{\sqrt{2^n}} \otimes_{l=1}^n \left[ \sum_{k_{n-l}=0}^1 e^{2\pi ij \frac{k_{n-l}}{2^l}} |k_{n-l}\rangle \right] & (2) \\\
+\end{matrix}
+
+<p>
+方括号里的东西，其实就2项， \(k_{n-l}=0\) 和 \(k_{n-l}=1\) 。如果 \(k_{n-l}=0\) ，那么相位就是 \(e^0=1\) ；反之如果 \(k_{n-l}=1\) ，那么相位就是 \(e^{2\pi ij \frac{1}{2^l}}\) 。所以所以(2)可以展开成这样：
+</p>
+
+\begin{matrix}
+\frac{1}{\sqrt{2^n}} \otimes_{l=1}^n \left[ \sum_{k_{n-l}=0}^1 e^{2\pi ij \frac{k_{n-l}}{2^l}} |k_{n-l}\rangle \right] & (2) \\\
+= \frac{1}{\sqrt{2^n}} \otimes_{l=1}^n \left[ |0\rangle + e^{2\pi ij/2^l} |1\rangle \right] & (3) \\\
+\end{matrix}
+
+<p>
+每个方括号里的 \(|1\rangle\) ，相位是 \(e^{2\pi i j/2^l}\) ，没有了k，剩下 \(j, l\) 。
+</p>
+
+<p>
+然后我们看 \(j/2^l\) 这个东西，  \(j\) 本身也是个n位二进制数 \(j=j_{n-1}j_{n-2}\dots j_0\) ，那么它除以 \(2^l\) 后，就变成了：
+</p>
+
+\begin{matrix}
+j/2^l = \frac{j_{n-1}2^{n-1} + j_{n-2}2^{n-2} + \dots + j_02^0}{2^l} \\\
+= j_{n-1}2^{n-1-l} + j_{n-2}2^{n-2-l} + \dots + j_0 2^{-l}
+\end{matrix}
+
+<p>
+从二进制数的角度看，相当于把小数点向左移了 \(l\) 位：
+</p>
+
+
+<div id="orgb71d8f0" class="figure">
+<p><img src="../images/bitshift.png" alt="bitshift.png" width="400px" />
+</p>
+</div>
+
+<p>
+很明显这是个带小数点的二进制数：前面的 \(n-l\) 项是整数部分，而后面的 \(l\) 项是小数部分。
+</p>
+
+<p>
+而这个数放到 \(e^{2\pi i}\) 的指数上，整数部分是可以全部消掉的（还记得 \(e^{2\pi i k} = 1\) 吗？），只剩下小数点部分：
+</p>
+
+\begin{matrix}
+e^{2\pi ij/2^l} = e^{2\pi i 0.j_{l-1}j_{l-2}\dots j_{0}}
+\end{matrix}
+
+<p>
+所以前面的(3)可以扩展成：
+</p>
+
+\begin{matrix}
+QFT|j\rangle = & \\\
+\frac{1}{\sqrt{2^n}} \otimes_{l=1}^n \left[ |0\rangle + e^{2\pi ij/2^l} |1\rangle \right] & (3) \\\
+= \frac{1}{\sqrt{2^n}}
+\left( |0\rangle + e^{2\pi i 0.j_0}|1\rangle \right)
+\left( |0\rangle + e^{2\pi i 0.j_1j_0}|1\rangle \right)
+\dots
+\left( |0\rangle + e^{2\pi i 0.j_{n-1}j_{n-2}\dots j_0}|1\rangle \right) & \\\
+\end{matrix}
+
+<p>
+这个结论很重要，可以看作是量子傅立叶变换的定义！
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

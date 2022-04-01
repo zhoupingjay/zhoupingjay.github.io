@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Understanding the Power of Quantum Computing 2: Extending Deutsch Problem to 2-bits</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Understanding the Power of Quantum Computing 2: Extending Deutsch Problem to 2-bits
+<br />
+<span class="subtitle">Ping Zhou, 2021-04-01</span>
+</h1>
+
+
+<section id="outline-container-org758bc4c" class="outline-2">
+<h2 id="org758bc4c">Two-Bit Deutsch Problem</h2>
+<div class="outline-text-2" id="text-org758bc4c">
+<p>
+My <a href="understand-quantum-computing-1bit-deutsch.html">previous article</a> discussed Deutsch Problem in its simplest form - determine attribute of an unknown 1-bit function. Now what if we extend the function to having 2-bit input?
+</p>
+
+<p>
+\[
+f(x_0, x_1) \to \{0, 1\}
+\]
+</p>
+
+<p>
+For 2-bit functions, there are 4 possible inputs: 00, 01, 10, 11. Outputs of the function are still 1-bit. So the truth table of the function will be like this:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">input</th>
+<th scope="col" class="org-left">output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">00</td>
+<td class="org-left">0 or 1</td>
+</tr>
+
+<tr>
+<td class="org-right">01</td>
+<td class="org-left">0 or 1</td>
+</tr>
+
+<tr>
+<td class="org-right">10</td>
+<td class="org-left">0 or 1</td>
+</tr>
+
+<tr>
+<td class="org-right">11</td>
+<td class="org-left">0 or 1</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+We define the attribute of the function in a similar way as 1-bit Deutsh Problem.
+If the function returns a constant value regardless of the input, we call it <b>constant</b>. Apparently there are 2 <b>constant</b> functions (always return 0, or always return 1).
+</p>
+
+<p>
+<b>Balanced</b> functions are a little bit tricky. How many balanced functions are there? From the table above we can see that in order for the function to be <b>balanced</b>, it must have exactly two 0s and two 1s in the &ldquo;output&rdquo; column. How many possible functions are there? Simple combination math tells us that there are 6 possible functions that meet this criteria. So there are 6 possible <b>balanced</b> functions out there. 
+</p>
+
+<p>
+Together, there are 8 possible 2-bit functions that are either constant or balanced. So the <b>Two-Bit Deutsch Problem</b> is like this: Someone randomly draws a function from these 8 candidates and gives it to us, and we need to determine whether it is <b>constant</b> or <b>balanced</b>.
+</p>
+
+<p>
+Again, this function must be wrapped into a reversible operator \(U_f\) for us to evaluate it in quantum circuit. So we&rsquo;ll ask the same thing to the person who gives us the function:
+</p>
+
+<blockquote>
+<p>
+Instead of giving me function \(f(x_0, x_1)\), can you give me the corresponding \(U_f\) (still as a blind box)?
+</p>
+</blockquote>
+
+
+<div id="orgda1d5db" class="figure">
+<p><img src="../images/qc_deutsch_2bit_uf.jpg" alt="qc_deutsch_2bit_uf.jpg" width="160px" />
+</p>
+</div>
+
+<p>
+If we want to be 100% sure about the answer, how many evaluations do we need on a classical computer? Since there are 4 possible inputs, we need to evaluate more than half of all possible inputs. Evaluating 2 times won&rsquo;t be enough (e.g. even we get 0 on the first two evaluations, the function may still be balanced). In general, if the input is n-bit, we&rsquo;ll need \(2^{n-1}+1\) evaluations in order to be 100% sure about the function&rsquo;s attribute. In other words, it grows <b>exponentially</b> as we expand the input.
+</p>
+
+<p>
+On a quantum computer, on contrary, we&rsquo;ll still only need to run the circuit <b>once</b>!
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgcedf4a7" class="outline-2">
+<h2 id="orgcedf4a7">Quantum Circuit for Two-Bit Deutsch Problem</h2>
+<div class="outline-text-2" id="text-orgcedf4a7">
+<p>
+If you have read my <a href="understand-quantum-computing-1bit-deutsch.html">prevoius note</a>, you&rsquo;ll notice that the quantum circuit for solving 2-Bit Deutsch Problem is very similar to the 1-bit version: It uses an auxilary qubit, puts H gates before and after the \(U_f\) block, then measures the two qubits.
+</p>
+
+
+<div id="org3a61a76" class="figure">
+<p><img src="../images/qc_deutsch_2bit_circuit.png" alt="qc_deutsch_2bit_circuit.png" width="560px" />
+</p>
+</div>
+
+<p>
+<b>To save your time I&rsquo;ll first put the conclusion here:</b>
+We just need to run this circuit <b>once</b> and measure the first two qubits. If we get &ldquo;00&rdquo; from our measurement, the function must be <b>constant</b>. Otherwise it must be <b>balanced</b>.
+</p>
+</div>
+</section>
+
+<section id="outline-container-org41ec00e" class="outline-2">
+<h2 id="org41ec00e">How It Works?</h2>
+<div class="outline-text-2" id="text-org41ec00e">
+<p>
+To understand how it works, we do&rsquo;ll do some time analysis on this circuit.
+</p>
+
+
+<div id="org43136bf" class="figure">
+<p><img src="../images/qc_deutsch_2bit_circuit.png" alt="qc_deutsch_2bit_circuit.png" width="560px" />
+</p>
+</div>
+
+
+<p>
+<b>1. Time t0</b>
+</p>
+
+<p>
+Our system is at initial state \(|0\rangle|0\rangle|1\rangle\).
+</p>
+
+
+<p>
+<b>2. Time t1</b>
+</p>
+
+<p>
+All three qubits are in superposition. The first two are both at \(\frac{1}{\sqrt{2}}(|0\rangle+|1\rangle)\), and the third one is at \(\frac{1}{\sqrt{2}}(|0\rangle-|1\rangle)\).
+Since we use the first two qubits as the input of functon \(f(x_0x_1)\), we&rsquo;ll consider their states together. The state of the two first qubits can be written as the tensor product (\(\otimes\)) of their states:
+</p>
+
+<p>
+\[
+   \frac{1}{\sqrt{2}}(|0\rangle+|1\rangle) \otimes \frac{1}{\sqrt{2}}(|0\rangle+|1\rangle) =
+   \frac{1}{2}(|00\rangle + |01\rangle + |10\rangle + |11\rangle)
+   \]
+</p>
+
+<p>
+Counting in the third qubit, the state of our system at time t1 can be written like this:
+</p>
+
+<p>
+\[
+   \frac{1}{2}(|00\rangle + |01\rangle + |10\rangle + |11\rangle)
+   \frac{1}{\sqrt{2}}(|0\rangle-|1\rangle)
+   \]
+</p>
+
+
+<p>
+<b>3. Time t2</b>
+</p>
+
+<p>
+After \(U_f\), the first two qubits remain unchanged, but the third qubit becomes \(\frac{1}{\sqrt{2}}(|0 \oplus f(x_0x_1)\rangle-|1 \oplus f(x_0x_1)\rangle)\). Using the same <b>Phase Kickback</b> trick as last time, we examine the cases when \(f(x_0x_1)\) returns 0 and 1 respectively.
+</p>
+<ul class="org-ul">
+<li>If \(f(x_0x_1)\) is 0, then the third qubit becomes \(\frac{1}{\sqrt{2}}(|0\rangle-|1\rangle)\).</li>
+<li>If \(f(x_0x_1)\) is 1, then the third qubit becomes \(\frac{1}{\sqrt{2}}(|1\rangle-|0\rangle)\). This is same as the previous case, except with a negative sign.</li>
+</ul>
+<p>
+So the third qubit can be written as \((-1)^{f(x_0x_1)}\frac{1}{\sqrt{2}}(|0\rangle-|1\rangle)\).
+</p>
+
+<p>
+Adding back the first two qubits, the state of our system becomes:
+\[
+   \frac{1}{2}(|00\rangle + |01\rangle + |10\rangle + |11\rangle)
+   \frac{1}{\sqrt{2}}(-1)^{f(x_0x_1)}(|0\rangle-|1\rangle)
+   \]
+</p>
+
+<p>
+And moving global phase to the front:
+\[
+   \frac{1}{2}(-1)^{f(x_0x_1)}(|00\rangle + |01\rangle + |10\rangle + |11\rangle)
+   \frac{1}{\sqrt{2}}(|0\rangle-|1\rangle)
+   \]
+</p>
+
+<p>
+So the return value of function \(f(x_0x_1)\) becomes part of the global phase of our system state.
+</p>
+
+
+<p>
+<b>4. Time t3</b>
+</p>
+
+<p>
+We apply H gates to the first two qubits again. What will happen to the first two qubits (\(x_0\), \(x_1\))?
+</p>
+
+<p>
+Before the two H gates (i.e. time t2), our system is at this state:
+\[
+   \frac{1}{2}(-1)^{f(x_0x_1)}(|00\rangle + |01\rangle + |10\rangle + |11\rangle)
+   \frac{1}{\sqrt{2}}(|0\rangle-|1\rangle)
+   \]
+</p>
+
+<p>
+We don&rsquo;t care about the third qubit any more, so we&rsquo;ll just <b>omit the third qubit in following discussion</b> to keep our equations short. Before entering the two H gates, our first two qubits are in a superposition of these 4 states:
+</p>
+<ul class="org-ul">
+<li>\((-1)^{f(00)}|00\rangle\)</li>
+<li>\((-1)^{f(01)}|01\rangle\)</li>
+<li>\((-1)^{f(10)}|10\rangle\)</li>
+<li>\((-1)^{f(11)}|11\rangle\)</li>
+</ul>
+
+<p>
+We&rsquo;ll examine the four cases one by one.
+</p>
+
+<ul class="org-ul">
+<li>If our system is at state \((-1)^{f(00)}|00\rangle\) before entering the H gates, then applying H gates to the first two qubits gives us this (omitting the third qubit):
+\[
+    (-1)^{f(00)}
+    H|0\rangle
+    \otimes
+    H|0\rangle
+    \to
+    (-1)^{f(00)}
+    \frac{1}{\sqrt{2}}(|0\rangle+|1\rangle)
+    \otimes
+    \frac{1}{\sqrt{2}}(|0\rangle+|1\rangle)
+    \]
+Which can be expanded into (we name it \(|\phi_{00}\rangle\) for convenience):
+\[|\phi_{00}\rangle = 
+     \frac{1}{2}(-1)^{f(00)}
+    (|00\rangle+|10\rangle+|01\rangle+|11\rangle)
+    \]</li>
+
+<li>Similary if our system is at \((-1)^{f(01)}|01\rangle\) at t2, we&rsquo;ll get this state after applying the H gates (omitting the third qubit):
+\[|\phi_{01}\rangle = 
+    \frac{1}{2}(-1)^{f(01)}
+    (|00\rangle+|10\rangle-|01\rangle-|11\rangle)
+    \]</li>
+
+<li>If our system is at \((-1)^{f(10)}|10\rangle\) at t2, we&rsquo;ll get this state after applying the H gates (omitting the third qubit):
+\[|\phi_{10}\rangle = 
+    \frac{1}{2}(-1)^{f(10)}
+    (|00\rangle-|10\rangle + |01\rangle-|11\rangle)
+   \]</li>
+
+<li>If our system is at \((-1)^{f(01)}|01\rangle\) at t2, we&rsquo;ll get this state after applying the H gates (omitting the third qubit):
+\[|\phi_{11}\rangle = 
+    \frac{1}{2}(-1)^{f(11)}
+    (|00\rangle-|10\rangle-|01\rangle+|11\rangle)
+    \]</li>
+</ul>
+
+<p>
+So at time t3, our system will be in a superposition of the 4 states above (\(|\phi_{00}\rangle\), \(|\phi_{01}\rangle\), \(|\phi_{10}\rangle\), \(|\phi_{11}\rangle\)), with equal amplitudes. Regrouping all the items according to the 4 base states (\(|00\rangle\), \(|01\rangle\), \(|10\rangle\), \(|11\rangle\)) and we&rsquo;ll get something this:
+</p>
+
+\begin{matrix}
+\frac{1}{2}
+[(-1)^{f(00)} + (-1)^{f(01)} + (-1)^{f(10)} + (-1)^{f(11)}]|00\rangle
++ \\
+\frac{1}{2}
+[(-1)^{f(00)} - (-1)^{f(01)} + (-1)^{f(10)} - (-1)^{f(11)}]|01\rangle
++ \\
+\frac{1}{2}
+[(-1)^{f(00)} + (-1)^{f(01)} - (-1)^{f(10)} - (-1)^{f(11)}]|10\rangle
++ \\
+\frac{1}{2}
+[(-1)^{f(00)} - (-1)^{f(01)} - (-1)^{f(10)} + (-1)^{f(11)}]|11\rangle
+\end{matrix}
+
+<p>
+What does this tell us? It tells us that our system is in a superposition of the 4 base states  (\(|00\rangle\), \(|01\rangle\), \(|10\rangle\), \(|11\rangle\)), and the bracket in front of each base state (the \(\frac{1}{2}[\dots \dots]\) stuff) is the <b>amplitude</b> of each base state. If we measure the first two qubits at this moment, we&rsquo;ll get one of the 4 results (00, 01, 10, 11) with probabilities determined by their respective amplitudes.
+</p>
+
+<p>
+Do you see where we are going now?
+</p>
+
+<p>
+If \(f(x_0x_1)\) is a <b>constant</b> function, then the four terms \((-1)^{f(00)}\), \((-1)^{f(01)}\), \((-1)^{f(10)}\), \((-1)^{f(11)}\) will be all the same (either 1 or -1). Among the four brackets above, only the one on \(|00\rangle\) will be non-zero. All other three brackets will be zero. If we measure the first two qubits, we should always get &ldquo;00&rdquo;.
+</p>
+
+<p>
+If \(f(x_0x_1)\) is <b>balanced</b>, we should see two 1s and two -1s among the four terms  \((-1)^{f(00)}\), \((-1)^{f(01)}\), \((-1)^{f(10)}\), \((-1)^{f(11)}\). It is easy to verify that the bracket on \(|00\rangle\) will always be zero. In other words it has zero amplitude. If we measure the first two qubits at this moment, we should never get &ldquo;00&rdquo;.
+</p>
+
+<p>
+This is how our quantum circuit solves the 2-bit Deutsh Problem - we run the circuit once and measure the first two qubits, and we&rsquo;ll able to tell if the function is constant or balanced.
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgd31b097" class="outline-2">
+<h2 id="orgd31b097">Conclusion</h2>
+<div class="outline-text-2" id="text-orgd31b097">
+<p>
+In this article, we see how we could extend Deutsch Problem to 2-bits and solve it with quantum computing. When we expand the size of input, number of evaluations will grow exponentially on a classical computer (if we want to be 100% sure about the attribute of the function). But with quantum computing, we still only need to run the circuit once to get the answer.
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

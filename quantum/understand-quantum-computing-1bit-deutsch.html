@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Understanding the Power of Quantum Computing 1: Deutsch Problem</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Understanding the Power of Quantum Computing 1: Deutsch Problem
+<br />
+<span class="subtitle">Ping Zhou, 2021-04-01</span>
+</h1>
+
+
+<section id="outline-container-org6b654cb" class="outline-2">
+<h2 id="org6b654cb">Introduction</h2>
+<div class="outline-text-2" id="text-org6b654cb">
+<p>
+Quantum computing is one of the hottest topic these days. You might have already heard about hypes like &ldquo;quantum supremacy&rdquo;. But why quantum computers can be faster on solving some problems? And how does it work behind the scene?
+</p>
+
+<p>
+In this article I&rsquo;m going to use a simple problem (the Deutsch Problem) as an example and walk you through the process.
+</p>
+
+<p>
+Ok, let&rsquo;s get started.
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgc92cf81" class="outline-2">
+<h2 id="orgc92cf81">Terms and Basic Concepts</h2>
+<div class="outline-text-2" id="text-orgc92cf81">
+<p>
+Before we start discussing the problem, let&rsquo;s first review some basic terms and concepts.
+</p>
+</div>
+
+<div id="outline-container-orgecc3351" class="outline-3">
+<h3 id="orgecc3351">Qubits</h3>
+<div class="outline-text-3" id="text-orgecc3351">
+<p>
+A single classical bit can be either 0 or 1 at any time. A qubit, similarly, can be at one of the&ldquo;base&rdquo; states - \(|0\rangle\), \(|1\rangle\). However, a qubit can also be in a <b>superposition</b> state which makes it look like on both \(|0\rangle\) and \(|1\rangle\) at same time. For example, a common state you might see in quantum computing is \(\frac{1}{\sqrt{2}}(|0\rangle+|1\rangle)\). Measuring the qubit at this state will give you 0 or 1 with same probability (i.e. 50% each).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfe283b7" class="outline-3">
+<h3 id="orgfe283b7">Quantum Gates</h3>
+<div class="outline-text-3" id="text-orgfe283b7">
+<p>
+Some of the quantum gates we&rsquo;ll use in this example:
+</p>
+<ul class="org-ul">
+<li>\(I\) gate: &ldquo;Identity&rdquo; gate, which outputs same as its input.</li>
+<li>\(H\) gate: aka Hadamard gate. We&rsquo;ll use this gate to put our qubits into superposition state. Essentially, H gate will turn \(|0\rangle\) into \(\frac{1}{\sqrt{2}}(|0\rangle+|1\rangle)\), and turn \(|1\rangle\) into \(\frac{1}{\sqrt{2}}(|0\rangle-|1\rangle)\). Another attribute we want to note here is that \(HH=I\), meaning that applying two H gates in a row will cancel each other.</li>
+<li>\(X\) gate: Flips the input (i.e. it turns \(|0\rangle\) into \(|1\rangle\), and turns \(|1\rangle\) into \(|0\rangle\)).</li>
+<li>\(Z\) gate: This gate operates on the &ldquo;phase&rdquo; of the input. The output of Z gate is \((-1)^x|x\rangle\). If we supply input \(|0\rangle\) to a Z gate, we&rsquo;ll still get \(|0\rangle\). But if we supply \(|1\rangle\) to a Z gate, we&rsquo;ll get \(-|1\rangle\) at the output.</li>
+<li>\(CNOT\) gate: aka &ldquo;Controlled NOT&rdquo; gate. This gate takes 2 qubits as inputs, let&rsquo;s say \(a\) and \(b\). If \(a\) is 1 then \(b\) is flipped, otherwise \(b\) is unchanged.</li>
+</ul>
+
+<p>
+Some other useful theorems of these quantum gates (we&rsquo;ll need them later in discussion):
+</p>
+<ul class="org-ul">
+<li>\(HZH=X\)</li>
+<li>\(HIH=I\)</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org1741e97" class="outline-3">
+<h3 id="org1741e97">Quantum Circuit</h3>
+<div class="outline-text-3" id="text-org1741e97">
+<p>
+A quantim circuit is like a blueprint of the algorithm. Each qubit is a line in the diagram, with quantum gates connect the lines (qubits) and time flows from left to right.
+</p>
+
+
+<div id="org6dac38c" class="figure">
+<p><img src="../images/qc_deutsch_en_circuit.png" alt="qc_deutsch_en_circuit.png" width="320px" />
+</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="outline-container-orgf26492c" class="outline-2">
+<h2 id="orgf26492c">Deutsch Problem</h2>
+<div class="outline-text-2" id="text-orgf26492c">
+<p>
+The problem we are going to solve with quantum computing is called the Deutsch Problem.
+It is, in my opinion, the simplest problem that we can use for demonstrating the advantage of quantum computing.
+</p>
+
+<p>
+Suppose someone gave us a 1-bit function (i.e. both its input and output are 1-bit). The function was given as a &ldquo;blind box&rdquo;, meaning that we don&rsquo;t know how it works. The only thing we can do with this function is to <b>evaluate</b> it - by feeding it with input and observing its output.
+</p>
+
+<p>
+Since this function takes 1-bit input and outputs 1-bit results, there aren&rsquo;t many possible variants. In fact, there are only 4 possible 1-bit funcitons:
+</p>
+<ol class="org-ol">
+<li>\(f(x)=0\), the function always outputs 0 regardless of input.</li>
+<li>\(f(x)=1\), the function always outputs 1 regardless of input.</li>
+<li>\(f(x)=x\), the function outputs same bit as the input.</li>
+<li>\(f(x)=\bar{x}\), the function outputs the <b>inverse</b> of the input bit.</li>
+</ol>
+
+<p>
+Among these 4 functions, the first two are called &ldquo;<b>constant</b>&rdquo; functions because they return constant values regardless of input. The other two functions are called &ldquo;<b>balanced</b>&rdquo; functions because they return 0 or 1 for half of the possible inputs respectively.
+</p>
+
+<p>
+<b>Deutsch Problem:</b> If we are given a 1-bit function f(x) as a blind box, how do we decide whether it is <b>constant</b> or <b>balanced</b>? Remember, the only thing we can do with the function is to <b>evaluate</b> it!
+</p>
+
+<p>
+If we are using a classical computer, how many times do we need to evaluate the function? Apparently we&rsquo;ll need <b>two</b> evaluations - one evaluation won&rsquo;t be enough to tell if it&rsquo;s constant or balanced.
+</p>
+
+<p>
+But if we are using a quantum computer, we just need to run our circuit <b>once</b> and we&rsquo;ll know the answer!
+</p>
+</div>
+</section>
+
+<section id="outline-container-org13b16b3" class="outline-2">
+<h2 id="org13b16b3">Solving Deutsch Problem with Quantum Computing</h2>
+<div class="outline-text-2" id="text-org13b16b3">
+</div>
+<div id="outline-container-org6fe4b95" class="outline-3">
+<h3 id="org6fe4b95">Transform the problem for quantum circuit</h3>
+<div class="outline-text-3" id="text-org6fe4b95">
+<p>
+To solve Deutsch Problem with quantum computing, we need to somehow &ldquo;incorporate&rdquo; f(x) in our quantum circuit. However in quantum circuit, every operator must be <b>reversible</b> (i.e. you must be able to compute input back from output). The function we are given is not likely to meet this requirement - E.g. constant functions are not reversible. So how do we interact with f(x) in our quantum circuit?
+</p>
+
+<p>
+Fortunately there is a generic solution to this issue: We <b>transform</b> the function f(x) into a quantum operator (a block of quantum circuit) \(U_f\) like this: 
+</p>
+
+
+<div id="org9da6ed6" class="figure">
+<p><img src="../images/qc_deutsch_uf.png" alt="qc_deutsch_uf.png" width="160px" />
+</p>
+</div>
+
+<p>
+This quantum operator uses an additional (auxilary) input (y), in additional to the original input to function f(x). And on the output side, it outputs x and the Exclusive OR of y and return value of f(x). It&rsquo;s easy to validate that this operator \(U_f\) is reversible.
+</p>
+
+<p>
+So with quantum computing, we need to <b>transform</b> the Deutsch Problem a little bit so it can be computed by our quantum circuit. We need to ask the person who gave us the function f(x):
+</p>
+<blockquote>
+<p>
+Instead of giving me function f(x) as a blind box, can you give me its corresponding \(U_f\) (also as a blind box)?
+</p>
+</blockquote>
+
+<p>
+The person kindly wrapped f(x) into \(U_f\) and gave it to us. Fantastic! Now we can build our quantum circuit with \(U_f\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org11e8b3c" class="outline-3">
+<h3 id="org11e8b3c">Build our quantum circuit</h3>
+<div class="outline-text-3" id="text-org11e8b3c">
+<p>
+The quantum circuit for solving Deutsch Problem is actually pretty simple. We initialize two qubits to \(|0\rangle\) and \(|1\rangle\) states, put them through H gates, then plug in the \(U_f\) block and another H gate, and measure the first qubit for results:
+</p>
+
+
+<div id="org9b22e17" class="figure">
+<p><img src="../images/qc_deutsch_en_orig.png" alt="qc_deutsch_en_orig.png" width="640px" />
+</p>
+</div>
+
+<p>
+We run the circuit and measure the first qubit. If we get 0 from measurement, then function f(x) must be <b>constant</b>. Or else it must be a <b>balanced</b> function.
+</p>
+
+<p>
+That&rsquo;s it! We only run the circuit <b>once</b> and we get the result of Deutsch Problem!
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org0ab32a2" class="outline-2">
+<h2 id="org0ab32a2">How it works</h2>
+<div class="outline-text-2" id="text-org0ab32a2">
+<p>
+The quantum circuit worked like magic - we just need to run circuit once and it tells us whether the function is constant or balanced. But how it actually achieves this acceleration? In this section I&rsquo;ll walk you through the analysis.
+</p>
+
+<p>
+We split our circuit into time steps and check the system state of each time step.
+</p>
+
+
+<div id="orgd7fc861" class="figure">
+<p><img src="../images/qc_deutsch_en_1.png" alt="qc_deutsch_en_1.png" width="640px" />
+</p>
+</div>
+
+<p>
+<b>Time step t0:</b>
+</p>
+
+<p>
+Our system is at initial state \(|0\rangle |1\rangle\).
+</p>
+
+<p>
+<b>Time step t1:</b>
+</p>
+
+<p>
+The H gates put the two qubits into superpositions. The first qubit becomes \(\frac{1}{\sqrt{2}}(|0\rangle+|1\rangle)\), and the second qubit becomes \(\frac{1}{\sqrt{2}}(|0\rangle-|1\rangle)\). For convenience, let&rsquo;s name these two states \(|+\rangle\) and \(|-\rangle\). So the state of our system is now \(|+\rangle |-\rangle\).
+</p>
+
+<p>
+<b>Time step t2:</b>
+</p>
+
+<p>
+The input of \(U_f\) is \(|+\rangle |-\rangle\). On the output side of \(U_f\), the first qubit is still \(|+\rangle\) (\(\frac{1}{\sqrt{2}}(|0\rangle+|1\rangle)\)). The second qubit is more interesting - it&rsquo;s the XOR of y and f(x). Since f(x) is a 1-bit function, the value of f(x) is either 0 or 1. We can examine the two outcomes of f(x):
+</p>
+<ul class="org-ul">
+<li>If f(x) is 0, then the second qubit will remain unchanged:  \(\frac{1}{\sqrt 2}(|0\rangle-|1\rangle)\), or \(|-\rangle\).</li>
+<li>If f(x) is 1, then the second qubit will be the <b>inverse</b> of y (\(|-\rangle\)). But y is in superposition state, how do we inverse it? Here is the trick: You can distribute the inverse operation into the equation - \(|0\rangle\) becomes \(|1\rangle\) and vice versa. So the second qubit becomes \(\frac{1}{\sqrt{2}}(|1\rangle-|0\rangle)\) after inversion. But wait&#x2026; isn&rsquo;t this just \(|-\rangle\) with a negative sign (\(-|-\rangle\))?</li>
+</ul>
+
+<p>
+Summarizing the two outcomes of f(x), the second qubit will get a negative sign if f(x) is 1. In other words, the second qubit can be expressed like this: \((-1)^{f(x)}|-\rangle\). Counting in the first qubit, the state of our system becomes: \(|+\rangle (-1)^{f(x)}|-\rangle\). Since we are treating the two qubits as a <b>system</b>, the nagative sign part (\((-1)^{f(x)}\)) is a <b>global phase</b> of our system. We can move this global phase to the front of our equation: \((-1)^{f(x)} |+\rangle|-\rangle\).
+</p>
+
+<p>
+What does this tell us? It tells us that if we supply \(|+\rangle |-\rangle\) as input to \(U_f\), we&rsquo;ll get \((-1)^{f(x)} |+\rangle|-\rangle\) at its output. Or more formally:
+</p>
+
+<p>
+\[
+U_f|+\rangle|-\rangle=(-1)^{f(x)} |+\rangle|-\rangle
+\]
+</p>
+
+<p>
+In other words, the value of f(x) now becomes the <b>global phase</b> of our system - it controls the negative sign before \(|+\rangle |-\rangle\). This trick is commonly called <b>Phase Kickback</b>.
+</p>
+
+<p>
+But how does this even help us determine the attribute of f(x)? Global phase is not distinguishable when we measure the state, after all.
+</p>
+
+<p>
+Let&rsquo;s examine the four possibilities of f(x) and what \(U_f\) will become in each circumstance:
+</p>
+
+<ol class="org-ol">
+<li>If f(x) is a constant function that always returns 0, then \(U_f|+\rangle|-\rangle=(-1)^{f(x)} |+\rangle|-\rangle=|+\rangle|-\rangle\). So \(U_f\) is equivalent to an \(I\) gate.</li>
+<li>If f(x) is a constant function that always returns 1, then \(U_f|+\rangle|-\rangle=(-1)^{f(x)} |+\rangle|-\rangle=-|+\rangle|-\rangle\). So \(U_f\) is equivalent to \(-I\) (\(I\) gate with negative sign).</li>
+<li>If \(f(x)=x\) (i.e. it returns the same bit as x), then \(U_f|+\rangle|-\rangle = (-1)^{f(x)}|+\rangle|-\rangle = (-1)^x|+\rangle|-\rangle\). Recall that a Z gate gives us \((-1)^x|x\rangle\), this means \(U_f\) is equivalent to a Z gate in this circumstance.</li>
+<li>Similarly if \(f(x)=\bar{x}\) (i.e. it returns the inverse of x), it&rsquo;s easy to show that \(U_f\) is equivalent to \(-Z\) gate (a Z gate with negative sign).</li>
+</ol>
+
+<p>
+Now we are getting somewhere: <b>If f(x) is constant, \(U_f\) will be equivalent to a \(\pm I\) gate. And if f(x) is balanced, \(U_f\) will be equivalent to a \(\pm Z\) gate!</b>
+</p>
+
+<p>
+<b>Time step t3:</b>
+</p>
+
+<p>
+Recall these theorems we mentioned earlier:
+</p>
+<ul class="org-ul">
+<li>\(HZH=X\)</li>
+<li>\(HIH=I\)</li>
+</ul>
+
+<p>
+Looking at the first qubit of our circuit - what happened from t0 to t2? We got an H gate, then the \(U_f\) block which is equivalent to either \(\pm I\) or \(\pm Z\) gate, depending on the attribute of function f(x). What if we append another H gate after t2?
+</p>
+<ul class="org-ul">
+<li>If \(U_f\) is equivalent to \(\pm I\) gate (meaning that the function is constant), the operations from t0 to t3 on the first qubit will be \(H\), \(\pm I\), then \(H\) again. And since \(HIH=I\), the operations from t0 to t3 will be equivalent to a \(\pm I\) gate on the first qubit.</li>
+<li>Similarly, if \(U_f\) is equivalent to \(\pm Z\) (i.e. the function is balanced), operations from t0 to t3 will be \(\pm HZH=\pm X\). So from t0 to t3 it was as if we did a \(\pm X\) gate on the first qubit.</li>
+</ul>
+
+<p>
+Now let&rsquo;s measure the first qubit - guess what we&rsquo;ll get?
+</p>
+
+
+<div id="orga682f8c" class="figure">
+<p><img src="../images/qc_deutsch_en.png" alt="qc_deutsch_en.png" width="640px" />
+</p>
+</div>
+
+<p>
+If the function f(x) is <b>constant</b>, from t0 to t3 the first qubit will go through a \(\pm I\) gate. So after t3 it will be at \(\pm|0\rangle\) state, and we&rsquo;ll get a 0 from measurement.
+</p>
+
+<p>
+If the function f(x) is <b>balanced</b>, the first qubit will go through a \(\pm X\) gate from t0 to t3. So after t3 it will be at \(\pm |1\rangle\) state, and we&rsquo;ll get a 1 from measurement.
+</p>
+
+<p>
+Now we know how quantum computing solves Deutsch Problem with just one run!
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgf652140" class="outline-2">
+<h2 id="orgf652140">Conclusion and Thoughts</h2>
+<div class="outline-text-2" id="text-orgf652140">
+<p>
+What do we learn from this journey? We can see that superposition played a crucial role in solving the Deutsch Problem with just one run. By putting our qubits into superpositions and feeding them into \(U_f\), we <b>sort of</b> examined all 4 possibilities simultaneously and turned f(x)&rsquo;s attribute into the global phase of our system state. We then revealed the phase using transformations (\(HIH=I\) and \(HZH=X\)) and read it out from measurement.
+</p>
+
+<p>
+&ldquo;Evaluation twice vs. run circuit once&rdquo; might seem trivial to you. But think about it - what if we expand the input (number of bits) to the problem? On a classical computer, the number of evaluations will grow exponentially (well, if we want to be 100% sure about the answer). But with quantum computer we&rsquo;ll still only need to run the circuit once!
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgd8b9965" class="outline-2">
+<h2 id="orgd8b9965">Appendix: How to construct \(U_f\)?</h2>
+<div class="outline-text-2" id="text-orgd8b9965">
+<p>
+One question you may still have is: How does the person who gives us function f(x) contruct the corresponding \(U_f\) (a block of quantum circuit)? This is particularly important if you want to simulate the problem - after all, you need \(U_f\) to build your circuit.
+</p>
+
+
+<div id="org96861d9" class="figure">
+<p><img src="../images/qc_deutsch_uf.png" alt="qc_deutsch_uf.png" width="160px" />
+</p>
+</div>
+
+<p>
+This can be done by examining the truth table of \(U_f\). For example, if the person wants to give us a balanced function \(f(x)=x\), the truth table of f(x) and \(U_f\) will be like this:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> Truth table for f(x)=x</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">x</th>
+<th scope="col" class="org-right">0</th>
+<th scope="col" class="org-right">1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">f(x)</td>
+<td class="org-right">0</td>
+<td class="org-right">1</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">\(y\oplus f(x)\)</td>
+<td class="org-right">\(y\oplus 0 = y\)</td>
+<td class="org-right">\(y\oplus 1 = \bar{y}\)</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+So y is inversed if x is 1 and unchanged otherwise. Apparently \(U_f\) for this function can be implemented with a CNOT gate:
+</p>
+
+
+<div id="org4eb1ddd" class="figure">
+<p><img src="../images/qc_deutsch_uf_x.jpg" alt="qc_deutsch_uf_x.jpg" width="200px" />
+</p>
+</div>
+
+<p>
+\(U_f\) for other 1-bit functions can be constructed in a similar way.
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

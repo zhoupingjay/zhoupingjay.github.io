@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>用量子搜索加速『NP完全』问题？</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">用量子搜索加速『NP完全』问题？
+<br />
+<span class="subtitle">Ping Zhou, 2021-10-26</span>
+</h1>
+<p>
+最近和量子搜索干上了 :-) 聊聊另一个量子搜索的应用——加速NP完全问题的求解。
+</p>
+
+<p>
+学计算机朋友的应该都听说过『NP完全问题』。
+</p>
+
+<p>
+所谓NP完全问题（NP-complete problems），不是指某一个，而是指一类问题，它们的共同特征是，可以快速验证给定的答案是否正确（verify the solution），但是要找到正确的答案（find the solutions）则很难，目前还没有找到高效（多项式复杂度）的算法。并且这一类问题是可以互相转化的，也就是说如果某一个NP完全问题找到了高效的求解算法，那么所有其他的NP完全问题也都能够高效求解了。
+</p>
+
+<p>
+哈密尔顿回路问题（Hamilton cycle problem）就是一个NP完全问题。这个问题是说，给你一个图（有向或无向都可），请你找到一个访问图中所有顶点各一次的回路。这个问题又称为“旅行推销员问题”。
+</p>
+
+<p>
+用数学语言来分析，假设这个图有n个顶点 \(v_1, v_2, \dots, v_n\) ，我们要找的是一个包含n个顶点，也就是长度为n的路径。为方便讨论，我们假设允许顶点重复，那么把所有可能的长度为n的路径列出来，总共有 \(n^n\) 种可能，所以整个搜索空间有 \(n^n = 2^{n \log n}\) 个状态。哈密尔顿回路问题，就是要在这个搜索空间里找出符合条件的答案。
+</p>
+
+<p>
+显然，给定一个路径，我们很容易就能判断它是否是哈密尔顿回路，但是要从给定的图找到一个哈密尔顿回路，目前还没有发现高效（多项式）的算法。在经典计算机上，寻找哈密尔顿回路的复杂度是：
+</p>
+
+\begin{matrix}
+O(2^{n \lceil \log n \rceil})
+\end{matrix}
+
+<p>
+那么在量子计算机上，是否可以做的更好呢？答案是肯定的。量子计算机可以对这个问题实现平方根（square root）加速：
+</p>
+
+\begin{matrix}
+O(2^{n \lceil \log n \rceil / 2})
+\end{matrix}
+
+<p>
+接下来看看量子计算机是怎么做到的。
+</p>
+
+<p>
+首先我们得有个函数判断给定的路径是否是哈密尔顿回路：
+</p>
+
+\begin{matrix}
+f(v_1 v_2 \dots v_n) = \left\{
+\begin{array}{ll}
+1 && v_1 v_2 \dots v_n \verb= is a Hamilton cycle= \\
+0 && otherwise
+\end{array}
+\right.
+\end{matrix}
+
+<p>
+然后，把路径 \(v_1 v_2 \dots v_n\) 看作是量子电路的一个状态 \(|v\rangle\) 。比如，给某个顶点编号1到n，那么每个状态就是由n个1到n的数字来组成。显然要用二进制表示这样的状态，需要的肯定不止n比特，而是需要 \(n\log n\) 比特。因此在量子电路里需要 \(n\log n\) 个量子位来表示状态。
+</p>
+
+<p>
+把这个判断函数f包装成Grover算法里的Oracle变换：
+</p>
+
+\begin{matrix}
+O|v\rangle |q\rangle \rightarrow |v\rangle |q \oplus f(v)\rangle
+\end{matrix}
+
+
+<div id="orgb242ed3" class="figure">
+<p><img src="../images/quantum_search_np_oracle.jpg" alt="quantum_search_np_oracle.jpg" width="480px" />
+</p>
+</div>
+
+<p>
+如果你还记得<a href="grovers_algorithm_1.html">Grover算法</a>里的讨论，当f(v)=0时，这个电路右边输出 \(|v\rangle |q\rangle\) ，而当f(v)=1时，右边输出 \(-|v\rangle |q\rangle\) ：
+</p>
+
+\begin{matrix}
+O|v\rangle |q\rangle = \left\{
+\begin{array}{ll}
+|v\rangle |q\rangle && f(v)=0 \\
+-|v\rangle |q\rangle && f(v)=-1
+\end{array}
+\right. \\
+q=\frac{1}{\sqrt 2}(|0\rangle - |1\rangle)
+\end{matrix}
+
+<p>
+如果我们忽略这里的辅助量子寄存器q，那么这里的O变换作用就是根据f(v)的值，给 \(|v\rangle\) 加上正负相位。所以，这正是我们在Grover算法里所需要的Oracle变换！
+</p>
+
+<p>
+接下来的步骤就是和Grover算法里一样，加上H门，Conditional Phase Shift，等等，这里就不重复了，有兴趣的可以参见我之前的文章。
+</p>
+
+<p>
+这个算法的性能，我们知道Grover算法的复杂度是 \(O(\sqrt N)\) （假设只有1个答案），这里的N就是搜索空间的大小 \(2^{n \log n}\) 。所以，用Grover算法来求解哈密尔顿回路问题，复杂度是 \(O(2^{n \lceil \log n \rceil / 2})\) ，也就是相对经典计算机有square root加速。
+</p>
+
+<p>
+感谢阅读！
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

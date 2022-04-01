@@ -1,0 +1,728 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子机器学习：TensorFlow Quantum入门</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子机器学习：TensorFlow Quantum入门
+<br />
+<span class="subtitle">Ping Zhou, 2020-11-27</span>
+</h1>
+<p>
+注：转载请注明作者，本文也发布在作者的个人公众号上。
+</p>
+
+<p>
+相关代码请见<a href="https://github.com/zhoupingjay/quantum/blob/main/Getting-Started-With-TensorFlow-Quantum-CN.ipynb">作者的Github</a>。
+</p>
+
+<section id="outline-container-org07c7cf7" class="outline-2">
+<h2 id="org07c7cf7">TensorFlow Quantum</h2>
+<div class="outline-text-2" id="text-org07c7cf7">
+<p>
+<a href="https://www.tensorflow.org/quantum">TensorFlow Quantum</a> (TFQ) 是谷歌在2020年发布的 <b>量子机器学习框架</b> ，它能够帮助开发者方便的创建经典+量子结合的混合机器学习模型。量子+机器学习，两个热门的名词结合在一起，听上去很酷！但是你可能会问，这个框架是如何把经典和量子世界结合起来的呢？所谓的”经典-量子混合模型“又是如何工作的？在这个笔记里，我会结合谷歌的&ldquo;<a href="https://www.tensorflow.org/quantum/tutorials/hello_many_worlds">Hello, many world</a>&rdquo;示例，实际讲解一下在TFQ下量子机器学习模型的搭建和工作原理。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org6de2e83" class="outline-2">
+<h2 id="org6de2e83">基本概念</h2>
+<div class="outline-text-2" id="text-org6de2e83">
+<p>
+要理解TFQ的代码，首先需要了解一些量子计算的基本概念。
+</p>
+</div>
+
+<div id="outline-container-org4ecb7ef" class="outline-3">
+<h3 id="org4ecb7ef">量子比特和状态向量</h3>
+<div class="outline-text-3" id="text-org4ecb7ef">
+<p>
+你可能在很多地方已经听到过量子比特（Qubit）的概念。一个经典比特在任意时刻只能处于两个状态中的一个，而量子比特则可以处于两个状态的叠加态：
+</p>
+
+<p>
+\(|\psi\rangle = \alpha|0\rangle + \beta|1\rangle\) 
+</p>
+
+<p>
+其中， \(\alpha\) 和 \(\beta\) 都是复数，并且 \(|\alpha|^2+|\beta|^2=1\) 。如果我们对这个量子比特进行测量，得到两个状态的概率分别是 \(|\alpha|^2\) 和 \(|\beta|^2\) 。
+</p>
+
+<p>
+因此，一个量子比特的状态可以用一个**状态向量**来表示：
+</p>
+
+\begin{matrix}
+\begin{pmatrix}
+\alpha \\
+\beta
+\end{pmatrix} 
+\end{matrix}
+
+<p>
+如果我们的系统里有多个量子比特，每个量子比特有相应的状态向量，那么这个系统的状态向量就是这些量子比特的**张量积**（tensor product）。例如一个系统有两个量子比特 \(\begin{pmatrix}\alpha_1 \\ \beta_1\end{pmatrix}\)  和  \(\begin{pmatrix}\alpha_2 \\ \beta_2\end{pmatrix}\) ，那么这个系统的状态向量就是：
+</p>
+
+<p>
+\(\begin{pmatrix}\alpha_1 \\ \beta_1\end{pmatrix}
+\otimes
+\begin{pmatrix}\alpha_2 \\ \beta_2\end{pmatrix} =
+\begin{pmatrix}
+\alpha_1\alpha_2 \\
+\alpha_1\beta_2 \\
+\beta_1\alpha_2 \\
+\beta_1\beta_2
+\end{pmatrix}\) 
+</p>
+
+<p>
+在谷歌的量子计算框架[<a href="https://github.com/quantumlib/Cirq">Cirq</a>]里，模拟器运行的结果里有一个 <code>final_state</code> 成员，这就是系统的状态向量。详细信息请参见我的[<a href="https://github.com/zhoupingjay/quantum/blob/main/Quantum-Teleportation.ipynb">另一篇笔记</a>]。
+</p>
+
+<p>
+量子比特另外一种重要的表示方法是 <b>Bloch球</b> （Bloch Sphere）。每一个量子比特都可以表示为Bloch球面上的一个向量：
+</p>
+
+
+<div id="org3c36ecd" class="figure">
+<p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="320px" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb89d7c6" class="outline-3">
+<h3 id="orgb89d7c6">算符(Operators)和可观测量(Observables)</h3>
+<div class="outline-text-3" id="text-orgb89d7c6">
+<p>
+<b><b>算符(Operators)</b></b>
+</p>
+
+<p>
+简单来说，算符就是把量子比特从一个状态变成另一个状态的变换。前面说到量子比特可以用向量来表示，因此算符实际上就是用来操作向量的矩阵。
+</p>
+
+<p>
+<b><b>可观测量(Observables)</b></b>
+</p>
+
+<p>
+什么是可观测量呢？简单说就是可测量的物理量，例如位置、动量等都可以算作可观测量。
+</p>
+
+<p>
+在量子世界里，每个可观测量都对应一个叫做“厄米子”(Hermitian Operator)的算符，这类算符有一些特别的属性（例如它们和自身的共轭转置相等）。在这次的笔记里，我们使用的**Z算符**就是其中之一，其矩阵表示长这样：
+</p>
+
+<p>
+\(Z=
+\begin{bmatrix}
+1 & 0 \\
+0 & -1
+\end{bmatrix}\) 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge565e19" class="outline-3">
+<h3 id="orge565e19">期望值</h3>
+<div class="outline-text-3" id="text-orge565e19">
+<p>
+前面说到，状态向量描述了一个系统的当前状态。如果我们知道了这个向量，我们就掌握的系统的所有状态信息。
+但是，状态向量实际上只有在使用模拟器的时候才能看到。在真实的环境中，我们能得到的是系统的**期望值**。
+</p>
+
+<p>
+期望值是来自概率论的一个概念，它的意思是所有可能结果和它们各自概率的加权之和。例如我们掷骰子，每次能得到1~6之间的一个数，假设得到每个数的概率相同，都是1/6，那么掷骰子的期望值就是：
+</p>
+
+<p>
+\(\frac{1}{6}\times 1 + \frac{1}{6}\times 2 + ... + \frac{1}{6}\times 6 = 3.5\) 
+</p>
+
+<p>
+在量子世界里，如果我们要谈期望值，除了当前状态外，我们还需要说明是在**哪个算符（可观测量）上的期望值**。
+</p>
+
+<p>
+为什么呢？因为使用不同的可观测量，相应的期望值也会不同！这就像同一个向量投影到不同的轴上，得到的值是不一样的！
+</p>
+
+<p>
+在这个笔记里，我们使用的是Z算符，所以谈到期望值，我们说的其实是“当前状态在Z算符上的期望值”。
+</p>
+
+<p>
+接下来的问题是： <b>如何计算当前状态在Z算符上的期望值呢？</b> 
+</p>
+
+<p>
+详细的推导过程这里就不列出了，不过你可能已经猜到了，这个值就是状态向量在Z轴上的投影，也就是 \(\cos\theta\) 。
+</p>
+
+<p>
+我们可以看几个例子来验证上面的结论：
+</p>
+
+
+<div id="org40b8896" class="figure">
+<p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="320px" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>如果当前状态是在Bloch球的北极，那么测量结果100%肯定是+Z，期望值是 \(\cos 0 = 1\) 。</li>
+<li>如果当前状态是在Bloch球的南极，那么测量结果100%肯定是-Z，期望值是 \(\cos\pi = -1\) 。</li>
+<li>如果当前状态在上面图中Bloch球的D点，测量结果50%可能是+Z，50%可能是-Z，期望值是 \(\cos\frac{\pi}{2}=0\) 。</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org74f9d7c" class="outline-2">
+<h2 id="org74f9d7c">问题描述</h2>
+<div class="outline-text-2" id="text-org74f9d7c">
+<p>
+要理解我们的量子机器学习模型，首先我们得搞明白它要解决的是什么问题。
+</p>
+
+<p>
+假设我们想要运行一个量子电路，那么在运行前我们先得准备初始的量子比特作为输入（通常是一组 \(|0\rangle\) 或 \(|1\rangle\) ）。
+</p>
+
+<p>
+在模拟器里，这些初始量子比特都是完美的 \(|0\rangle\) 或 \(|1\rangle\) ，但是在现实环境里，我们的电路会有各种噪声干扰，导致这些量子比特偏离我们想要的状态。如果我们从Bloch球来理解，这些噪声实际上相当于把原来“完美”的量子比特在X，Y，Z轴上作了旋转，使其偏离了原有的状态。这个噪声干扰的过程可以用下面的电路来表示：
+</p>
+
+
+<div id="orga359870" class="figure">
+<p><img src="../images/tfq-noisy-circuit.svg" alt="tfq-noisy-circuit.svg" class="org-svg" width="480px" />
+</p>
+</div>
+
+<p>
+\(\beta_1\) ,  \(\beta_2\) ,  \(\beta_3\) 参数是噪声产生的旋转角度，对我们来说是未知的。
+</p>
+
+<p>
+显然，如果不对这些量子比特进行**校准**（Calibrate）就输入给量子电路用，就不能得到我们想要的结果。怎么进行校准呢？很简单，我们给它再加上一组X，Y，Z旋转，把它转回到我们要的目标状态！
+</p>
+
+
+<div id="orgcbca09a" class="figure">
+<p><img src="../images/tfq-calibration-circuit.svg" alt="tfq-calibration-circuit.svg" class="org-svg" width="480px" />
+</p>
+</div>
+
+<p>
+而校准所需的角度参数 \(\theta_1\) ,  \(\theta_2\) ,  \(\theta_3\) ，就是我们的量子机器学习模型所要解决的问题。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgeb44f02" class="outline-2">
+<h2 id="orgeb44f02">量子机器学习模型</h2>
+<div class="outline-text-2" id="text-orgeb44f02">
+<p>
+原版的例子直接跳入大量细节，可能不太容易理解，在这里我从全局角度出发，应该会更容易明白。我们要搭建的，是一个用来校准量子比特噪声的机器学习模型：
+</p>
+
+
+<div id="org8b086e2" class="figure">
+<p><img src="../images/hello-tfq-circuit.svg" alt="hello-tfq-circuit.svg" class="org-svg" width="560px" />
+</p>
+</div>
+
+<p>
+那么作为机器学习模型，我们要回答这几个问题：
+</p>
+
+<ul class="org-ul">
+<li>模型的输入（dataset）是什么？</li>
+<li>模型的训练标签（labels）是什么？</li>
+<li>模型的输出是什么？</li>
+</ul>
+
+<p>
+我把整个过程画了这样一张图，然后结合这张图分别解释其中的各个部分，相信能更好的帮助你理解：
+</p>
+
+
+<div id="org0cbc30c" class="figure">
+<p><img src="../images/hello-tfq-1.svg" alt="hello-tfq-1.svg" class="org-svg" width="560px" />
+</p>
+</div>
+</div>
+
+<div id="outline-container-org62f40e4" class="outline-3">
+<h3 id="org62f40e4">输入数据集（Datasets）</h3>
+<div class="outline-text-3" id="text-org62f40e4">
+<p>
+输入的数据集（Dataset）包含两个部分：命令（commands）和噪声电路（noisy circuit）。
+</p>
+
+<p>
+<b><b>Commands</b></b>
+</p>
+
+<p>
+Commands是我们希望量子比特达到的目标状态的代号。例如，“Command 0“表示我们想要的到一个处于Bloch球的北极（+Z）的量子比特，而“Command 1”表示我们想要一个处于南极（-Z）的量子比特。
+</p>
+
+<p>
+<b><b>Noisy input</b></b>
+</p>
+
+<p>
+这部分就是模拟噪声的电路。TFQ里提供了一个 <code>tfq.convert_to_tensor</code> 函数来把电路转换成TensorFlow能看懂的tensor：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">circuit_tensor</span> = tfq.convert_to_tensor<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>circuit<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc4128de" class="outline-3">
+<h3 id="orgc4128de">训练标签（Labels）</h3>
+<div class="outline-text-3" id="text-orgc4128de">
+<p>
+这里的训练标签，就是 <b>我们想要量子比特达到的目标状态的期望值</b> ：
+</p>
+
+<p>
+当输入Command 0时，我们想要量子比特的期望值是1；而输入Command 1时，我们想要量子比特的期望值是-1。
+</p>
+
+<p>
+因此，训练标签（对应Command 0，1）的内容就是 <code>[1, -1]</code> 。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4cd4108" class="outline-3">
+<h3 id="org4cd4108">模型输出</h3>
+<div class="outline-text-3" id="text-org4cd4108">
+<p>
+模型的输出，就是量子比特校准后的期望值。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org38b9d5f" class="outline-3">
+<h3 id="org38b9d5f">经典-量子混合模型</h3>
+<div class="outline-text-3" id="text-org38b9d5f">
+<p>
+我们这个模型里有经典和量子两部分。
+</p>
+
+<ul class="org-ul">
+<li><b>经典部分</b> 就是图中的Controller，就是一个普通的深度神经网络。它的输出是校准角度 \(\theta_1\) ,  \(\theta_2\) ,  \(\theta_3\) 。</li>
+<li><b>量子部分</b> 是图中的“ControllPQC”层（我们给它取名“expectation<sub>layer</sub>“）。它从Controller那里拿到校准角度参数 \(\theta_1\) ,  \(\theta_2\) ,  \(\theta_3\) ，用它们运行校准电路（“model<sub>circuit</sub>”），然后把输出（校准后的期望值）反馈给Controller进行训练。</li>
+</ul>
+
+<p>
+总结起来，我们想让这个模型干的事就是：
+</p>
+
+<p>
+给你一个被噪声干扰的量子比特(circuit<sub>input</sub>)和两个命令(Command 0, 1)，要求在输入Command 0的时候输出一个期望值是1的量子比特，而在输入Command 1的时候输出期望值是-1的量子比特。
+</p>
+
+<p>
+这样捋一遍是不是就清楚了？:-)
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org3b142c3" class="outline-2">
+<h2 id="org3b142c3">代码解析</h2>
+<div class="outline-text-2" id="text-org3b142c3">
+</div>
+<div id="outline-container-orgf7edd55" class="outline-3">
+<h3 id="orgf7edd55">安装TFQ</h3>
+<div class="outline-text-3" id="text-orgf7edd55">
+<p>
+TensorFlow Quantum依赖TensorFlow 2.3.1+，最简单的方法是通过pip：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">pip install -q <span class="org-variable-name">tensorflow</span>==2.3.1
+pip install -q tensorflow-quantum
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf3f4c26" class="outline-3">
+<h3 id="orgf3f4c26">导入依赖包</h3>
+<div class="outline-text-3" id="text-orgf3f4c26">
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">import</span> tensorflow <span class="org-keyword">as</span> tf
+<span class="org-keyword">import</span> tensorflow_quantum <span class="org-keyword">as</span> tfq
+
+<span class="org-keyword">import</span> cirq
+<span class="org-keyword">import</span> sympy
+<span class="org-keyword">import</span> numpy <span class="org-keyword">as</span> np
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">visualization tools</span>
+%matplotlib inline
+<span class="org-keyword">import</span> matplotlib.pyplot <span class="org-keyword">as</span> plt
+<span class="org-keyword">from</span> cirq.contrib.svg <span class="org-keyword">import</span> SVGCircuit
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3190fed" class="outline-3">
+<h3 id="org3190fed">准备输入数据</h3>
+<div class="outline-text-3" id="text-org3190fed">
+<p>
+首先创建一个量子比特对象：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">This creates a "perfect" qubit at |0&gt;.</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">It will be fed into the noisy preparation circuit to emulate a noisy qubit.</span>
+<span class="org-variable-name">qubit</span> = cirq.GridQubit<span class="org-rainbow-delimiters-depth-1">(</span>0, 0<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+创建输入数据集 - Command 0，1:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Dataset: commands_input (0 and 1)</span>
+<span class="org-variable-name">commands</span> = np.array<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span><span class="org-rainbow-delimiters-depth-3">[</span>0<span class="org-rainbow-delimiters-depth-3">]</span>, <span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">]</span>, dtype=np.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+创建噪声电路。这里我们随机产生一组角度，作为X/Y/Z轴旋转的参数。创建好的Circuit对象，需要转换成TensorFlow的tensor。
+</p>
+
+<p>
+另外要注意的是，这里需要2个噪声电路的副本，分别对应前面Command数组的两项。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Dataset: circuit_input (noisy preparation)</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">This emulates the noisy qubit by applying X/Y/Z rotations with random angles.</span>
+<span class="org-variable-name">random_rotations</span> = np.random.uniform<span class="org-rainbow-delimiters-depth-1">(</span>0, 2 * np.pi, 3<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">noisy_preparation</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>
+  cirq.rx<span class="org-rainbow-delimiters-depth-2">(</span>random_rotations<span class="org-rainbow-delimiters-depth-3">[</span>0<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
+  cirq.ry<span class="org-rainbow-delimiters-depth-2">(</span>random_rotations<span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
+  cirq.rz<span class="org-rainbow-delimiters-depth-2">(</span>random_rotations<span class="org-rainbow-delimiters-depth-3">[</span>2<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>
+<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Convert the circuit object to tensor.</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">Two copies of the circuit because we have two commands (0 and 1) to train.</span>
+<span class="org-variable-name">datapoint_circuits</span> = tfq.convert_to_tensor<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>
+  noisy_preparation
+<span class="org-rainbow-delimiters-depth-2">]</span> * 2<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+打印出来看看，可以看到原先&ldquo;完美&rdquo;的量子比特（Cirq里默认初始状态是 \(|0\rangle\) ）被随机在X，Y，Z轴上做了旋转。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Print out the noisy qubit</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>random_rotations<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>noisy_preparation<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="org0006a70">
+[3.84902356 3.3647054  3.03737137]
+(0, 0): ───Rx(1.23π)───Ry(1.07π)───Rz(0.967π)───
+</pre>
+
+<p>
+创建Keras输入端，分别对应Commands和noisy<sub>preparation</sub>。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Create keras inputs from the datasets</span>
+<span class="org-variable-name">circuits_input</span> = tf.keras.Input<span class="org-rainbow-delimiters-depth-1">(</span>shape=<span class="org-rainbow-delimiters-depth-2">()</span>,
+                                <span class="org-comment-delimiter"># </span><span class="org-comment">The circuit-tensor has dtype `tf.string` </span>
+                                dtype=tf.string,
+                                name=<span class="org-string">'circuits_input'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">commands_input</span> = tf.keras.Input<span class="org-rainbow-delimiters-depth-1">(</span>shape=<span class="org-rainbow-delimiters-depth-2">(</span>1,<span class="org-rainbow-delimiters-depth-2">)</span>,
+                                dtype=tf.dtypes.float32,
+                                name=<span class="org-string">'commands_input'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0d3ea45" class="outline-3">
+<h3 id="org0d3ea45">准备训练标签</h3>
+<div class="outline-text-3" id="text-org0d3ea45">
+<p>
+训练标签就是目标状态的期望值，也就是1和-1（分别对应输入Command 0和1）。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Labels: target expecation values (1 for command 0, -1 for command 1)</span>
+<span class="org-variable-name">expected_outputs</span> = np.array<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span><span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span>, <span class="org-rainbow-delimiters-depth-3">[</span>-1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">]</span>, dtype=np.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org868f2ea" class="outline-3">
+<h3 id="org868f2ea">搭建量子机器学习模型</h3>
+<div class="outline-text-3" id="text-org868f2ea">
+<p>
+经典部分就是一个普通的深度神经网络（DNN）。因为这里只有一个量子比特，一个简单的2层DNN就够了。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Classical part of our model - "controller".</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">Since the problem is fairly small, a simple DNN is enough.</span>
+<span class="org-variable-name">controller</span> = tf.keras.Sequential<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>
+    tf.keras.layers.Dense<span class="org-rainbow-delimiters-depth-3">(</span>10, activation=<span class="org-string">'elu'</span><span class="org-rainbow-delimiters-depth-3">)</span>,
+    tf.keras.layers.Dense<span class="org-rainbow-delimiters-depth-3">(</span>3<span class="org-rainbow-delimiters-depth-3">)</span>
+<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+然后是量子部分。首先我们用Cirq API搭建校准电路（ <code>model_circuit</code> ），带3个参数 \(\theta_1\) ,  \(\theta_2\) ,  \(\theta_3\) ：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Quantum part of our model - "model_circuit"</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">Parameters that the classical NN will feed values into.</span>
+<span class="org-variable-name">control_params</span> = sympy.symbols<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">'theta_1 theta_2 theta_3'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Create the parameterized circuit.</span>
+<span class="org-variable-name">qubit</span> = cirq.GridQubit<span class="org-rainbow-delimiters-depth-1">(</span>0, 0<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">model_circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>
+    cirq.rz<span class="org-rainbow-delimiters-depth-2">(</span>control_params<span class="org-rainbow-delimiters-depth-3">[</span>0<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
+    cirq.ry<span class="org-rainbow-delimiters-depth-2">(</span>control_params<span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
+    cirq.rx<span class="org-rainbow-delimiters-depth-2">(</span>control_params<span class="org-rainbow-delimiters-depth-3">[</span>2<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>model_circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+
+<div id="orgdc6dd2e" class="figure">
+<p><img src="../images/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="480px" />
+</p>
+</div>
+
+<p>
+要把这个电路接到模型里去，我们需要把它包装成一个Keras layer。
+</p>
+
+<p>
+这里我们用的是Parameterized Quantum Circuit&ldquo; (PQC)： <code>tfq.layers.ControlledPQC</code> 。我们给它取名 <code>expectation_layer</code> ，因为它的输出是期望值。
+</p>
+
+<p>
+你可能注意到我们在创建PQC层的时候用到了 <code>operators</code> 参数。前面说过，谈期望值必须说明是在哪个算符上，这里通过 <code>operators</code> 参数，我们告诉PQC用Z算符来计算期望值。
+</p>
+
+<p>
+PQC创建完成，接下来我们就可以把它同噪声电路（ <code>circuits_input</code> ）和校准参数（controller的输出 <code>dense_2</code> ）接起来了。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">dense_2</span> = controller<span class="org-rainbow-delimiters-depth-1">(</span>commands_input<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">TFQ layer for classically controlled circuits.</span>
+<span class="org-variable-name">expectation_layer</span> = tfq.layers.ControlledPQC<span class="org-rainbow-delimiters-depth-1">(</span>model_circuit,
+                                             <span class="org-comment-delimiter"># </span><span class="org-comment">Observe Z</span>
+                                             operators = cirq.Z<span class="org-rainbow-delimiters-depth-2">(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">expectation</span> = expectation_layer<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>circuits_input, dense_2<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+创建模型：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">model</span> = tf.keras.Model<span class="org-rainbow-delimiters-depth-1">(</span>inputs=<span class="org-rainbow-delimiters-depth-2">[</span>circuits_input, commands_input<span class="org-rainbow-delimiters-depth-2">]</span>,
+                       outputs=expectation<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+这个模型可视化出来是这样的，感觉还是我前面画的那个更清楚：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">tf.keras.utils.plot_model<span class="org-rainbow-delimiters-depth-1">(</span>model, show_shapes=<span class="org-constant">True</span>, dpi=70<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+
+<div id="org661b17c" class="figure">
+<p><img src="../images/output_35_0.png" alt="output_35_0.png" width="560px" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7964f17" class="outline-3">
+<h3 id="org7964f17">模型训练</h3>
+<div class="outline-text-3" id="text-org7964f17">
+<p>
+训练过程就和普通的DNN差不多，这里用Adam优化器和MSE损失函数。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Now we can train the model...</span>
+<span class="org-variable-name">optimizer</span> = tf.keras.optimizers.Adam<span class="org-rainbow-delimiters-depth-1">(</span>learning_rate=0.05<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">loss</span> = tf.keras.losses.MeanSquaredError<span class="org-rainbow-delimiters-depth-1">()</span>
+model.<span class="org-builtin">compile</span><span class="org-rainbow-delimiters-depth-1">(</span>optimizer=optimizer, loss=loss<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">history</span> = model.fit<span class="org-rainbow-delimiters-depth-1">(</span>x=<span class="org-rainbow-delimiters-depth-2">[</span>datapoint_circuits, commands<span class="org-rainbow-delimiters-depth-2">]</span>,
+                    y=expected_outputs,
+                    epochs=30,
+                    verbose=0<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+把训练过程可视化出来：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Plot the history - looks good!</span>
+plt.plot<span class="org-rainbow-delimiters-depth-1">(</span>history.history<span class="org-rainbow-delimiters-depth-2">[</span><span class="org-string">'loss'</span><span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+plt.title<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Learning to Control a Qubit"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+plt.xlabel<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Iterations"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+plt.ylabel<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Error in Control"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+plt.show<span class="org-rainbow-delimiters-depth-1">()</span>
+</pre>
+</div>
+
+
+<div id="org8ffdc10" class="figure">
+<p><img src="../images/output_39_0.png" alt="output_39_0.png" width="480px" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6eb83b8" class="outline-3">
+<h3 id="org6eb83b8">验证</h3>
+<div class="outline-text-3" id="text-org6eb83b8">
+<p>
+模型训练好了，我们给它输入Command 0和1，看看它输出的期望值：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">model<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>datapoint_circuits, commands<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="orge36c6ae">
+&lt;tf.Tensor: shape=(2, 1), dtype=float32, numpy=
+array([[ 0.9891974],
+       [-0.9958328]], dtype=float32)&gt;
+</pre>
+
+<p>
+可以看到，输出的期望值非常接近我们的目标。可见我们的模型把被噪声干扰的量子比特校准回了需要的状态，我们的第一个量子机器学习模型就成功完成了！
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-orgfb8854b" class="outline-2">
+<h2 id="orgfb8854b">拓展</h2>
+<div class="outline-text-2" id="text-orgfb8854b">
+<p>
+这个例子还可以进一步扩展跟通用的情况，使用其他的算符。下次有空再说。
+</p>
+
+<p>
+感谢阅读！
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

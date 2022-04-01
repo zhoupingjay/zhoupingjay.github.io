@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Solving a magit issue with Emacs 26.3</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Solving a magit issue with Emacs 26.3
+<br />
+<span class="subtitle">Ping Zhou, 2019-12-18</span>
+</h1>
+<p>
+Some point after my Emacs was upgraded to 26.3, I started seeing errors whenever I try to open file from git repository (i.e. directories with .git subdirectory). The error was annoying as it prevented me from opening files.
+</p>
+
+<p>
+So I dig a little into the error and found out that it was from magit (the package that deals with git stuff). The error was caused by wrong argument number provided to function magit-turn-on-auto-revert-mode-if-desired:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">magit-turn-on-auto-revert-mode-if-desired</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-type">&amp;optional</span> file<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">if</span> file
+      <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">--when-let</span> <span class="org-rainbow-delimiters-depth-4">(</span>find-buffer-visiting file<span class="org-rainbow-delimiters-depth-4">)</span>
+        <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">with-current-buffer</span> it
+          <span class="org-rainbow-delimiters-depth-5">(</span>magit-turn-on-auto-revert-mode-if-desired<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">when</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">and</span> buffer-file-name
+               <span class="org-rainbow-delimiters-depth-5">(</span>file-readable-p buffer-file-name<span class="org-rainbow-delimiters-depth-5">)</span>
+               <span class="org-rainbow-delimiters-depth-5">(</span>executable-find magit-git-executable t<span class="org-rainbow-delimiters-depth-5">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">see #3684</span>
+               <span class="org-rainbow-delimiters-depth-5">(</span>magit-toplevel<span class="org-rainbow-delimiters-depth-5">)</span>
+               <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-keyword">or</span> <span class="org-rainbow-delimiters-depth-6">(</span>not magit-auto-revert-tracked-only<span class="org-rainbow-delimiters-depth-6">)</span>
+                   <span class="org-rainbow-delimiters-depth-6">(</span>magit-file-tracked-p buffer-file-name<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
+               <span class="org-rainbow-delimiters-depth-5">(</span>not auto-revert-mode<span class="org-rainbow-delimiters-depth-5">)</span>         <span class="org-comment-delimiter">; </span><span class="org-comment">see #3014</span>
+               <span class="org-rainbow-delimiters-depth-5">(</span>not global-auto-revert-mode<span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">see #3460</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span>auto-revert-mode 1<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+The source file is located at <code>.emacs.d/elpa/magit-20191207.2321/magit-autorevert.el</code>.
+</p>
+
+<p>
+Now the problem is that function <code>executable-find</code> (provided by Emacs 26.3) only takes one argument, while it was given 2 arguments from <code>magit-turn-on-auto-revert-mode-if-desired</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>executable-find magit-git-executable t<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+This was the root cause of the “wrong argument number” error from magit when I tried to open files from git repository.
+</p>
+
+<p>
+How to fix? For short-term I just removed the 2nd argument (“t”) from the call:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>executable-find magit-git-executable<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+Also I had to remove the pre-compiled file (<code>magit-autorevert.elc</code>) from the magit directory to make sure my change takes effect. After this I restarted Emacs and the issue was gone. Yeah!
+</p>
+
+<p>
+Longer term, this needs to be fixed either in magit or Emacs in future updates.
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

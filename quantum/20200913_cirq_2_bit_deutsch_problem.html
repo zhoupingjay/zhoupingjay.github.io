@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>用谷歌Cirq模拟双比特Deutsch问题</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">用谷歌Cirq模拟双比特Deutsch问题
+<br />
+<span class="subtitle">Ping Zhou, 2020-09-13</span>
+</h1>
+
+<section id="outline-container-orgead535a" class="outline-2">
+<h2 id="orgead535a">谷歌量子计算框架Cirq</h2>
+<div class="outline-text-2" id="text-orgead535a">
+<p>
+Cirq是谷歌开发的开源量子计算框架，它让开发者能够方便的用Python搭建量子电路。您可能会问，我没有量子计算机，如何运行我设计的电路呢？别急，Cirq内置了模拟器，您在自己的电脑上就可以模拟您设计的量子电路。如果想在真实的量子计算机上运行，Cirq也提供了相应的接口。
+</p>
+
+<p>
+Cirq的源码：<a href="https://github.com/quantumlib/Cirq">https://github.com/quantumlib/Cirq</a>
+</p>
+
+<p>
+Cirq的安装，最简单的方法是用pip：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">python -m pip install --upgrade pip
+python -m pip install cirq
+</pre>
+</div>
+
+<p>
+安装完成，您就可以在电脑上模拟量子计算了！
+</p>
+
+<p>
+接下来进入实战，我们要用Cirq来模拟双比特Deutsch问题。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgd3869f0" class="outline-2">
+<h2 id="orgd3869f0">回顾一下双比特Deutsch问题</h2>
+<div class="outline-text-2" id="text-orgd3869f0">
+<p>
+回顾一下双比特Deutsch问题：有人给你一个函数f，不告诉你它内部是怎么运作的，只知道它输入2个比特，输出1个比特，并且f有可能是常量函数（无论什么输入，输出总是0或者总是1），也有可能是平衡函数（对所有可能的输入，一半的情况下输出0，另一半情况输出1）。我们只能通过对f的查询，来判断f的性质。在上文我们讨论过，这样的函数f总共有8种可能（2个常量函数，6个平衡函数）。所以，提问的人实际上是从这8个可能的f函数中，随机抽一个给我们来判断。
+</p>
+
+
+<div id="orgcafd356" class="figure">
+<p><img src="../images/2-bit deutsch.svg" alt="2-bit deutsch.svg" class="org-svg" width="400px" />
+</p>
+</div>
+
+<p>
+我们知道量子计算里，每个这样的函数f，都可以包装成相应的可逆变换Uf。所以在量子计算环境下，提问的人实际上是把这8种可能的函数f包装成8个Uf，从里面随机抽一个作为黑盒给我们，让我们判断相应的函数f的性质。
+</p>
+
+<p>
+所以要模拟双比特Deutsch问题，我们首先要从提问者的角度，把这8个可能的Uf准备出来。
+</p>
+
+<p>
+<b><b>我们从一个简单的例子出发：</b></b>
+</p>
+
+<p>
+假如有这样一个平衡函数函数f，它在输入是00或01的情况下输出0，其余情况下输出1，我们把它和相应的Uf输出列在下面的表里：
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">输入 (x0x1)</th>
+<th scope="col" class="org-right">\[f(x_0x_1)\]</th>
+<th scope="col" class="org-left">\[y\oplus f(x_0x_1)\]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">00</td>
+<td class="org-right">0</td>
+<td class="org-left">y</td>
+</tr>
+
+<tr>
+<td class="org-right">01</td>
+<td class="org-right">0</td>
+<td class="org-left">y</td>
+</tr>
+
+<tr>
+<td class="org-right">10</td>
+<td class="org-right">1</td>
+<td class="org-left">y取反</td>
+</tr>
+
+<tr>
+<td class="org-right">11</td>
+<td class="org-right">1</td>
+<td class="org-left">y取反</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+从上面这个表中可以看出，Uf的第三个输出端，其状态取决于第一个输入：
+</p>
+
+<p>
+如果x0=1，那么在第三个输出端输出，反之如果x0=1，那么就输出。这在量子电路里，就是一个简单的CNOT门：CNOT(x0, y)。所以对于上面这个表里的f函数，包装成相应的Uf内部就是一个简单的CNOT门实现。
+</p>
+
+
+<div id="org4bf9cd6" class="figure">
+<p><img src="../images/2-bit deutsch 2.svg" alt="2-bit deutsch 2.svg" class="org-svg" width="400px" />
+</p>
+</div>
+
+<p>
+<b><b>以此类推，对每一个函数f，我们都可以用量子电路来实现相应的Uf。</b></b>
+</p>
+
+<p>
+我们把这些Uf放在一个池子里，模拟的时候从里面随机选一个，作为提问者的问题。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgd4a787c" class="outline-2">
+<h2 id="orgd4a787c">用Cirq模拟双比特Deutsch问题</h2>
+<div class="outline-text-2" id="text-orgd4a787c">
+</div>
+<div id="outline-container-orgd27d1fd" class="outline-3">
+<h3 id="orgd27d1fd">首先我们要导入Cirq包：</h3>
+<div class="outline-text-3" id="text-orgd27d1fd">
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">import</span> cirq
+<span class="org-keyword">import</span> random
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgaa56113" class="outline-3">
+<h3 id="orgaa56113">然后生成这个Uf池子：</h3>
+<div class="outline-text-3" id="text-orgaa56113">
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">q0</span>, <span class="org-variable-name">q1</span>, <span class="org-variable-name">q2</span> = cirq.LineQubit.<span class="org-builtin">range</span><span class="org-rainbow-delimiters-depth-1">(</span>3<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">constant</span> = <span class="org-rainbow-delimiters-depth-1">[</span><span class="org-rainbow-delimiters-depth-2">[]</span>, <span class="org-rainbow-delimiters-depth-2">[</span>cirq.X<span class="org-rainbow-delimiters-depth-3">(</span>q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">]</span>
+<span class="org-variable-name">balanced</span> = <span class="org-rainbow-delimiters-depth-1">[</span><span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q0, q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+            <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q1, q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+            <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q0, q2<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q1, q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+            <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q0, q2<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.X<span class="org-rainbow-delimiters-depth-3">(</span>q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+            <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q1, q2<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.X<span class="org-rainbow-delimiters-depth-3">(</span>q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+            <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q0, q2<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q1, q2<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.X<span class="org-rainbow-delimiters-depth-3">(</span>q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">]</span>
+
+<span class="org-variable-name">Uf_pool</span> = <span class="org-rainbow-delimiters-depth-1">[</span>
+    <span class="org-rainbow-delimiters-depth-2">[]</span>,            <span class="org-comment-delimiter"># </span><span class="org-comment">&#24120;&#37327;&#20989;&#25968;: f(x0x1) = 0</span>
+    <span class="org-rainbow-delimiters-depth-2">[</span>cirq.X<span class="org-rainbow-delimiters-depth-3">(</span>q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,  <span class="org-comment-delimiter"># </span><span class="org-comment">&#24120;&#37327;&#20989;&#25968;: f(x0x1) = 1</span>
+
+    <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q0, q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>, <span class="org-comment-delimiter"># </span><span class="org-comment">&#24179;&#34913;&#20989;&#25968;: f(00/01)=0, f(10/11)=1</span>
+    <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q1, q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>, <span class="org-comment-delimiter"># </span><span class="org-comment">&#24179;&#34913;&#20989;&#25968;</span>
+    <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q0, q2<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q1, q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>, <span class="org-comment-delimiter"># </span><span class="org-comment">&#24179;&#34913;&#20989;&#25968;</span>
+    <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q0, q2<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.X<span class="org-rainbow-delimiters-depth-3">(</span>q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,        <span class="org-comment-delimiter"># </span><span class="org-comment">&#24179;&#34913;&#20989;&#25968;</span>
+    <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q1, q2<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.X<span class="org-rainbow-delimiters-depth-3">(</span>q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,        <span class="org-comment-delimiter"># </span><span class="org-comment">&#24179;&#34913;&#20989;&#25968;</span>
+    <span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q0, q2<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>q1, q2<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.X<span class="org-rainbow-delimiters-depth-3">(</span>q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span> <span class="org-comment-delimiter"># </span><span class="org-comment">&#24179;&#34913;&#20989;&#25968;</span>
+<span class="org-rainbow-delimiters-depth-1">]</span>
+<span class="org-variable-name">Uf_attributes</span> = <span class="org-rainbow-delimiters-depth-1">[</span>
+    <span class="org-string">"constant"</span>,
+    <span class="org-string">"constant"</span>,
+    <span class="org-string">"balanced"</span>,
+    <span class="org-string">"balanced"</span>,
+    <span class="org-string">"balanced"</span>,
+    <span class="org-string">"balanced"</span>,
+    <span class="org-string">"balanced"</span>,
+    <span class="org-string">"balanced"</span>,
+<span class="org-rainbow-delimiters-depth-1">]</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbd8042f" class="outline-3">
+<h3 id="orgbd8042f">根据Uf生成量子电路</h3>
+<div class="outline-text-3" id="text-orgbd8042f">
+<p>
+接下来，我们要写一个函数，根据提问者给出的Uf，生成相应的量子电路。
+</p>
+
+
+<div id="org4e00ff4" class="figure">
+<p><img src="file:///home/zhouping/git/zhoupingjay/my_web_backup/images/2-bit deutsch 3.svg" alt="2-bit deutsch 3.svg" class="org-svg" width="480" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">generate_two_bit_deutsch</span><span class="org-rainbow-delimiters-depth-1">(</span>Uf<span class="org-rainbow-delimiters-depth-1">)</span>:
+    <span class="org-comment-delimiter"># </span><span class="org-comment">&#40664;&#35748;&#21021;&#22987;&#36755;&#20837;&#37117;&#26159;|0&gt;, &#25152;&#20197;q2&#20808;&#35201;&#29992;X&#21464;&#25104;|1&gt;</span>
+    <span class="org-variable-name">circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>cirq.X<span class="org-rainbow-delimiters-depth-3">(</span>q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    circuit.append<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>cirq.H<span class="org-rainbow-delimiters-depth-3">(</span>q0<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.H<span class="org-rainbow-delimiters-depth-3">(</span>q1<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.H<span class="org-rainbow-delimiters-depth-3">(</span>q2<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+                   strategy=cirq.InsertStrategy.NEW_THEN_INLINE<span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">&#25509;&#20837;&#25552;&#38382;&#32773;&#32473;&#30340;Uf</span>
+    circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>Uf, strategy=cirq.InsertStrategy.NEW_THEN_INLINE<span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">&#36755;&#20986;&#31471;&#20877;&#21152;&#19978;H&#21644;M&#38376;</span>
+    circuit.append<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>cirq.H<span class="org-rainbow-delimiters-depth-3">(</span>q0<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.H<span class="org-rainbow-delimiters-depth-3">(</span>q1<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+                  strategy=cirq.InsertStrategy.NEW_THEN_INLINE<span class="org-rainbow-delimiters-depth-1">)</span>
+    circuit.append<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>cirq.measure<span class="org-rainbow-delimiters-depth-3">(</span>q0<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.measure<span class="org-rainbow-delimiters-depth-3">(</span>q1<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+                  strategy=cirq.InsertStrategy.NEW_THEN_INLINE<span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-keyword">return</span> circuit
+</pre>
+</div>
+
+<p>
+试试这个函数生成的量子电路：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">&#29992;Uf_pool[4]&#29983;&#25104;&#30005;&#36335;&#65292;&#24182;&#25171;&#21360;&#20986;&#26469;</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>generate_two_bit_deutsch<span class="org-rainbow-delimiters-depth-2">(</span>Uf_pool<span class="org-rainbow-delimiters-depth-3">[</span>4<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="orga8b8fb2">
+0: ───────H───@───────H───M───
+              │
+1: ───────H───┼───@───H───M───
+              │   │
+2: ───X───H───X───X───────────
+</pre>
+
+<p>
+两边H门之间的就是提问者给的Uf。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">&#27979;&#35797;&#19968;&#19979;&#65292;&#25226;&#27744;&#23376;&#37324;&#25152;&#26377;&#30340;&#30005;&#36335;&#37117;&#25171;&#21360;&#20986;&#26469;</span>
+<span class="org-keyword">for</span> pick <span class="org-keyword">in</span> <span class="org-builtin">range</span><span class="org-rainbow-delimiters-depth-1">(</span>0,8<span class="org-rainbow-delimiters-depth-1">)</span>:
+    <span class="org-variable-name">Uf</span> = Uf_pool<span class="org-rainbow-delimiters-depth-1">[</span>pick<span class="org-rainbow-delimiters-depth-1">]</span>
+    <span class="org-variable-name">Uf_attr</span> = Uf_attributes<span class="org-rainbow-delimiters-depth-1">[</span>pick<span class="org-rainbow-delimiters-depth-1">]</span>
+    <span class="org-variable-name">circuit</span> = generate_two_bit_deutsch<span class="org-rainbow-delimiters-depth-1">(</span>Uf<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Circuit for Uf_pool[{}]: {}"</span>.<span class="org-builtin">format</span><span class="org-rainbow-delimiters-depth-2">(</span>pick, Uf<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7deaa23" class="outline-3">
+<h3 id="org7deaa23">模拟提问和回答的过程</h3>
+<div class="outline-text-3" id="text-org7deaa23">
+<p>
+接下来我们来模拟提问和回答的过程：
+</p>
+<ul class="org-ul">
+<li>提问者随机选一个Uf给我们</li>
+<li>我们用这个Uf生成量子电路</li>
+<li>用模拟器运行生成的量子电路</li>
+<li>根据电路运行结果，判断函数f的性质</li>
+</ul>
+
+<p>
+模拟过程代码如下：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">&#25552;&#38382;&#32773;&#38543;&#26426;&#36873;&#19968;&#20010;Uf&#32473;&#25105;&#20204;</span>
+random.seed<span class="org-rainbow-delimiters-depth-1">()</span>
+<span class="org-variable-name">pick</span> = random.randint<span class="org-rainbow-delimiters-depth-1">(</span>0, 7<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">Uf</span> = Uf_pool<span class="org-rainbow-delimiters-depth-1">[</span>pick<span class="org-rainbow-delimiters-depth-1">]</span>
+<span class="org-variable-name">Uf_attr</span> = Uf_attributes<span class="org-rainbow-delimiters-depth-1">[</span>pick<span class="org-rainbow-delimiters-depth-1">]</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Random pick Uf[{}]: {}"</span>.<span class="org-builtin">format</span><span class="org-rainbow-delimiters-depth-2">(</span>pick, Uf<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">&#25105;&#20204;&#29992;&#36825;&#20010;Uf&#29983;&#25104;&#37327;&#23376;&#30005;&#36335;</span>
+<span class="org-variable-name">circuit</span> = generate_two_bit_deutsch<span class="org-rainbow-delimiters-depth-1">(</span>Uf<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Generated circuit"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-variable-name">simulator</span> = cirq.Simulator<span class="org-rainbow-delimiters-depth-1">()</span>
+<span class="org-variable-name">result</span> = simulator.run<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>result<span class="org-rainbow-delimiters-depth-1">)</span>
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">simulator &#36820;&#22238;&#30340;&#26159;&#19968;&#20010;pandas DataFrame</span>
+<span class="org-keyword">if</span> result.data.loc<span class="org-rainbow-delimiters-depth-1">[</span>0<span class="org-rainbow-delimiters-depth-1">][</span>0<span class="org-rainbow-delimiters-depth-1">]</span> == 0 <span class="org-keyword">and</span> result.data.loc<span class="org-rainbow-delimiters-depth-1">[</span>0<span class="org-rainbow-delimiters-depth-1">][</span>1<span class="org-rainbow-delimiters-depth-1">]</span> == 0:
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Our result:    constant"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Actual result: {}"</span>.<span class="org-builtin">format</span><span class="org-rainbow-delimiters-depth-2">(</span>Uf_attr<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-keyword">else</span>:
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Our result:    balanced"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Actual result: {}"</span>.<span class="org-builtin">format</span><span class="org-rainbow-delimiters-depth-2">(</span>Uf_attr<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<pre class="example" id="org68a9701">
+Random pick Uf[1]: [cirq.X.on(cirq.LineQubit(2))]
+Generated circuit
+0: ───────H───────H───M───
+
+1: ───────H───────H───M───
+
+2: ───X───H───X───────────
+0=0
+1=0
+Our result:    constant
+Actual result: constant
+</pre>
+
+<p>
+多跑几次，可以看到无论提问者抽哪个Uf，我们的量子电路总能判断出正确的函数性质。而且更重要的是， <b>我们只需要对函数f进行一次查询！</b>
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-orgd0162c7" class="outline-2">
+<h2 id="orgd0162c7">总结</h2>
+<div class="outline-text-2" id="text-orgd0162c7">
+<p>
+Cirq并不是唯一的量子计算编程框架，IBM，微软，百度都有各自的量子计算编程框架，可见各大公司都在积极布局量子计算。虽然量子计算现在还在早期，不过谁知道呢，也许以后量子计算也会像人工智能一样普及？
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

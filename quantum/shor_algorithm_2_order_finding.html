@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子计算会终结现在的密码体系吗？(2) 因式分解和Order Finding问题</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子计算会终结现在的密码体系吗？(2) 因式分解和Order Finding问题
+<br />
+<span class="subtitle">Ping Zhou, 2021-04-26</span>
+</h1>
+
+
+<section id="outline-container-org7317421" class="outline-2">
+<h2 id="org7317421">上文回顾：RSA公钥加密算法</h2>
+<div class="outline-text-2" id="text-org7317421">
+<p>
+在<a href="shor_algorithm_1_rsa.html">上文</a>中我们讲了以RSA为代表的公钥加密算法，以及为什么其安全性的核心是因式分解问题。
+</p>
+
+
+<div id="org01fd3db" class="figure">
+<p><img src="../images/RSA.png" alt="RSA.png" width="480px" />
+</p>
+</div>
+
+<p>
+那么为什么量子计算机能高效求解因式分解问题呢？这是因为，因式分解可以转化为Order Finding或函数周期求解问题，而这类问题，正是量子计算机所能高效求解的！
+</p>
+
+<p>
+下面我们就来看一下，如何将因式分解问题转化为Order Finding问题。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org228ff6d" class="outline-2">
+<h2 id="org228ff6d">Order Finding问题</h2>
+<div class="outline-text-2" id="text-org228ff6d">
+<p>
+给定两个互质的数N和a，求使得 \(a^r=1 \mod N\) 的最小整数r，这就是所谓的Order Finding问题。求出的r，称为&ldquo;the order of a modulo N&rdquo;。
+</p>
+
+<p>
+如果 \(a^r=1 \mod N\) ，那么很显然 \(a^{2r}, a^{3r}, \dots\) 也对N取模为1。
+</p>
+
+<p>
+进一步推论，如果a的幂取任意整数 \(x=jr+l\) ，那么 \(a^x=a^{jr+l}=a^{jr}a^l=a^l \mod N\) ， 同理可知 \(a^{x+r} = a^xa^r = a^x \mod N\) 。
+</p>
+
+<p>
+因此如果我们定义一个函数 \(f(x)=a^x \mod N\) ，那么这个函数的值其实是 <b>以r为周期的</b> ，即 \(f(x)=f(x+r)\) 。因此Order Finding问题就相当于找到这个函数f(x)的周期。
+</p>
+
+<p>
+例如N=15，a=7，那么 \(f(x)=7^x \mod 15\) 函数的值：
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> \(f(x)=7^x \mod 15\)</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">\(x\)</th>
+<th scope="col" class="org-right">0</th>
+<th scope="col" class="org-right">1</th>
+<th scope="col" class="org-right">2</th>
+<th scope="col" class="org-right">3</th>
+<th scope="col" class="org-right">4</th>
+<th scope="col" class="org-right">5</th>
+<th scope="col" class="org-right">6</th>
+<th scope="col" class="org-left">\(\dots\)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">\(f(x)\)</td>
+<td class="org-right">1</td>
+<td class="org-right">7</td>
+<td class="org-right">4</td>
+<td class="org-right">13</td>
+<td class="org-right">1</td>
+<td class="org-right">7</td>
+<td class="org-right">4</td>
+<td class="org-left">\(\dots\)</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+不难看出，7对15模的order是4，因此这个函数的值是以4为周期不断重复。
+</p>
+
+<p>
+看起来很简单吧！为什么这个问题对因式分解，乃至RSA公钥加密算法那么重要呢？
+</p>
+</div>
+</section>
+
+<section id="outline-container-orga9b15e8" class="outline-2">
+<h2 id="orga9b15e8">为什么因式分解问题可以转化为Order Finding？</h2>
+<div class="outline-text-2" id="text-orga9b15e8">
+<p>
+假设要分解的大数是N，如何把它转化为Order Finding问题呢？
+</p>
+
+<ol class="org-ol">
+<li>首先我们看，如果N是偶数，那么已经找到了一个因子2，问题解决；</li>
+
+<li>如果N不是偶数，那么从1到N-1中随机选一个和它互质的数a，求x对N的order，\(a^r=1 \mod N\) ；</li>
+
+<li><p>
+然后，如果求到的r是偶数，那么我们有：
+</p>
+
+<p>
+\[
+   a^r = (a^{r/2})^2=1 \mod N
+   \]
+</p>
+
+<p>
+因此
+</p>
+
+<p>
+\[
+   (a^{r/2})^2 - 1 = 0 \mod N
+   \]
+</p>
+
+<p>
+等式左边可以分解为 \((a^{r/2}-1)(a^{r/2}+1)\) ，而它们的乘积能被N整除。
+因此， \(a^{r/2}-1\) 和 \(a^{r/2}+1\) 这两个数至少有一个含有和N的（大于1的）公约数！
+</p>
+
+<p>
+所以我们要做的，就是用它们分别与N求最大公约数：
+</p>
+
+\begin{matrix}
+GCD(a^{r/2}-1, N) \\
+GCD(a^{r/2}+1, N)
+\end{matrix}
+
+<p>
+两个最大公约数中，必然能找到N的非平凡因子，问题解决！
+</p></li>
+
+<li><p>
+如果r是奇数，没关系，我们回到第2步重新选a，不断重复，直到得到一个偶数的r。
+因为每次选到的x求出的r为奇偶数的概率是二分之一，这样重复几次，就能以很高的概率得到偶数的r，从而求出N的因子。
+</p>
+
+<p>
+上面这些步骤中，除了Order Finding外，其他步骤都可以在经典计算机上用多项式时间解决。
+</p>
+
+<p>
+所以，如果我们能高效的解决Order Finding问题，也就能高效的解决大数因式分解问题了！
+</p>
+
+<p>
+而这关键的一步，正是量子计算机大展身手的地方！
+</p></li>
+</ol>
+
+<p>
+<b>【举个栗子】</b>
+</p>
+
+<p>
+假如要分解的数N=15，我们随机选了一个与它互质的数a=7，在前面的讨论中我们已经知道 \(7^4=1 \mod 15\) ，因此7对15模的order是4。然后我们分别计算：
+</p>
+
+\begin{matrix}
+GCD(7^{4/2}+1, 15) = GCD(49+1, 15) = 5 \\
+GCD(7^{4/2}-1, 15) = GCD(49-1, 15) = 3 \\
+\end{matrix}
+
+<p>
+这样我们就成功的得到了15的非平凡因子5和3。
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

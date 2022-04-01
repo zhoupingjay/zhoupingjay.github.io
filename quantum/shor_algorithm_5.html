@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子计算会终结现在的密码体系吗？(5) 回到Shor算法</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子计算会终结现在的密码体系吗？(5) 回到Shor算法
+<br />
+<span class="subtitle">Ping Zhou, 2021-05-17</span>
+</h1>
+
+
+<section id="outline-container-org59e568f" class="outline-2">
+<h2 id="org59e568f">上文回顾：量子傅立叶变换</h2>
+<div class="outline-text-2" id="text-org59e568f">
+<p>
+量子傅立叶变换是Shor算法的核心步骤之一。今天我们回到Shor算法，看看如何用量子傅立叶变换来求解Order Finding和函数周期问题。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgbd8d275" class="outline-2">
+<h2 id="orgbd8d275">Shor算法第一步</h2>
+<div class="outline-text-2" id="text-orgbd8d275">
+<p>
+用量子计算机求解Order Finding问题，实质上是要找到函数 \(f(x)=a^x \mod N\) 的周期。
+</p>
+
+<p>
+Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这里的 \(|x\rangle, |y\rangle\) 都是多个量子位组成的寄存器）：
+</p>
+
+
+<div id="orgd2f5a55" class="figure">
+<p><img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px" />
+</p>
+</div>
+
+<p>
+然后给它制备输入： 
+</p>
+
+
+<div id="org221a6f0" class="figure">
+<p><img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px" />
+</p>
+</div>
+
+<p>
+在输出端测量 \(|\beta\rangle\) ，使得它坍缩到某个值z，这时 \(\alpha\) 就会坍缩到 \(|l\rangle, |l+r\rangle, |l+2r\rangle, \dots, |l+Ar\rangle\) 的叠加态：
+</p>
+
+\begin{matrix}
+|\alpha\rangle = \frac{1}{\sqrt{A+1}} \sum_{j=0}^{A}|jr+l\rangle
+\end{matrix}
+
+<p>
+其中\(l\) 称为offset，是满足 \(a^l \mod N = z\) 的最小整数。假设 \(|\alpha\rangle\) 有n个量子位，那么A就是在0到 \(q=2^n\) 之间有多少个周期。
+</p>
+
+<p>
+这里面， \(l, j\) 都是未知的，并且每次运行这个电路都有可能不同，不能直接从中导出周期r。所以下一步我们要做的，就是用量子傅立叶变换从中提取出有用的周期信息。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgdf32f1c" class="outline-2">
+<h2 id="orgdf32f1c">Shor算法的关键：用量子傅立叶变换提取周期信息</h2>
+<div class="outline-text-2" id="text-orgdf32f1c">
+<p>
+接着上一步：如果我们对 \(|\alpha\rangle\) 做量子傅立叶变换，会发生什么？
+</p>
+
+
+<div id="orgf165192" class="figure">
+<p><img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="480px" />
+</p>
+</div>
+
+<p>
+节省大家时间，先把答案放在这里，如果你有兴趣可以看我后文的推导。
+</p>
+
+<p>
+如果我们对 \(|\alpha\rangle\) 做量子傅立叶变换，然后对它测量，得到某个值y，那么这个y值与 \(q=2^n\) 之间的比值，会非常接近某个整数k与周期r的比值。
+</p>
+
+\begin{matrix}
+\frac{y}{q} = \frac{y}{2^n} \approx \frac{k}{r} && (q=2^n) \\\
+\end{matrix}
+
+<p>
+好了，到了这一步，q是已知的（n个量子位， \(q=2^n\) ），y是测量得到的，也就是说左边这个分数是已知的。这个不等式告诉我们：测量得到的y，与q的比值，是 \(\frac{k}{r}\) 的一个 <b>近似估计</b> 。我们知道r小于N（N是要分解的数），所以右边是一个分母小于N的分数。如果我们能从左边 \(\frac{y}{q}\) 估计出一个和它很接近，并且分母小于N的分数，那这个分数的分母就有可能是我们要找的周期r！然后我们要做的就是对这个候选的r进行验证，如果它确实是函数f(x)的周期，那么问题解决，否则就重新运行Shor算法电路。
+</p>
+
+<p>
+那么怎么从已知的 \(\frac{y}{q}\) 估计出右边的 \(\frac{k}{r}\) 呢？熟悉数论的朋友可能已经想到了—— <b>连分数算法</b> ！
+</p>
+
+<p>
+举个栗子：我们的电路用了11个量子位，因此 \(q=2^n=2048\) ，量子傅立叶变换后测到y值是1537，于是 \(\frac{y}{q}=\frac{1537}{2048}\) 。用连分数算法可以得到一个近似的分数 \(\frac{3}{4}\) ，它的分母4就是可能的周期r。至于连分数算法，Python里有个fractions库可以直接用：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">import</span> fractions
+<span class="org-variable-name">r_candidate</span> = fractions.Fraction.from_float<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-builtin">float</span><span class="org-rainbow-delimiters-depth-2">(</span>r/q<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>.limit_denominator<span class="org-rainbow-delimiters-depth-1">(</span>N<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+就这样，我们用量子电路解决了Order Finding问题，再把结果放到<a href="shor_algorithm_3.html">Shor算法的整体流程</a>里，因式分解问题也就解决了！
+</p>
+
+
+<div id="orga5fce5b" class="figure">
+<p><img src="../images/shor1.png" alt="shor1.png" width="400px" />
+</p>
+</div>
+
+<p>
+感谢阅读！
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

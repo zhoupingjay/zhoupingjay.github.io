@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>C++ vector容器强制释放内存</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">C++ vector容器强制释放内存
+<br />
+<span class="subtitle">Ping Zhou, 2021-11-27</span>
+</h1>
+<p>
+换个话题，聊聊使用C++ STL vector容器时的一个内存管理问题。
+</p>
+
+<p>
+C++用户经常会用STL里的vector容器来管理一组动态对象。STL vector的使用和C语言的数组类似，很方便：
+</p>
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-constant">std</span>::<span class="org-type">vector</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">int</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-variable-name">buf</span> = <span class="org-rainbow-delimiters-depth-1">{</span> 0, 1, 2, 3, 4, 5 <span class="org-rainbow-delimiters-depth-1">}</span>;
+buf<span class="org-rainbow-delimiters-depth-1">[</span>0<span class="org-rainbow-delimiters-depth-1">]</span>++;
+buf<span class="org-rainbow-delimiters-depth-1">[</span>1<span class="org-rainbow-delimiters-depth-1">]</span> = 10;
+</pre>
+</div>
+
+<p>
+并且内存的使用和释放都由STL管理，用户不用像C语言那样手动malloc和free管理内存，确实省心不少。
+</p>
+
+<p>
+但是在有些情况下，我们需要对容器占用的内存进行手动管理。
+</p>
+
+<p>
+举个例子，假如我们有个数据管道，每次迭代生成一个样本池，里面有几百万个对象放在一个vector里，从中抽取一万个样本，然后交给管道作下一步处理，并且这个过程会反复进行。
+</p>
+
+<p>
+那么在这个反复迭代过程中，我们希望样本池在每次采样完后就从内存里释放掉。否则下一次迭代时，我们再次生成样本池，而前一次占用的内存的还没释放掉，就有可能因为内存不够导致程序崩溃（Out Of Memory）。
+</p>
+
+<p>
+你可能会问，这种情况用容器的clear方法不就好了？
+</p>
+
+<p>
+但是，clear方法只是把这个容器的size变成了0，如果它的capacity其实没变，也就是说，clear方法并没有真的释放容器占用的内存。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++">buf.clear<span class="org-rainbow-delimiters-depth-1">()</span>;
+
+<span class="org-constant">std</span>::cout &lt;&lt; buf.size<span class="org-rainbow-delimiters-depth-1">()</span>;      <span class="org-comment-delimiter">// </span><span class="org-comment">size&#21464;&#25104;&#20102;0</span>
+<span class="org-constant">std</span>::cout &lt;&lt; buf.capacity<span class="org-rainbow-delimiters-depth-1">()</span>;  <span class="org-comment-delimiter">// </span><span class="org-comment">capacity&#36824;&#26159;6</span>
+</pre>
+</div>
+
+<p>
+那么在C++ STL里，是可以手动强制释放容器占用的内存的。方法不止一个，这里举个简单可靠的，就是用swap方法：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-constant">std</span>::<span class="org-type">vector</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">int</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-variable-name">buf</span> = <span class="org-rainbow-delimiters-depth-1">{</span> 0, 1, 2, 3, 4, 5 <span class="org-rainbow-delimiters-depth-1">}</span>;
+<span class="org-comment-delimiter">// </span><span class="org-comment">......</span>
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">&#24378;&#21046;&#37322;&#25918;buf&#21344;&#29992;&#30340;&#20869;&#23384;</span>
+<span class="org-constant">std</span>::vector<span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">int</span><span class="org-rainbow-delimiters-depth-1">&gt;()</span>.swap<span class="org-rainbow-delimiters-depth-1">(</span>buf<span class="org-rainbow-delimiters-depth-1">)</span>;
+</pre>
+</div>
+
+<p>
+解释一下这个方法的原理：
+</p>
+
+<ul class="org-ul">
+<li>首先用 <code>std::vector&lt;int&gt;()</code> 生成一个空的列表，其容量为0；</li>
+<li>然后用它和buf进行交换（ <code>swap</code> 方法）；</li>
+<li>因为空列表的内存占用是0，buf和它交换后就会被强制释放。</li>
+</ul>
+
+<p>
+之后再查看 <code>buf.capacity()</code> ，就会看到它也变成了0。
+</p>
+
+<p>
+注：除了这个方法外，理论上我们还可以用 <code>erase</code> 或 <code>resize</code> 来释放内存，但这两个方法都不一定可靠，因为它们都依赖底层的 <code>shrink_to_fit()</code> 方法，而我们用的vector不一定实现这个方法。
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fix a Problem in Emacs Python/Jupyter setup</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Fix a Problem in Emacs Python/Jupyter setup
+<br />
+<span class="subtitle">Ping Zhou, 2020-03-28</span>
+</h1>
+<p>
+I’ve configured my Emacs with a nice Python and Jupyter environment. I want to <a href="20190827_run_emacs_server_on_macos.html">use it on my Mac laptop</a>. Recently I noticed this strange issue:
+</p>
+
+<p>
+<b>Problem</b>: I send my code to Jupyter using C-c C-c, the Jupyter console shows a bunch of strange “Ctrl-G” (“<sup>G</sup>”) characters. My code was not executed, and the console seems to be stuck there. I have to press Ctrl-C to get back to shell.
+</p>
+
+
+<div id="org3dd8bad" class="figure">
+<p><img src="../images/2020/03/image-1.png" alt="image-1.png" width="480px" />
+</p>
+</div>
+
+<p>
+I searched up this problem and it seems to be related to the “shell echo” feature of elpy. An evidence is that if I send the code with <code>python-shell-send-buffer</code>, I don’t see this problem at all.
+</p>
+
+<p>
+<b>Solution</b>: To fix this problem, I simply disabled “shell echo” in elpy:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> elpy-shell-echo-output nil<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+Now I add this in my Emacs configuration and restart Emacs. Type in some Python code, press C-c C-c, and the code is executed in Jupyter console. Works like magic!
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

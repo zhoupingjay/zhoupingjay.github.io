@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Run Emacs Server on MacOS</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Run Emacs Server on MacOS
+<br />
+<span class="subtitle">Ping Zhou, 2019-08-27</span>
+</h1>
+<p>
+Ok, I’ve been using Emacs for a long time and my Emacs config file is getting bigger and more complex. Emacs is a powerful tool, but it can take longer time to start up with a big config file. However, I want Emacs to be my go-to editor instead of just a heavy-weight IDE. I want to use Emacs when I want to quickly edit something (like “vim &lt;something&gt;” or “nano &lt;something&gt;”). How do I do that with Emacs?
+</p>
+
+<p>
+One possible option is to start Emacs with “-Q” argument. This tells Emacs to skip all init script so it can start as quickly as possible. The downside is that you lose all your precious Emacs configuration and your favorite themes. 🙂
+</p>
+
+<p>
+Another option is to start Emacs as a server, and just launch a client (“emacsclient”) when you need the editor. In this way you get both quick startup time and a fully configured Emacs environment. I already use this approach on Linux, can I do this on MacOS?
+</p>
+
+<section id="outline-container-org6080d7f" class="outline-2">
+<h2 id="org6080d7f">Create “plist” file</h2>
+<div class="outline-text-2" id="text-org6080d7f">
+<p>
+First, I created a “plist” file in my LaunchAgents folder: ~/Library/LaunchAgents/emacs.daemon.plist
+</p>
+
+<p>
+Here is an example of the plist file for Emacs server. Assuming Emacs binary is at /Applications/Emacs.app/Contents/MacOS/Emacs and the argument “–daemon” launches Emacs in server (daemon) mode.
+</p>
+
+<pre class="example" id="org4f0452d">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
+ &lt;plist version="1.0"&gt;
+  &lt;dict&gt;
+    &lt;key&gt;Label&lt;/key&gt;
+    &lt;string&gt;emacs.daemon&lt;/string&gt;
+    &lt;key&gt;ProgramArguments&lt;/key&gt;
+    &lt;array&gt;
+      &lt;string&gt;/Applications/Emacs.app/Contents/MacOS/Emacs&lt;/string&gt;
+      &lt;string&gt;--daemon&lt;/string&gt;
+    &lt;/array&gt;
+   &lt;key&gt;RunAtLoad&lt;/key&gt;
+   &lt;true/&gt;
+   &lt;key&gt;ServiceDescription&lt;/key&gt;
+   &lt;string&gt;Emacs Daemon&lt;/string&gt;
+  &lt;/dict&gt;
+&lt;/plist&gt;
+</pre>
+</div>
+</section>
+
+<section id="outline-container-org9dfc775" class="outline-2">
+<h2 id="org9dfc775">Add to launchctl</h2>
+<div class="outline-text-2" id="text-org9dfc775">
+<p>
+Load the “plist” file to launchctl, so that it will be launched automatically.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">launchctl load -w ~/Library/LaunchAgents/emacs.daemon.plist
+</pre>
+</div>
+
+<p>
+If you need to manually start/stop the daemon:
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">launchctl start emacs.daemon
+launchctl stop emacs.daemon
+</pre>
+</div>
+
+<p>
+To unload the “plist” file:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">launchctl unload ~/Library/LaunchAgents/emacs.daemon.plist
+</pre>
+</div>
+
+<p>
+That’s it! Emacs should be running as a server now. You can check this with a “ps” command:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">ps aux|grep <span class="org-string">"[Ee]macs"</span>
+</pre>
+</div>
+</div>
+</section>
+
+<section id="outline-container-orgf5e6995" class="outline-2">
+<h2 id="orgf5e6995">Launch Emacs client</h2>
+<div class="outline-text-2" id="text-orgf5e6995">
+<p>
+Now that Emacs server is up and running, you can launch emacsclient just like any other editor. E.g. emacsclient ~/.bash<sub>profile</sub>
+</p>
+
+<p>
+One caveat is that if you have multiple emacs installed (e.g. MacOS comes with an old version of Emacs, and you installed Emacs 26.x), you need to make sure client and server are from the same Emacs installation. For example, if Emacs server is at:
+</p>
+
+<pre class="example" id="org8c260ed">
+/Applications/Emacs.app/Contents/MacOS/Emacs
+</pre>
+
+<p>
+You need to run emacsclient from the same installation:
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">$ which emacsclient
+/Applications/Emacs.app/Contents/MacOS/bin/emacsclient
+</pre>
+</div>
+
+<p>
+Launching Emacs client from a different installation won’t work.
+</p>
+
+<p>
+A note about GUI – By default emacsclient is launched in console. To launch emacsclient with GUI, use the “–c” argument:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">emacsclient --c
+</pre>
+</div>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

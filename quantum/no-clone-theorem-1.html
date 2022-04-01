@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子信息的不可克隆性 (1)</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子信息的不可克隆性 (1)
+<br />
+<span class="subtitle">Ping Zhou, 2022-01-03</span>
+</h1>
+<p>
+如果你关注过量子通信或量子信息的动态，应该会经常听到量子信息的“不可克隆性”这个概念。那么这个概念是怎么来的？今天就来聊一聊。
+</p>
+
+<p>
+先从一个简单的例子出发。从以前对CNOT门的讨论，它似乎可以用来“复制”信息：
+</p>
+
+
+<div id="org02dc3f1" class="figure">
+<p><img src="../images/no-clone-cnot.jpg" alt="no-clone-cnot.jpg" width="240px" />
+</p>
+</div>
+
+<p>
+看起来当辅助量子位是 \(|0\rangle\) 的时候，输出就得到了两个 \(|x\rangle\) ，真的是这样吗？
+</p>
+
+<p>
+实际上，CNOT门只能复制经典信息（也就是输入为 \(|0\rangle\) 或 \(|1\rangle\) 的情况）。如果输入是一般状态 \(|\psi\rangle=a|0\rangle+b|1\rangle\) ，CNOT并不能复制它！
+</p>
+
+<p>
+咱们来具体推导一下。首先在输入端，要复制的量子位是 \(a|0\rangle+b|1\rangle\) ，辅助量子位 \(|0\rangle\) ，合起来输入端状态就是
+</p>
+
+\begin{matrix}
+(a|0\rangle + b|1\rangle)|0\rangle = a|00\rangle + b|10\rangle
+\end{matrix}
+
+<p>
+CNOT的作用是当第一个量子位为1的时候翻转第二个量子位，所以我们在输出端得到的状态是
+</p>
+
+\begin{matrix}
+a|00\rangle + b|11\rangle & (1) \\
+\end{matrix}
+
+<p>
+但是，我们要的是在输出端复制 \(|\psi\rangle\) ，也就是在输出端得到 \(|\psi\rangle|\psi\rangle\) ，这个状态展开写就是这样：
+</p>
+
+\begin{matrix}
+|\psi\rangle|\psi\rangle = (a|0\rangle+b|1\rangle)(a|0\rangle+b|1\rangle) & \\
+= a^2|00\rangle + ab|01\rangle + ab|10\rangle + b^2|11\rangle & (2) \\
+\end{matrix}
+
+<p>
+比较一下(1)和(2)，只有当 \(ab=0\) ，也就是要复制的量子位为 \(|0\rangle\) 或 \(|1\rangle\) 时，这两个式子才有可能相等，而在一般情况下，(1)和(2)不可能相等。
+</p>
+
+<p>
+这个推导告诉我们，CNOT组成的“复制”电路，只能复制经典比特，不能复制处于一般态的量子位。
+</p>
+
+<p>
+从这个简单的例子开头，下一步我们可以讨论更一般的情况，证明复制量子态的机器不可能存在。
+</p>
+
+<p>
+(未完待续）
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

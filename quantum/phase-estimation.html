@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>量子相位估计 Phase Estimation</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">量子相位估计 Phase Estimation
+<br />
+<span class="subtitle">Ping Zhou, 2021-07-26</span>
+</h1>
+<p>
+之前的Shor算法系列，其实还有个相关的坑，就是“量子相位估计” (Phase Estimation)，今天也来填一下。:-)
+</p>
+
+<section id="outline-container-org8ce5414" class="outline-2">
+<h2 id="org8ce5414">什么是“量子相位估计”？</h2>
+<div class="outline-text-2" id="text-org8ce5414">
+<p>
+假如我们有一个幺正算符 \(U\) ，他的本征矢量是 \(|u\rangle\) ，本征值是 \(e^{i\phi}\) （ \(\phi\) 在0到 \(2\pi\) 之间）。
+</p>
+
+<p>
+&ldquo;量子相位估计“问题，就是从幺正算符 \(U\) 和它的本征矢量 \(|u\rangle\) ，估算它的本征值 \(e^{i\phi}\) 里的相位 \(\phi\) ：
+</p>
+
+<p>
+Estimate phase \(\phi\) of an eigenvalue of an unitary operator \(U\), given its eigenvector \(|u\rangle\).
+</p>
+</div>
+</section>
+
+<section id="outline-container-orga6e7d77" class="outline-2">
+<h2 id="orga6e7d77">量子相位估计算法</h2>
+<div class="outline-text-2" id="text-orga6e7d77">
+<p>
+既然幺正算符 \(U\) 的本征矢量是 \(|u\rangle\) ，并且其对应的本征值是 \(e^{i\phi}\) ，那么根据本征矢量的定义：
+</p>
+
+\begin{matrix}
+U|u\rangle = e^{i\phi}|u\rangle
+\end{matrix}
+
+<p>
+那么如果对 \(|u\rangle\) 进行多次U变换，不难推导出：
+</p>
+
+\begin{matrix}
+U^k|u\rangle = e^{ik\phi}|u\rangle
+\end{matrix}
+
+<p>
+所以多次对 \(|u\rangle\) 进行 \(U\) 变换，得到的状态仍然是 \(|u\rangle\) ，只不过给它增加了一个全局相位。
+</p>
+
+<p>
+我们可以从 \(U\) 制备出一组（n个）这样的幺正变换： \(U, U^2, U^4, U^8, \dots, U^{2^{n-1}}\)
+</p>
+
+<p>
+然后，对这些幺正变换作一些扩展，给它们加上控制输入，变成类似CNOT这样的可控 \(U^{2^k}\) 变换（也就是当控制输入是 \(|1\rangle\) 的时候才进行 \(U^{2^k}\) 变换）：
+</p>
+
+\begin{matrix}
+CU, CU^2, CU^4, CU^8, \dots, CU^{2^{n-1}}
+\end{matrix}
+
+<p>
+再把这些可控U变换这样接起来：
+</p>
+
+
+<div id="orgaddab1b" class="figure">
+<p><img src="../images/phase_estimation_p1.jpg" alt="phase_estimation_p1.jpg" width="640px" />
+</p>
+</div>
+
+<p>
+右边会是什么状态？我们来推导一下。
+</p>
+
+<p>
+从这个电路图可以看出，实际上每一步是用输入中的一位作为控制输入，对 \(|u\rangle\) 作可控U变换。
+</p>
+
+<p>
+例如在第k步，使用第k个量子位作为控制输入，输入状态是：
+\(\frac{1}{\sqrt 2}(|0\rangle + |1\rangle)|u\rangle\)
+</p>
+
+<p>
+第k位对应的可控U变换是 \(CU^{2^{k}}\) ，经过这个可控U变换后，状态变成了：
+</p>
+
+\begin{matrix}
+CU^{2^{k}} \frac{1}{\sqrt 2}(|0\rangle + |1\rangle) \\
+= \frac{1}{\sqrt 2}(|0\rangle|u\rangle + |1\rangle U^{2^k}|u\rangle) \\
+= \frac{1}{\sqrt 2}(|0\rangle|u\rangle + |1\rangle e^{i2^k\phi}|u\rangle) \\
+= \frac{1}{\sqrt 2}(|0\rangle + e^{i2^k\phi}|1\rangle) |u\rangle \\
+\end{matrix}
+
+<p>
+所以经过这一系列的可控U变换，右边的各个量子位状态变成了这样：
+</p>
+
+\begin{matrix}
+|\alpha_0\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{i\phi}|1\rangle) \\
+|\alpha_1\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{i2\phi}|1\rangle) \\
+|\alpha_2\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{i2^2\phi}|1\rangle) \\
+\dots \\
+|\alpha_k\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{i2^k\phi}|1\rangle) \\
+\dots \\
+|\alpha_{n-1}\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{i2^{n-1}\phi}|1\rangle) \\
+\end{matrix}
+
+<p>
+这里的 \(\phi\) 是一个角度，我们可以把它写成 \(\phi=2\pi \psi\) ，显然这里的 \(\psi\) 只用考虑小数部分，整数部分可以忽略，所以我们进一步假设 \(\psi\) 可以近似成n位的二进制小数：
+</p>
+
+<p>
+\(\psi=0.\psi_1\psi_2\dots\psi_n\) 
+</p>
+
+<p>
+把这个代入到前面的式子里去，其中的第k位， \(|1\rangle\) 的相位要乘以 \(2^k\) ，也就是小数点向右移动k位，同样，移位后的整数部分可以忽略：
+</p>
+
+\begin{matrix}
+e^{i 2^k \phi} = e^{2\pi i 2^k 0.\psi_1\psi_2\dots\psi_n} \\
+= e^{2\pi i \psi_1\psi_2\dots\psi_k.\psi_{k+1}\dots\psi_n} \\
+= e^{2\pi i 0.\psi_{k+1}\dots\psi_n} \\
+\end{matrix}
+
+<p>
+所以，电路右边的状态，用 \(\psi\) 表示的话是这样的：
+</p>
+
+\begin{matrix}
+|\alpha_0\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.\psi_1\psi_2\dots\psi_n}|1\rangle) \\
+|\alpha_1\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.\psi_2\psi_3\dots\psi_n}|1\rangle) \\
+|\alpha_2\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.\psi_3\psi_4\dots\psi_n}|1\rangle) \\
+\dots \\
+|\alpha_{n-2}\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.\psi_{n-1}\psi_n}|1\rangle) \\
+|\alpha_n\rangle = \frac{1}{\sqrt 2}(|0\rangle + e^{2\pi i 0.\psi_n}|1\rangle) \\
+\end{matrix}
+
+<p>
+如果您还记得之前<a href="qft-1.html">量子傅里叶变换的输入输出解读</a>的话，就会发现：这正是 \(\psi\) 的n位量子傅里叶变换的输出啊！
+</p>
+
+<p>
+那么，如果在这后面再接上一个量子傅立叶逆变换，不就能回到 \(\psi\) （也就是 \(\phi\) ）了？
+</p>
+
+<p>
+完整的量子相位估计电路：
+</p>
+
+
+<div id="org5b88253" class="figure">
+<p><img src="../images/phase_estimation_p2.jpg" alt="phase_estimation_p2.jpg" width="720px" />
+</p>
+</div>
+
+<p>
+总结一下，这个“量子相位估计”电路的作用，就是对给定的幺正变换 \(U\) 和它的本征矢量 \(|u\rangle\) ，给出其本征值的相位 \(\psi=\phi/2\pi\) 的 <b>n位二进制近似</b> 。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orge2436b0" class="outline-2">
+<h2 id="orge2436b0">量子相位估计有什么用？</h2>
+<div class="outline-text-2" id="text-orge2436b0">
+<p>
+其实…之前的量子因式分解Shor算法就可以看作是量子相位估计的一个应用。
+</p>
+
+<p>
+回想一下，<a href="shor_impl_thoughts.html">Shor算法的实现</a>里，使用的“指数取模”变换 \(U_f\) ，其内部实现其实是一系列的“乘法取模”变换（这里略去了辅助量子位）：
+</p>
+
+\begin{matrix}
+U|x\rangle = |ax \mod N\rangle
+\end{matrix}
+
+<p>
+可以证明，下面这一系列矢量都是这个变换 \(U\) 的本征矢量（其中r是a对N的order，即 \(a^r=1 \mod N\) ）：
+</p>
+
+\begin{matrix}
+|u_s\rangle = \frac{1}{\sqrt r} \sum_{k=0}^{r-1} e^{-\frac{2\pi isk}{r}} |a^k \mod N\rangle \\
+(0 \le s \le r-1)
+\end{matrix}
+
+<p>
+而它们各自对应的本征值，则是 \(e^{\frac{2\pi is}{r}}\) ，换句话说：
+</p>
+
+\begin{matrix}
+U|u_s\rangle = e^{\frac{2\pi is}{r}} |u_s\rangle
+\end{matrix}
+
+<p>
+证明过程这里先略过，后面有空再补，或者您可以作为练习自行推导 :-)
+</p>
+
+<p>
+我们看Shor算法里面实现“指数取模”的方法，以及后面作的量子傅立叶变换，是不是就是相当于对这个U的本征值做了一个量子相位估计？
+</p>
+
+<p>
+根据估计出来的相位 \(\frac{2\pi s}{r}\) ，我们得到分数 \(\frac{s}{r}\) 的一个近似，然后再用连分数算法，估算出r的值，也就是要找的order。
+</p>
+
+<p>
+所以，Shor算法里的order finding其实就是量子相位估计的一个应用。
+</p>
+
+<p>
+感谢阅读！
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

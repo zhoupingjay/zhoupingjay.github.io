@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-01 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>实战：用Cirq实现量子因式分解算法</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/quantum"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Quantum Computing Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">实战：用Cirq实现量子因式分解算法
+<br />
+<span class="subtitle">Ping Zhou, 2021-07-02</span>
+</h1>
+<p>
+前面的“量子因式分解系列”讨论了Shor算法和它的量子电路，今天切换到编程模式，用谷歌的Cirq框架来实现Shor算法，并用它来解决简单的因式分解问题。
+</p>
+
+<section id="outline-container-org4d498d2" class="outline-2">
+<h2 id="org4d498d2">导入依赖包</h2>
+<div class="outline-text-2" id="text-org4d498d2">
+<p>
+首先还是导入需要的包：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">import</span> fractions
+<span class="org-keyword">import</span> math
+<span class="org-keyword">import</span> random
+<span class="org-keyword">import</span> sympy
+<span class="org-keyword">import</span> cirq
+<span class="org-keyword">from</span> cirq.contrib.svg <span class="org-keyword">import</span> SVGCircuit
+<span class="org-keyword">from</span> typing <span class="org-keyword">import</span> Callable, List, Optional, Sequence, Union
+%matplotlib inline
+</pre>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org01cb822" class="outline-2">
+<h2 id="org01cb822">指数取模运算</h2>
+<div class="outline-text-2" id="text-org01cb822">
+<p>
+还记得Shor算法的量子电路吗？
+</p>
+
+<div id="orgc13bcd4" class="figure">
+<p><img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="400px" />
+</p>
+</div>
+
+<p>
+首先，我们需要一个“指数取模”的量子变换 \(U_f\) :
+</p>
+
+\begin{matrix}
+U_f |x\rangle|y\rangle \rightarrow |x\rangle|ya^x \mod N\rangle
+\end{matrix}
+
+<p>
+它的输入 \(|x\rangle|y\rangle\) ，输出是 \(|x\rangle|ya^x \mod N\rangle\) 。
+</p>
+
+<p>
+在Cirq里面怎么实现这个变换呢？一种办法是按照我之前的文章《聊聊量子因式分解算法的实现》，从加法器和乘法器开始，逐层往上实现。这个工程量就大了，我们也没有真的量子计算机可以跑不是？另一种方法是，利用Cirq框架提供的ArithmeticOperation接口，用经典计算来模拟这个变换：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">mod_pow</span><span class="org-rainbow-delimiters-depth-1">(</span>a:<span class="org-builtin">int</span>, x:<span class="org-builtin">int</span>, N:<span class="org-builtin">int</span>, y:<span class="org-builtin">int</span>=1<span class="org-rainbow-delimiters-depth-1">)</span> -&gt; <span class="org-builtin">int</span>:
+    <span class="org-variable-name">p</span> = y
+    <span class="org-keyword">for</span> i <span class="org-keyword">in</span> <span class="org-builtin">range</span><span class="org-rainbow-delimiters-depth-1">(</span>x<span class="org-rainbow-delimiters-depth-1">)</span>:
+        <span class="org-variable-name">p</span> = <span class="org-rainbow-delimiters-depth-1">(</span>p * a<span class="org-rainbow-delimiters-depth-1">)</span> % N
+        <span class="org-keyword">return</span> p
+
+<span class="org-keyword">class</span> <span class="org-type">ModularExp</span><span class="org-rainbow-delimiters-depth-1">(</span>cirq.ArithmeticOperation<span class="org-rainbow-delimiters-depth-1">)</span>:
+    <span class="org-keyword">def</span> <span class="org-function-name">__init__</span><span class="org-rainbow-delimiters-depth-1">(</span>
+        <span class="org-keyword">self</span>,
+        y: Sequence<span class="org-rainbow-delimiters-depth-2">[</span>cirq.Qid<span class="org-rainbow-delimiters-depth-2">]</span>,
+        x: Union<span class="org-rainbow-delimiters-depth-2">[</span><span class="org-builtin">int</span>, Sequence<span class="org-rainbow-delimiters-depth-3">[</span>cirq.Qid<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+        a: <span class="org-builtin">int</span>,
+        N: <span class="org-builtin">int</span>,
+    <span class="org-rainbow-delimiters-depth-1">)</span> -&gt; <span class="org-constant">None</span>:
+        <span class="org-keyword">if</span> <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-1">(</span>y<span class="org-rainbow-delimiters-depth-1">)</span> &lt; N.bit_length<span class="org-rainbow-delimiters-depth-1">()</span>:
+            <span class="org-keyword">raise</span> <span class="org-type">ValueError</span><span class="org-rainbow-delimiters-depth-1">(</span>
+                f<span class="org-string">'Register with {len(y)} qubits is too small for N {N}'</span>
+            <span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">self</span>.y = y
+        <span class="org-keyword">self</span>.x = x
+        <span class="org-keyword">self</span>.a = a
+        <span class="org-keyword">self</span>.N = N
+
+    <span class="org-keyword">def</span> <span class="org-function-name">registers</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span><span class="org-rainbow-delimiters-depth-1">)</span> -&gt; Sequence<span class="org-rainbow-delimiters-depth-1">[</span>Union<span class="org-rainbow-delimiters-depth-2">[</span><span class="org-builtin">int</span>, Sequence<span class="org-rainbow-delimiters-depth-3">[</span>cirq.Qid<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">]</span>:
+        <span class="org-keyword">return</span> <span class="org-keyword">self</span>.y, <span class="org-keyword">self</span>.x, <span class="org-keyword">self</span>.a, <span class="org-keyword">self</span>.N
+
+    <span class="org-keyword">def</span> <span class="org-function-name">with_registers</span><span class="org-rainbow-delimiters-depth-1">(</span>
+        <span class="org-keyword">self</span>,
+        *new_registers: Union<span class="org-rainbow-delimiters-depth-2">[</span><span class="org-builtin">int</span>, Sequence<span class="org-rainbow-delimiters-depth-3">[</span><span class="org-string">'cirq.Qid'</span><span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">]</span>,
+    <span class="org-rainbow-delimiters-depth-1">)</span> -&gt; <span class="org-string">'ModularExp'</span>:
+        <span class="org-keyword">if</span> <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-1">(</span>new_registers<span class="org-rainbow-delimiters-depth-1">)</span> != 4:
+            <span class="org-keyword">raise</span> <span class="org-type">ValueError</span><span class="org-rainbow-delimiters-depth-1">(</span>
+                f<span class="org-string">'Expected 4 registers (y, x, a, '</span>
+                f<span class="org-string">'N), but got {len(new_registers)}'</span>
+            <span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-variable-name">y</span>, <span class="org-variable-name">x</span>, <span class="org-variable-name">a</span>, <span class="org-variable-name">N</span> = new_registers
+        <span class="org-keyword">if</span> <span class="org-keyword">not</span> <span class="org-builtin">isinstance</span><span class="org-rainbow-delimiters-depth-1">(</span>y, Sequence<span class="org-rainbow-delimiters-depth-1">)</span>:
+            <span class="org-keyword">raise</span> <span class="org-type">ValueError</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'y must be a qubit register, got {type(y)}'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">if</span> <span class="org-keyword">not</span> <span class="org-builtin">isinstance</span><span class="org-rainbow-delimiters-depth-1">(</span>a, <span class="org-builtin">int</span><span class="org-rainbow-delimiters-depth-1">)</span>:
+            <span class="org-keyword">raise</span> <span class="org-type">ValueError</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'a must be a classical constant, got {type(a)}'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">if</span> <span class="org-keyword">not</span> <span class="org-builtin">isinstance</span><span class="org-rainbow-delimiters-depth-1">(</span>N, <span class="org-builtin">int</span><span class="org-rainbow-delimiters-depth-1">)</span>:
+            <span class="org-keyword">raise</span> <span class="org-type">ValueError</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'N must be a classical constant, got {type(N)}'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">return</span> ModularExp<span class="org-rainbow-delimiters-depth-1">(</span>y, x, a, N<span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-keyword">def</span> <span class="org-function-name">apply</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>, *register_values: <span class="org-builtin">int</span><span class="org-rainbow-delimiters-depth-1">)</span> -&gt; <span class="org-builtin">int</span>:
+        <span class="org-keyword">assert</span> <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-1">(</span>register_values<span class="org-rainbow-delimiters-depth-1">)</span> == 4
+        <span class="org-variable-name">y</span>, <span class="org-variable-name">x</span>, <span class="org-variable-name">a</span>, <span class="org-variable-name">N</span> = register_values
+        <span class="org-keyword">if</span> y &gt;= N:
+            <span class="org-keyword">return</span> y
+        <span class="org-comment-delimiter"># </span><span class="org-comment">return (y * a ** x) % N</span>
+        <span class="org-keyword">return</span> mod_pow<span class="org-rainbow-delimiters-depth-1">(</span>a=a, x=x, N=N, y=y<span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-keyword">def</span> <span class="org-function-name">_circuit_diagram_info_</span><span class="org-rainbow-delimiters-depth-1">(</span>
+        <span class="org-keyword">self</span>,
+        args: cirq.CircuitDiagramInfoArgs,
+    <span class="org-rainbow-delimiters-depth-1">)</span> -&gt; cirq.CircuitDiagramInfo:
+        <span class="org-keyword">assert</span> args.known_qubits <span class="org-keyword">is</span> <span class="org-keyword">not</span> <span class="org-constant">None</span>
+        wire_symbols: <span class="org-variable-name">List</span><span class="org-rainbow-delimiters-depth-1">[</span><span class="org-builtin">str</span><span class="org-rainbow-delimiters-depth-1">]</span> = <span class="org-rainbow-delimiters-depth-1">[]</span>
+        <span class="org-variable-name">t</span>, <span class="org-variable-name">e</span> = 0, 0
+        <span class="org-keyword">for</span> qubit <span class="org-keyword">in</span> args.known_qubits:
+            <span class="org-keyword">if</span> qubit <span class="org-keyword">in</span> <span class="org-keyword">self</span>.y:
+                <span class="org-keyword">if</span> t == 0:
+                    <span class="org-keyword">if</span> <span class="org-builtin">isinstance</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>.x, Sequence<span class="org-rainbow-delimiters-depth-1">)</span>:
+                        <span class="org-variable-name">e_str</span> = <span class="org-string">'e'</span>
+                    <span class="org-keyword">else</span>:
+                        <span class="org-variable-name">e_str</span> = <span class="org-builtin">str</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>.x<span class="org-rainbow-delimiters-depth-1">)</span>
+                    wire_symbols.append<span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'ModularExp(t*{self.a}**{e_str} % {self.N})'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                <span class="org-keyword">else</span>:
+                    wire_symbols.append<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">'t'</span> + <span class="org-builtin">str</span><span class="org-rainbow-delimiters-depth-2">(</span>t<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                <span class="org-variable-name">t</span> += 1
+            <span class="org-keyword">if</span> <span class="org-builtin">isinstance</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>.x, Sequence<span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">and</span> qubit <span class="org-keyword">in</span> <span class="org-keyword">self</span>.x:
+                wire_symbols.append<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">'e'</span> + <span class="org-builtin">str</span><span class="org-rainbow-delimiters-depth-2">(</span>e<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                <span class="org-variable-name">e</span> += 1
+        <span class="org-keyword">return</span> cirq.CircuitDiagramInfo<span class="org-rainbow-delimiters-depth-1">(</span>wire_symbols=<span class="org-builtin">tuple</span><span class="org-rainbow-delimiters-depth-2">(</span>wire_symbols<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+利用cirq.ArithmeticOperation接口，模拟实现一个指数取模变换ModularExp，这其中的核心就是apply函数：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">apply</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>, *register_values: <span class="org-builtin">int</span><span class="org-rainbow-delimiters-depth-1">)</span> -&gt; <span class="org-builtin">int</span>:
+    <span class="org-keyword">assert</span> <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-1">(</span>register_values<span class="org-rainbow-delimiters-depth-1">)</span> == 4
+    <span class="org-variable-name">y</span>, <span class="org-variable-name">x</span>, <span class="org-variable-name">a</span>, <span class="org-variable-name">N</span> = register_values
+    <span class="org-keyword">if</span> y &gt;= N:
+        <span class="org-keyword">return</span> y
+    <span class="org-comment-delimiter"># </span><span class="org-comment">return (y * a ** x) % N</span>
+    <span class="org-keyword">return</span> mod_pow<span class="org-rainbow-delimiters-depth-1">(</span>a=a, x=x, N=N, y=y<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+这个apply函数根据输入的寄存器值，返回指数取模的结果。这里我没有直接用Python的指数和取模运算，而是自己实现了一个，来模拟前文中用乘法取模实现指数取模的方法。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">mod_pow</span><span class="org-rainbow-delimiters-depth-1">(</span>a:<span class="org-builtin">int</span>, x:<span class="org-builtin">int</span>, N:<span class="org-builtin">int</span>, y:<span class="org-builtin">int</span>=1<span class="org-rainbow-delimiters-depth-1">)</span> -&gt; <span class="org-builtin">int</span>:
+    <span class="org-variable-name">p</span> = y
+    <span class="org-keyword">for</span> i <span class="org-keyword">in</span> <span class="org-builtin">range</span><span class="org-rainbow-delimiters-depth-1">(</span>x<span class="org-rainbow-delimiters-depth-1">)</span>:
+        <span class="org-variable-name">p</span> = <span class="org-rainbow-delimiters-depth-1">(</span>p * a<span class="org-rainbow-delimiters-depth-1">)</span> % N
+    <span class="org-keyword">return</span> p
+</pre>
+</div>
+</div>
+</section>
+
+<section id="outline-container-orgaf78742" class="outline-2">
+<h2 id="orgaf78742">构建量子电路</h2>
+<div class="outline-text-2" id="text-orgaf78742">
+<p>
+有了指数取模变换，接下来就可以把它接到量子电路里去了。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">make_order_finding_circuit</span><span class="org-rainbow-delimiters-depth-1">(</span>a: <span class="org-builtin">int</span>, N: <span class="org-builtin">int</span><span class="org-rainbow-delimiters-depth-1">)</span> -&gt; cirq.Circuit:
+    <span class="org-variable-name">N2</span> = N*N
+    <span class="org-variable-name">L</span> = N2.bit_length<span class="org-rainbow-delimiters-depth-1">()</span>
+    <span class="org-variable-name">y</span> = cirq.LineQubit.<span class="org-builtin">range</span><span class="org-rainbow-delimiters-depth-1">(</span>L<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-variable-name">x</span> = cirq.LineQubit.<span class="org-builtin">range</span><span class="org-rainbow-delimiters-depth-1">(</span>L, 2 * L<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">return</span> cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>
+        cirq.X<span class="org-rainbow-delimiters-depth-2">(</span>y<span class="org-rainbow-delimiters-depth-3">[</span>L - 1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)</span>,
+        cirq.H.on_each<span class="org-rainbow-delimiters-depth-2">(</span>*x<span class="org-rainbow-delimiters-depth-2">)</span>,
+        ModularExp<span class="org-rainbow-delimiters-depth-2">(</span>y, x, a, N<span class="org-rainbow-delimiters-depth-2">)</span>,
+        cirq.qft<span class="org-rainbow-delimiters-depth-2">(</span>*x, inverse=<span class="org-constant">True</span><span class="org-rainbow-delimiters-depth-2">)</span>,
+        cirq.measure<span class="org-rainbow-delimiters-depth-2">(</span>*x, key=<span class="org-string">'exponent'</span><span class="org-rainbow-delimiters-depth-2">)</span>,
+        <span class="org-comment-delimiter"># </span><span class="org-comment">This is not needed but it's an implicit measurement.</span>
+        <span class="org-comment-delimiter"># </span><span class="org-comment">cirq.measure(*y, key='mod')</span>
+    <span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+首先计算需要多少个量子位L。前文说过，寄存器表示的最大值应不小于要分解的数N的平方，即 \(2^L \ge N^2\) 。
+</p>
+
+<p>
+然后构建电路：
+</p>
+<ul class="org-ul">
+<li>寄存器y初始化成 $|1&rang;$；</li>
+<li>寄存器x初始化为 \(|0\rangle\) ，加上H变换，把它制备成叠加态；</li>
+<li>给x, y接上我们的ModularExp变换；</li>
+<li>对寄存器x做量子傅立叶变换，然后测量；</li>
+<li>寄存器y之后丢弃（其实是做了个隐性测量，不信你可以也给它接个测量试试）。</li>
+</ul>
+
+<p>
+举个简单的例子，要分解的数N=15，随机选a=7，搭个电路试试看：
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">circuit</span> = make_order_finding_circuit<span class="org-rainbow-delimiters-depth-1">(</span>a=7, N=15<span class="org-rainbow-delimiters-depth-1">)</span>
+SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+画出来是这样的：
+</p>
+
+
+<div id="orgf3df5d6" class="figure">
+<p><img src="../images/shor_cirq.jpg" alt="shor_cirq.jpg" width="400px" />
+</p>
+</div>
+
+<p>
+然后我们来跑一下这个电路试试，采样100次：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">result</span> = cirq.sample<span class="org-rainbow-delimiters-depth-1">(</span>circuit, repetitions=100<span class="org-rainbow-delimiters-depth-1">)</span>
+result.data.plot<span class="org-rainbow-delimiters-depth-1">(</span>kind=<span class="org-string">'hist'</span>, xlim=<span class="org-rainbow-delimiters-depth-2">(</span>0,256<span class="org-rainbow-delimiters-depth-2">)</span>, bins=16<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+可以看到，测量的结果集中在0到256之间的4个波峰上，这是因为，7对15的order是4（ \(7^4 \mod 15 = 1\) ），测量得到的结果集中在数轴的0/4, 1/4, 2/4, 3/4这四个波峰上。
+</p>
+
+
+<div id="org15c7793" class="figure">
+<p><img src="../images/shor_cirq_test.png" alt="shor_cirq_test.png" width="400px" />
+</p>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org49a45d8" class="outline-2">
+<h2 id="org49a45d8">Order Finder</h2>
+<div class="outline-text-2" id="text-org49a45d8">
+<p>
+搭建量子电路的函数有了，接下来把它包装到order finding函数里：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">quantum_order_finder</span><span class="org-rainbow-delimiters-depth-1">(</span>
+        a: <span class="org-builtin">int</span>, N: <span class="org-builtin">int</span>,
+        repetitions:<span class="org-builtin">int</span> = 1
+<span class="org-rainbow-delimiters-depth-1">)</span> -&gt; Optional<span class="org-rainbow-delimiters-depth-1">[</span><span class="org-builtin">int</span><span class="org-rainbow-delimiters-depth-1">]</span>:
+    <span class="org-keyword">if</span> a &lt; 2 <span class="org-keyword">or</span> N &lt;= a <span class="org-keyword">or</span> math.gcd<span class="org-rainbow-delimiters-depth-1">(</span>a, N<span class="org-rainbow-delimiters-depth-1">)</span> &gt; 1:
+        <span class="org-keyword">raise</span> <span class="org-type">ValueError</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'Invalid a={a} for N={N}.'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-variable-name">circuit</span> = make_order_finding_circuit<span class="org-rainbow-delimiters-depth-1">(</span>a, N<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-variable-name">result</span> = cirq.sample<span class="org-rainbow-delimiters-depth-1">(</span>circuit, repetitions=repetitions<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-variable-name">nbits</span> = result.measurements<span class="org-rainbow-delimiters-depth-1">[</span><span class="org-string">'exponent'</span><span class="org-rainbow-delimiters-depth-1">]</span>.shape<span class="org-rainbow-delimiters-depth-1">[</span>1<span class="org-rainbow-delimiters-depth-1">]</span>
+    <span class="org-keyword">for</span> i <span class="org-keyword">in</span> <span class="org-builtin">range</span><span class="org-rainbow-delimiters-depth-1">(</span>repetitions<span class="org-rainbow-delimiters-depth-1">)</span>:
+        <span class="org-variable-name">exponent</span> = result.data<span class="org-rainbow-delimiters-depth-1">[</span><span class="org-string">'exponent'</span><span class="org-rainbow-delimiters-depth-1">][</span>i<span class="org-rainbow-delimiters-depth-1">]</span>
+        <span class="org-variable-name">f</span> = fractions.Fraction.from_float<span class="org-rainbow-delimiters-depth-1">(</span>exponent/<span class="org-rainbow-delimiters-depth-2">(</span>2**nbits<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>.limit_denominator<span class="org-rainbow-delimiters-depth-1">(</span>N<span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">'exponent measured:'</span>, exponent, <span class="org-string">'nbits:'</span>, nbits, <span class="org-string">'f:'</span>, f<span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">if</span> f.numerator != 0:
+            <span class="org-variable-name">r</span> = f.denominator
+            <span class="org-comment-delimiter"># </span><span class="org-comment">Check if r is the order and if it's an even number.</span>
+            <span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-1">(</span>r % 2<span class="org-rainbow-delimiters-depth-1">)</span> == 0 <span class="org-keyword">and</span> <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">(</span>a ** r<span class="org-rainbow-delimiters-depth-2">)</span> % N<span class="org-rainbow-delimiters-depth-1">)</span> == 1:
+                <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'Found order r={r}!'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                <span class="org-keyword">return</span> r
+    <span class="org-keyword">return</span> <span class="org-constant">None</span>
+</pre>
+</div>
+
+<p>
+这个函数很简单，就是根据输入的a和N参数，构建量子电路，运行它，然后读出结果。
+</p>
+
+<p>
+这里面一个重要的步骤是如何解读测量结果。我们测量得到的值，与 \(q=2^L\) 的比值，因该非常接近某个数k与r的比值。这里用了fractions包里的连分数算法：
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-variable-name">f</span> = fractions.Fraction.from_float<span class="org-rainbow-delimiters-depth-1">(</span>exponent/<span class="org-rainbow-delimiters-depth-2">(</span>2**nbits<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>.limit_denominator<span class="org-rainbow-delimiters-depth-1">(</span>N<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+把测量得到的数exponent与 \(2^{nbit}\) 的比值，近似到分母小于N的一个分数，然后这个分母就可能是order。我们需要的order是偶数，所以还进一步做了判断，不符合条件的结果直接丢弃。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org7b581cd" class="outline-2">
+<h2 id="org7b581cd">量子因式分解主函数</h2>
+<div class="outline-text-2" id="text-org7b581cd">
+<p>
+好了，order finding的实现有了，接下来可以实现量子因式分解的主函数了。
+</p>
+
+<p>
+首先是一个辅助函数：输入要分解的数N，以及和它互质的数a，求解N的因子。
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">quantum_factor_helper</span><span class="org-rainbow-delimiters-depth-1">(</span>
+        N: <span class="org-builtin">int</span>, a: <span class="org-builtin">int</span>,
+        repetitions:<span class="org-builtin">int</span> = 10
+<span class="org-rainbow-delimiters-depth-1">)</span> -&gt; Optional<span class="org-rainbow-delimiters-depth-1">[</span><span class="org-builtin">int</span><span class="org-rainbow-delimiters-depth-1">]</span>:
+    <span class="org-variable-name">r</span> = quantum_order_finder<span class="org-rainbow-delimiters-depth-1">(</span>a=a, N=N, repetitions=repetitions<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">if</span> r <span class="org-keyword">is</span> <span class="org-keyword">not</span> <span class="org-constant">None</span>:
+        <span class="org-variable-name">k</span> = <span class="org-rainbow-delimiters-depth-1">(</span>a**<span class="org-rainbow-delimiters-depth-2">(</span>r//2<span class="org-rainbow-delimiters-depth-2">)</span> % N<span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-variable-name">c1</span> = math.gcd<span class="org-rainbow-delimiters-depth-1">(</span>k - 1, N<span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-variable-name">c2</span> = math.gcd<span class="org-rainbow-delimiters-depth-1">(</span>k + 1, N<span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'a={a}, N={N}, r={r}, k={k}, c1={c1}, c2={c2}'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">if</span> c1 &gt; 1 <span class="org-keyword">and</span> c1 &lt; N <span class="org-keyword">and</span> math.gcd<span class="org-rainbow-delimiters-depth-1">(</span>c1, N<span class="org-rainbow-delimiters-depth-1">)</span> &gt; 1:
+            <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'Factor of {N} is {c1}'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+            <span class="org-keyword">return</span> c1
+        <span class="org-keyword">if</span> c2 &gt; 1 <span class="org-keyword">and</span> c2 &lt; N <span class="org-keyword">and</span> math.gcd<span class="org-rainbow-delimiters-depth-1">(</span>c2, N<span class="org-rainbow-delimiters-depth-1">)</span> &gt; 1:
+            <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'Factor of {N} is {c2}'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+            <span class="org-keyword">return</span> c2
+    <span class="org-keyword">return</span> <span class="org-constant">None</span>
+</pre>
+</div>
+
+<p>
+这个辅助函数首先求解a对N的order，如果找到的话，计算 \(a^{r/2} \mod N - 1\) 和 \(a^{r/2} \mod N + 1\) ，这两个数至少有一个应是N的因子。如果没找到，就返回None。
+</p>
+
+<p>
+主函数部分：
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">quantum_factor</span><span class="org-rainbow-delimiters-depth-1">(</span>
+        N: <span class="org-builtin">int</span>, attempts: <span class="org-builtin">int</span> = 30, seed: <span class="org-builtin">int</span> = <span class="org-constant">None</span>
+<span class="org-rainbow-delimiters-depth-1">)</span> -&gt; Optional<span class="org-rainbow-delimiters-depth-1">[</span><span class="org-builtin">int</span><span class="org-rainbow-delimiters-depth-1">]</span>:
+    <span class="org-keyword">if</span> <span class="org-builtin">type</span><span class="org-rainbow-delimiters-depth-1">(</span>N<span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">is</span> <span class="org-keyword">not</span> <span class="org-builtin">int</span>:
+        <span class="org-keyword">raise</span> <span class="org-type">TypeError</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"n must be an integer."</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">if</span> N &gt; <span class="org-rainbow-delimiters-depth-1">(</span>2 ** 30<span class="org-rainbow-delimiters-depth-1">)</span>:
+        <span class="org-keyword">raise</span> <span class="org-type">ValueError</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number is too large. Try n &lt;= 2^30."</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">if</span> N &lt; 1:
+        <span class="org-keyword">raise</span> <span class="org-type">ValueError</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number must be positive integer greater than 1."</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">if</span> N % 2 == 0:
+        <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">"{N} has trivial factor of 2."</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">return</span> 2
+    <span class="org-keyword">if</span> sympy.isprime<span class="org-rainbow-delimiters-depth-1">(</span>N<span class="org-rainbow-delimiters-depth-1">)</span>:
+        <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'{N} is a prime number.'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">return</span> <span class="org-constant">None</span>
+
+    random.seed<span class="org-rainbow-delimiters-depth-1">(</span>seed<span class="org-rainbow-delimiters-depth-1">)</span>
+
+    <span class="org-keyword">for</span> i <span class="org-keyword">in</span> <span class="org-builtin">range</span><span class="org-rainbow-delimiters-depth-1">(</span>attempts<span class="org-rainbow-delimiters-depth-1">)</span>:
+        <span class="org-variable-name">a</span> = random.randint<span class="org-rainbow-delimiters-depth-1">(</span>2, N-1<span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'Randomly pick a={a}'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-variable-name">gcd</span> = math.gcd<span class="org-rainbow-delimiters-depth-1">(</span>a, N<span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">if</span> gcd &gt; 1:
+            <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'gcd({a}, {N})={gcd}, found factor!'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+            <span class="org-keyword">return</span> gcd
+
+        <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">'Calling quantum order finding'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-variable-name">c</span> = quantum_factor_helper<span class="org-rainbow-delimiters-depth-1">(</span>a=a, N=N<span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">if</span> c <span class="org-keyword">is</span> <span class="org-keyword">not</span> <span class="org-constant">None</span>:
+            <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>f<span class="org-string">'Found factor {c}!'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+            <span class="org-keyword">return</span> c
+</pre>
+</div>
+
+<p>
+主函数输入参数N就是要分解的数，还有个attempts参数，告诉它我们想最多重复运行多少次算法。因为Shor算法是一个随机算法，不保证一次就能得到所需的结果，可能需要运行多次。
+</p>
+
+<p>
+在执行Shor算法前，首先对输入做一些判断，例如N太大，N是偶数，以及N是质数，这些情况下不需要运行Shor算法，直接返回。
+</p>
+
+<p>
+然后进入主循环，每次在2到N-1之间选一个随机的数a，如果它与N不互质，那么我们已经找到了N的因子，问题解决，否则就对它求解order，然后order算出N的因子。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org845365c" class="outline-2">
+<h2 id="org845365c">测试一下</h2>
+<div class="outline-text-2" id="text-org845365c">
+<p>
+我们用主函数 <code>quantum_factor</code> 测试一下，分解N=21：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">quantum_factor<span class="org-rainbow-delimiters-depth-1">(</span>21<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+得到类似这样的输出（因为算法的随机性，每次运行的结果都会有所不同）：
+</p>
+
+<pre class="example" id="org9a3e4ac">
+Randomly pick a=19
+Calling quantum order finding
+exponent measured: 256 nbits: 9 f: 1/2
+exponent measured: 0 nbits: 9 f: 0
+exponent measured: 342 nbits: 9 f: 2/3
+exponent measured: 85 nbits: 9 f: 1/6
+Found order r=6!
+a=19, N=21, r=6, k=13, c1=3, c2=7
+Factor of 21 is 3
+Found factor 3!
+</pre>
+
+<p>
+计算成功！我们找到了N=21的因子3。
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>
