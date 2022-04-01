@@ -9,6 +9,7 @@
 <title>How to Run GUI Application in Windows Subsystem for Linux (WSL)</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
+<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -122,7 +123,7 @@ Try running some GUI application from WSL. For example, “xeye”, or launching
 If you see authorization error like this, it means need to configure xauth for WSL. See following section for steps.
 </p>
 
-<pre class="example" id="orgb4102b5">
+<pre class="example" id="org7a38969">
 Authorization required, but no authorization protocol specified
 Error: Can't open display: :0
 </pre>
@@ -139,14 +140,14 @@ There are two options to solve this problem. First one is to copy the “.Xautho
 <p>
 Source file:
 </p>
-<pre class="example" id="org8a23e6b">
+<pre class="example" id="org313c6eb">
 C:\cygwin64\home\&lt;CYGWIN_USER&gt;
 </pre>
 
 <p>
 Destination file:
 </p>
-<pre class="example" id="org52a814b">
+<pre class="example" id="org52921a7">
 C:\Users\&lt;WINDOWS_USER&gt;\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\&lt;WSL_USER&gt;
 </pre>
 
@@ -173,7 +174,7 @@ Done! Now you should be able to run GUI applications in WSL. For example, Emacs 
 </p>
 
 
-<div id="orgd03c2ab" class="figure">
+<div id="orgfda972a" class="figure">
 <p><img src="../images/2019/08/image.png" alt="image.png" width="480px" />
 </p>
 </div>

@@ -9,6 +9,7 @@
 <title>Markdown in Emacs: Live Preview, Math and Images</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
+<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -230,7 +231,7 @@ The filter will insert MathJax script in the generated HTML so that math symbols
 You can point it to any URL that hosts MathJax (if you trust the source), but I decide to host MathJax locally in simple-httpd:
 </p>
 
-<pre class="example" id="org720b647">
+<pre class="example" id="org9cf1281">
 &lt;script src=\"/mathjax/es5/tex-chtml-full.js\"&gt;&lt;/script&gt;
 </pre>
 
@@ -270,7 +271,7 @@ The CSS file is also hosted locally in simple-httpd.
 <p>
 Add this line to my filter:
 </p>
-<pre class="example" id="orgc75d190">
+<pre class="example" id="orge2f6d95">
 &lt;link rel=\"stylesheet\" href = \"/github-markdown.css\"/&gt;
 </pre>
 
@@ -304,7 +305,7 @@ Now the filter is like this:
 Open a Markdown file, and then start live preview:
 </p>
 
-<pre class="example" id="org188b736">
+<pre class="example" id="org8472a85">
 M-x markdown-live-preview
 </pre>
 
@@ -343,7 +344,7 @@ This relative path works for impatient-mode too (i.e. it will look for test.png 
 Try math equations in Markdown:
 </p>
 
-<pre class="example" id="org85bd881">
+<pre class="example" id="orgead9c9b">
 $$
 \begin{pmatrix}
 aa &amp; bb \\

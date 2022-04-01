@@ -9,6 +9,7 @@
 <title>聊聊量子搜索算法(Grover算法) - 2</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
+<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -92,7 +93,7 @@
 </p>
 
 
-<div id="orgd0b8e51" class="figure">
+<div id="org5a2e17a" class="figure">
 <p><img src="../images/Quantum Search - Grover's Algorithm.png" alt="Quantum Search - Grover's Algorithm.png" width="480px" />
 </p>
 </div>
@@ -129,7 +130,7 @@
 这个\(|\psi\rangle\)向量，和\(|\alpha\rangle\)轴之间的夹角，我们记作\(\frac{\theta}{2}\)，如下图所示：
 </p>
 
-<div id="org9ac6b5b" class="figure">
+<div id="org7d764ec" class="figure">
 <p><img src="../images/Quantum Search - Grover's Algorithm Visualized1.png" alt="Quantum Search - Grover's Algorithm Visualized1.png" width="480px" />
 </p>
 </div>
@@ -157,7 +158,7 @@ G=(2|\psi\rangle \langle\psi|-I)O
 我们先从O（Oracle）变换看起。O变换干了什么呢？它是把输入的状态\(|x\rangle\)变成\((-1)^{f(x)} |x\rangle\)。如果f(x)=1，那么它就给输出加上一个-1的相位，否则不变。那么这个操作在二维平面图中，实际上就是把输入的向量对\(|\alpha\rangle\)轴做了一个 <b><b>反射</b></b> 。
 </p>
 
-<div id="org64e9655" class="figure">
+<div id="orga9e721e" class="figure">
 <p><img src="../images/Quantum Search - Grover's Algorithm Visualized2.png" alt="Quantum Search - Grover's Algorithm Visualized2.png" width="480px" />
 </p>
 </div>
@@ -244,7 +245,7 @@ G=(2|\psi\rangle \langle\psi|-I)O
 上面这个式子，加号左边就是原向量乘-1，而加号右边的向量，所有分量都相同，都是\(2\langle\alpha\rangle\)，归一化后就是无差别叠加态\(|\psi\rangle\)。两者相加，得到的是什么？看下面的图就可以直观的理解了：
 </p>
 
-<div id="org520371d" class="figure">
+<div id="org742a0a8" class="figure">
 <p><img src="../images/Quantum Search - Grover's Algorithm Visualized3.png" alt="Quantum Search - Grover's Algorithm Visualized3.png" width="480px" />
 </p>
 </div>
@@ -265,7 +266,7 @@ G=(2|\psi\rangle \langle\psi|-I)O
 连续两步反射操作合在一起，其实就是把输入的向量进行了 <b><b>旋转</b></b> 。那么这个旋转角度是多少呢？我们在图里画一下就能明白了：
 </p>
 
-<div id="orga81a3e7" class="figure">
+<div id="orge013d21" class="figure">
 <p><img src="../images/Quantum Search - Grover's Algorithm Visualized.png" alt="Quantum Search - Grover's Algorithm Visualized.png" width="480px" />
 </p>
 </div>

@@ -1,0 +1,12 @@
+*~
+\#*\#
+ltximg
+auto
+*.log
+*.aux
+*.toc
+*.out
+*.tex
+*.dvi
+*.md
+.ipynb_checkpoints 
