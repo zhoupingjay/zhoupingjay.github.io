@@ -79,9 +79,9 @@
 前面的“量子因式分解系列”讨论了Shor算法和它的量子电路，今天切换到编程模式，用谷歌的Cirq框架来实现Shor算法，并用它来解决简单的因式分解问题。
 </p>
 
-<section id="outline-container-org410e87c" class="outline-2">
-<h2 id="org410e87c">导入依赖包</h2>
-<div class="outline-text-2" id="text-org410e87c">
+<section id="outline-container-orgeeba513" class="outline-2">
+<h2 id="orgeeba513">导入依赖包</h2>
+<div class="outline-text-2" id="text-orgeeba513">
 <p>
 首先还是导入需要的包：
 </p>
@@ -100,14 +100,14 @@
 </div>
 </section>
 
-<section id="outline-container-org741e3d4" class="outline-2">
-<h2 id="org741e3d4">指数取模运算</h2>
-<div class="outline-text-2" id="text-org741e3d4">
+<section id="outline-container-org0ab5aed" class="outline-2">
+<h2 id="org0ab5aed">指数取模运算</h2>
+<div class="outline-text-2" id="text-org0ab5aed">
 <p>
 还记得Shor算法的量子电路吗？
 </p>
 
-<div id="org5faa640" class="figure">
+<div id="orgdda17f2" class="figure">
 <p><img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="400px" />
 </p>
 </div>
@@ -236,9 +236,9 @@ U_f |x\rangle|y\rangle \rightarrow |x\rangle|ya^x \mod N\rangle
 </div>
 </section>
 
-<section id="outline-container-orgec98435" class="outline-2">
-<h2 id="orgec98435">构建量子电路</h2>
-<div class="outline-text-2" id="text-orgec98435">
+<section id="outline-container-org7dd7228" class="outline-2">
+<h2 id="org7dd7228">构建量子电路</h2>
+<div class="outline-text-2" id="text-org7dd7228">
 <p>
 有了指数取模变换，接下来就可以把它接到量子电路里去了。
 </p>
@@ -290,7 +290,7 @@ SVGCircuit(circuit)
 </p>
 
 
-<div id="orga7f317e" class="figure">
+<div id="org095c5d0" class="figure">
 <p><img src="../images/shor_cirq.jpg" alt="shor_cirq.jpg" width="400px" />
 </p>
 </div>
@@ -310,16 +310,16 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 </p>
 
 
-<div id="orgbbd873f" class="figure">
+<div id="org5d03dcc" class="figure">
 <p><img src="../images/shor_cirq_test.png" alt="shor_cirq_test.png" width="400px" />
 </p>
 </div>
 </div>
 </section>
 
-<section id="outline-container-org1e5c220" class="outline-2">
-<h2 id="org1e5c220">Order Finder</h2>
-<div class="outline-text-2" id="text-org1e5c220">
+<section id="outline-container-org17bd983" class="outline-2">
+<h2 id="org17bd983">Order Finder</h2>
+<div class="outline-text-2" id="text-org17bd983">
 <p>
 搭建量子电路的函数有了，接下来把它包装到order finding函数里：
 </p>
@@ -367,9 +367,9 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 </div>
 </section>
 
-<section id="outline-container-org3f16c5c" class="outline-2">
-<h2 id="org3f16c5c">量子因式分解主函数</h2>
-<div class="outline-text-2" id="text-org3f16c5c">
+<section id="outline-container-orgc3107cf" class="outline-2">
+<h2 id="orgc3107cf">量子因式分解主函数</h2>
+<div class="outline-text-2" id="text-orgc3107cf">
 <p>
 好了，order finding的实现有了，接下来可以实现量子因式分解的主函数了。
 </p>
@@ -454,9 +454,9 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 </div>
 </section>
 
-<section id="outline-container-org724a777" class="outline-2">
-<h2 id="org724a777">测试一下</h2>
-<div class="outline-text-2" id="text-org724a777">
+<section id="outline-container-org86afb8a" class="outline-2">
+<h2 id="org86afb8a">测试一下</h2>
+<div class="outline-text-2" id="text-org86afb8a">
 <p>
 我们用主函数 <code>quantum_factor</code> 测试一下，分解N=21：
 </p>
@@ -470,7 +470,7 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 得到类似这样的输出（因为算法的随机性，每次运行的结果都会有所不同）：
 </p>
 
-<pre class="example" id="orgc296b4a">
+<pre class="example" id="org031d864">
 Randomly pick a=19
 Calling quantum order finding
 exponent measured: 256 nbits: 9 f: 1/2

@@ -79,9 +79,9 @@
 在上一篇 “一文看懂量子计算机的威力 – 从Deutsch问题说起” 中，我们看到了量子计算机只需一次查询就可以判断函数的特性。但是在那个例子中，我们讨论的是一个简单的单比特函数，如果把输入扩展到多比特，量子计算机是否仍然只需要一次查询呢？今天我们就结合谷歌的Cirq框架，看看量子计算的 <b>指数级</b> 加速。
 </p>
 
-<section id="outline-container-org81921f6" class="outline-2">
-<h2 id="org81921f6">双比特Deutsch问题</h2>
-<div class="outline-text-2" id="text-org81921f6">
+<section id="outline-container-orgc537455" class="outline-2">
+<h2 id="orgc537455">双比特Deutsch问题</h2>
+<div class="outline-text-2" id="text-orgc537455">
 <p>
 首先和上次一样，假设我们有个函数f，但这次函数f输入2个比特，输出1个比特。这个函数f对我们是黑盒，我们不知道这个函数内部是怎么运作的，只能通过喂给它不同的输入，观察输出。因为输入有2个比特，因此共有4种可能的输入00，01，10，11。
 </p>
@@ -159,7 +159,7 @@ U_f |x_0\rangle |x_1\rangle |y\rangle
 </p>
 
 
-<div id="orgf75133b" class="figure">
+<div id="org24c72bd" class="figure">
 <p><img src="../images/2020/09/image-1.png" alt="image-1.png" width="480px" />
 </p>
 </div>
@@ -174,9 +174,9 @@ U_f |x_0\rangle |x_1\rangle |y\rangle
 </div>
 </section>
 
-<section id="outline-container-org8b698d8" class="outline-2">
-<h2 id="org8b698d8">原理解析</h2>
-<div class="outline-text-2" id="text-org8b698d8">
+<section id="outline-container-orgb206fc2" class="outline-2">
+<h2 id="orgb206fc2">原理解析</h2>
+<div class="outline-text-2" id="text-orgb206fc2">
 <p>
 下面我们做一些推导，可以帮助您理解其中的原理。如果您不感兴趣，可以直接跳到下一篇的实战部分。其实推导并不难，不要被公式吓到 :-)
 </p>

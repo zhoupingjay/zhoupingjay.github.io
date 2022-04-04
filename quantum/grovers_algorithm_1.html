@@ -79,9 +79,9 @@
 今天来聊一下量子计算里面的一个经典算法：量子搜索算法（Grover算法）。
 </p>
 
-<section id="outline-container-orga03971e" class="outline-2">
-<h2 id="orga03971e">搜索问题</h2>
-<div class="outline-text-2" id="text-orga03971e">
+<section id="outline-container-orgfe6a0db" class="outline-2">
+<h2 id="orgfe6a0db">搜索问题</h2>
+<div class="outline-text-2" id="text-orgfe6a0db">
 <p>
 假设我们有N个无结构的元素，比如很多指纹信息，我们的任务是从中找出符合某些要求的元素。为方便讨论，我们给这些元素编号，从0开始一直到N-1，并且其中只有1个符合我们要找的条件。如果我们用经典计算机来搜索的话，只能一个一个元素的试，看它是否符合要求，因此需要试的次数为\(O(N)\)。但是如果使用量子计算机，只需要试\(O(\sqrt{N})\)次数就可以找到。和经典计算机相比，虽然这不是指数级别的加速，但也相当可观了，尤其是如果“判断元素是否符合要求”这个操作很费力的话，减少判断次数的收益也会很大。
 </p>
@@ -102,17 +102,17 @@ f : \{0, 1\}^{n} \rightarrow \{0, 1\}
 </div>
 </section>
 
-<section id="outline-container-org7d5a712" class="outline-2">
-<h2 id="org7d5a712">量子搜索算法(Grover算法)</h2>
-<div class="outline-text-2" id="text-org7d5a712">
+<section id="outline-container-org8a550bf" class="outline-2">
+<h2 id="org8a550bf">量子搜索算法(Grover算法)</h2>
+<div class="outline-text-2" id="text-org8a550bf">
 <p>
 定义了搜索问题，接下来讨论量子搜索算法。
 </p>
 </div>
 
-<div id="outline-container-org7714939" class="outline-3">
-<h3 id="org7714939">量子搜索电路</h3>
-<div class="outline-text-3" id="text-org7714939">
+<div id="outline-container-orgc18b613" class="outline-3">
+<h3 id="orgc18b613">量子搜索电路</h3>
+<div class="outline-text-3" id="text-orgc18b613">
 <p>
 量子搜索算法（Grover算法）是一个迭代的过程，主要思路是从初始状态出发，重复进行多次变换，让系统越来越接近目标状态，最后进行测量，就能以很高的概率得到正确结果。
 </p>
@@ -122,7 +122,7 @@ f : \{0, 1\}^{n} \rightarrow \{0, 1\}
 </p>
 
 
-<div id="org74da5b4" class="figure">
+<div id="orgf1cffb9" class="figure">
 <p><img src="../images/Quantum Search - Grover's Algorithm.png" alt="Quantum Search - Grover's Algorithm.png" />
 </p>
 </div>
@@ -151,9 +151,9 @@ f : \{0, 1\}^{n} \rightarrow \{0, 1\}
 </div>
 </div>
 
-<div id="outline-container-org7ad3825" class="outline-3">
-<h3 id="org7ad3825">G变换</h3>
-<div class="outline-text-3" id="text-org7ad3825">
+<div id="outline-container-org847f645" class="outline-3">
+<h3 id="org847f645">G变换</h3>
+<div class="outline-text-3" id="text-org847f645">
 <p>
 我们把量子搜索算法里每次迭代的过程称为G变换，这个G变换内部又分成4个步骤。
 </p>
@@ -310,8 +310,8 @@ G=(2|\psi \rangle \langle \psi | - I)O
 </div>
 </section>
 
-<section id="outline-container-org43ca4f3" class="outline-2">
-<h2 id="org43ca4f3">下文预告：量子搜索算法是如何找到答案的？</h2>
+<section id="outline-container-orgafea71e" class="outline-2">
+<h2 id="orgafea71e">下文预告：量子搜索算法是如何找到答案的？</h2>
 </section>
 </main>
 <footer id="postamble" class="status">

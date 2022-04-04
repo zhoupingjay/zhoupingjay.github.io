@@ -76,9 +76,9 @@
 <span class="subtitle">Ping Zhou, 2020-11-11</span>
 </h1>
 
-<section id="outline-container-org989b8e9" class="outline-2">
-<h2 id="org989b8e9">Introduction</h2>
-<div class="outline-text-2" id="text-org989b8e9">
+<section id="outline-container-orgc94f7d5" class="outline-2">
+<h2 id="orgc94f7d5">Introduction</h2>
+<div class="outline-text-2" id="text-orgc94f7d5">
 <p>
 Emacs has a Markdown mode, but I need a more comprehensive setup with features like:
 </p>
@@ -94,9 +94,9 @@ Basically I need a setup that provides similar functionality as VS Code + Markdo
 </div>
 </section>
 
-<section id="outline-container-orga66bc42" class="outline-2">
-<h2 id="orga66bc42">Install dependencies</h2>
-<div class="outline-text-2" id="text-orga66bc42">
+<section id="outline-container-orgc2e7ca2" class="outline-2">
+<h2 id="orgc2e7ca2">Install dependencies</h2>
+<div class="outline-text-2" id="text-orgc2e7ca2">
 <p>
 Emacs packages needed:
 </p>
@@ -125,13 +125,13 @@ Get MathJax:
 </div>
 </section>
 
-<section id="outline-container-orgcf53b53" class="outline-2">
-<h2 id="orgcf53b53">Configure Emacs</h2>
-<div class="outline-text-2" id="text-orgcf53b53">
+<section id="outline-container-org82bdfad" class="outline-2">
+<h2 id="org82bdfad">Configure Emacs</h2>
+<div class="outline-text-2" id="text-org82bdfad">
 </div>
-<div id="outline-container-org26a7236" class="outline-3">
-<h3 id="org26a7236">Markdown settings</h3>
-<div class="outline-text-3" id="text-org26a7236">
+<div id="outline-container-orgc8a62f5" class="outline-3">
+<h3 id="orgc8a62f5">Markdown settings</h3>
+<div class="outline-text-3" id="text-orgc8a62f5">
 <p>
 Add these customization to Emacs config:
 </p>
@@ -160,9 +160,9 @@ This can be done with Emacs Customization UI (M-x customize), or by manually edi
 </div>
 </div>
 
-<div id="outline-container-orgc52cb86" class="outline-3">
-<h3 id="orgc52cb86">Simple HTTPD</h3>
-<div class="outline-text-3" id="text-orgc52cb86">
+<div id="outline-container-orgc6602a6" class="outline-3">
+<h3 id="orgc6602a6">Simple HTTPD</h3>
+<div class="outline-text-3" id="text-orgc6602a6">
 <p>
 Add this to Emacs config file to enable simple-httpd (a simple Web server inside Emacs):
 </p>
@@ -193,9 +193,9 @@ Default root folder of simple-httpd is <code>~/public_html</code>. This can also
 </div>
 </div>
 
-<div id="outline-container-orgd64ece3" class="outline-3">
-<h3 id="orgd64ece3">Impatient Mode</h3>
-<div class="outline-text-3" id="text-orgd64ece3">
+<div id="outline-container-org7b4bf30" class="outline-3">
+<h3 id="org7b4bf30">Impatient Mode</h3>
+<div class="outline-text-3" id="text-org7b4bf30">
 <p>
 Add these to Emacs config file to configure markdown filter for impatient-mode:
 </p>
@@ -230,7 +230,7 @@ The filter will insert MathJax script in the generated HTML so that math symbols
 You can point it to any URL that hosts MathJax (if you trust the source), but I decide to host MathJax locally in simple-httpd:
 </p>
 
-<pre class="example" id="org41f6bb4">
+<pre class="example" id="org3caf7e3">
 &lt;script src=\"/mathjax/es5/tex-chtml-full.js\"&gt;&lt;/script&gt;
 </pre>
 
@@ -250,9 +250,9 @@ Now MathJax script should be available to impatient-mode.
 </div>
 </section>
 
-<section id="outline-container-orgaecf773" class="outline-2">
-<h2 id="orgaecf773">(Optional) Add GitHub Style</h2>
-<div class="outline-text-2" id="text-orgaecf773">
+<section id="outline-container-org6e07402" class="outline-2">
+<h2 id="org6e07402">(Optional) Add GitHub Style</h2>
+<div class="outline-text-2" id="text-org6e07402">
 <p>
 The rendered HTML seems to be plain. So I added a GitHub-style CSS to the impatient-mode filter:
 </p>
@@ -270,7 +270,7 @@ The CSS file is also hosted locally in simple-httpd.
 <p>
 Add this line to my filter:
 </p>
-<pre class="example" id="org48a3b40">
+<pre class="example" id="orgec9b337">
 &lt;link rel=\"stylesheet\" href = \"/github-markdown.css\"/&gt;
 </pre>
 
@@ -293,18 +293,18 @@ Now the filter is like this:
 </div>
 </section>
 
-<section id="outline-container-org6ad01b2" class="outline-2">
-<h2 id="org6ad01b2">Test Run</h2>
-<div class="outline-text-2" id="text-org6ad01b2">
+<section id="outline-container-org8373234" class="outline-2">
+<h2 id="org8373234">Test Run</h2>
+<div class="outline-text-2" id="text-org8373234">
 </div>
-<div id="outline-container-orgb1467d5" class="outline-3">
-<h3 id="orgb1467d5">Live Preview</h3>
-<div class="outline-text-3" id="text-orgb1467d5">
+<div id="outline-container-org9029d29" class="outline-3">
+<h3 id="org9029d29">Live Preview</h3>
+<div class="outline-text-3" id="text-org9029d29">
 <p>
 Open a Markdown file, and then start live preview:
 </p>
 
-<pre class="example" id="org93cb87c">
+<pre class="example" id="orgeba7f83">
 M-x markdown-live-preview
 </pre>
 
@@ -318,9 +318,9 @@ As you type in the Markdown file, live preview also changes accordingly.
 </div>
 </div>
 
-<div id="outline-container-org8fd19cb" class="outline-3">
-<h3 id="org8fd19cb">Images</h3>
-<div class="outline-text-3" id="text-org8fd19cb">
+<div id="outline-container-org64fc9de" class="outline-3">
+<h3 id="org64fc9de">Images</h3>
+<div class="outline-text-3" id="text-org64fc9de">
 <p>
 To add images, just insert the &lt;img&gt; tag in Markdown:
 </p>
@@ -336,14 +336,14 @@ This relative path works for impatient-mode too (i.e. it will look for test.png 
 </div>
 </div>
 
-<div id="outline-container-org4705f19" class="outline-3">
-<h3 id="org4705f19">Math Equations</h3>
-<div class="outline-text-3" id="text-org4705f19">
+<div id="outline-container-org243dfa7" class="outline-3">
+<h3 id="org243dfa7">Math Equations</h3>
+<div class="outline-text-3" id="text-org243dfa7">
 <p>
 Try math equations in Markdown:
 </p>
 
-<pre class="example" id="orge2cce4b">
+<pre class="example" id="org600fea6">
 $$
 \begin{pmatrix}
 aa &amp; bb \\

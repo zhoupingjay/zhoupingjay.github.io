@@ -79,15 +79,15 @@
 今天来填个坑 :-) 前面Shor算法系列里大量用到的“量子傅立叶变换”，具体要怎么实现？这次来详细讨论一下。
 </p>
 
-<section id="outline-container-org9161dcb" class="outline-2">
-<h2 id="org9161dcb">量子傅立叶变换</h2>
-<div class="outline-text-2" id="text-org9161dcb">
+<section id="outline-container-orgfe890c3" class="outline-2">
+<h2 id="orgfe890c3">量子傅立叶变换</h2>
+<div class="outline-text-2" id="text-orgfe890c3">
 <p>
 <a href="qft-1.html">前文</a>说过，量子傅立叶变换QFT是这么一块电路：
 </p>
 
 
-<div id="orge921f87" class="figure">
+<div id="org918b813" class="figure">
 <p><img src="../images/qft_box.jpg" alt="qft_box.jpg" width="560px" />
 </p>
 </div>
@@ -112,15 +112,15 @@ QFT|j\rangle = \\
 </div>
 </section>
 
-<section id="outline-container-org4a48b40" class="outline-2">
-<h2 id="org4a48b40">基本构件：受控旋转门</h2>
-<div class="outline-text-2" id="text-org4a48b40">
+<section id="outline-container-orgbaf442e" class="outline-2">
+<h2 id="orgbaf442e">基本构件：受控旋转门</h2>
+<div class="outline-text-2" id="text-orgbaf442e">
 <p>
 就像搭积木一样，量子傅立叶变换的电路是由很多基本组件构成的。其中最重要的一个组件是“受控旋转门” \(R_k\) ：
 </p>
 
 
-<div id="org7f51b64" class="figure">
+<div id="org11c1f99" class="figure">
 <p><img src="../images/qft_rk.jpg" alt="qft_rk.jpg" width="160px" />
 </p>
 </div>
@@ -136,9 +136,9 @@ QFT|j\rangle = \\
 </div>
 </section>
 
-<section id="outline-container-orgad13b52" class="outline-2">
-<h2 id="orgad13b52">量子傅立叶变换电路</h2>
-<div class="outline-text-2" id="text-orgad13b52">
+<section id="outline-container-org48d9697" class="outline-2">
+<h2 id="org48d9697">量子傅立叶变换电路</h2>
+<div class="outline-text-2" id="text-org48d9697">
 <p>
 有了受控旋转门 \(R_k\) ，接下来我们就可以来搭建量子傅里叶变换电路了！
 </p>
@@ -151,7 +151,7 @@ QFT|j\rangle = \\
 然后把它们这样连接起来：
 </p>
 
-<div id="org872837c" class="figure">
+<div id="org12cd522" class="figure">
 <p><img src="../images/qft_circuit.jpg" alt="qft_circuit.jpg" width="720px" />
 </p>
 </div>
@@ -221,9 +221,9 @@ QFT|j\rangle = \\
 </div>
 </section>
 
-<section id="outline-container-org7d36842" class="outline-2">
-<h2 id="org7d36842">复杂度</h2>
-<div class="outline-text-2" id="text-org7d36842">
+<section id="outline-container-org1f45fb1" class="outline-2">
+<h2 id="org1f45fb1">复杂度</h2>
+<div class="outline-text-2" id="text-org1f45fb1">
 <p>
 实现这个量子傅立叶变换电路，需要多少个基本量子门？从前面的电路就可以看出，我们对每个输入量子位，需要制备一些受控旋转门 \(R_k\) ，总共需要的数量是 \(O(n^2)\) 级别。其余的辅助量子门，例如H门和SWAP门，数量是 \(O(n)\) 级别。所以量子傅立叶变换的总体复杂度（即需要的基本量子门数量）是 \(O(n^2)\) 。
 </p>
