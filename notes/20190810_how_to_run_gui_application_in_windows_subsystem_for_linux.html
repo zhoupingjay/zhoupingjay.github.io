@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>How to Run GUI Application in Windows Subsystem for Linux (WSL)</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -56,9 +55,9 @@
 <span class="subtitle">Ping Zhou, 2019-08-10</span>
 </h1>
 
-<section id="outline-container-orgf8cbb2d" class="outline-2">
-<h2 id="orgf8cbb2d">Install WSL</h2>
-<div class="outline-text-2" id="text-orgf8cbb2d">
+<section id="outline-container-orgb01c2f9" class="outline-2">
+<h2 id="orgb01c2f9">Install WSL</h2>
+<div class="outline-text-2" id="text-orgb01c2f9">
 <p>
 Basically you need to turn on WSL in Program Features. Refer to this document for the steps:
 <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">https://docs.microsoft.com/en-us/windows/wsl/install-win10</a>
@@ -66,9 +65,9 @@ Basically you need to turn on WSL in Program Features. Refer to this document fo
 </div>
 </section>
 
-<section id="outline-container-orgf03e98b" class="outline-2">
-<h2 id="orgf03e98b">Install Linux distribution in WSL</h2>
-<div class="outline-text-2" id="text-orgf03e98b">
+<section id="outline-container-org98a4bf8" class="outline-2">
+<h2 id="org98a4bf8">Install Linux distribution in WSL</h2>
+<div class="outline-text-2" id="text-org98a4bf8">
 <p>
 Refer to same document for steps. I installed Ubuntu but there are other distributions available.
 <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">https://docs.microsoft.com/en-us/windows/wsl/install-win10</a>
@@ -76,9 +75,9 @@ Refer to same document for steps. I installed Ubuntu but there are other distrib
 </div>
 </section>
 
-<section id="outline-container-org0f756c6" class="outline-2">
-<h2 id="org0f756c6">Install Dependencies</h2>
-<div class="outline-text-2" id="text-org0f756c6">
+<section id="outline-container-org5659465" class="outline-2">
+<h2 id="org5659465">Install Dependencies</h2>
+<div class="outline-text-2" id="text-org5659465">
 <p>
 GUI applications may have additional dependencies (libraries, etc). An easy way to install proper libraries is by installing some GUI programs, which will automatically resolve and install needed libraries. For example:
 </p>
@@ -90,9 +89,9 @@ GUI applications may have additional dependencies (libraries, etc). An easy way 
 </div>
 </section>
 
-<section id="outline-container-orgcc0e251" class="outline-2">
-<h2 id="orgcc0e251">Configure X-Window Server</h2>
-<div class="outline-text-2" id="text-orgcc0e251">
+<section id="outline-container-orgf3b7ebb" class="outline-2">
+<h2 id="orgf3b7ebb">Configure X-Window Server</h2>
+<div class="outline-text-2" id="text-orgf3b7ebb">
 <p>
 There are several choices available. I used the X-Win server from Cygwin because I already have one installed.
 </p>
@@ -123,16 +122,16 @@ Try running some GUI application from WSL. For example, “xeye”, or launching
 If you see authorization error like this, it means need to configure xauth for WSL. See following section for steps.
 </p>
 
-<pre class="example" id="org7a38969">
+<pre class="example" id="org58fe6e3">
 Authorization required, but no authorization protocol specified
 Error: Can't open display: :0
 </pre>
 </div>
 </section>
 
-<section id="outline-container-orgf254b93" class="outline-2">
-<h2 id="orgf254b93">Configure xauth</h2>
-<div class="outline-text-2" id="text-orgf254b93">
+<section id="outline-container-org6f0ad3d" class="outline-2">
+<h2 id="org6f0ad3d">Configure xauth</h2>
+<div class="outline-text-2" id="text-org6f0ad3d">
 <p>
 There are two options to solve this problem. First one is to copy the “.Xauthority” file from Cygwin to your WSL home folder.
 </p>
@@ -140,14 +139,14 @@ There are two options to solve this problem. First one is to copy the “.Xautho
 <p>
 Source file:
 </p>
-<pre class="example" id="org313c6eb">
+<pre class="example" id="orgeb6f567">
 C:\cygwin64\home\&lt;CYGWIN_USER&gt;
 </pre>
 
 <p>
 Destination file:
 </p>
-<pre class="example" id="org52921a7">
+<pre class="example" id="orgd6d4c41">
 C:\Users\&lt;WINDOWS_USER&gt;\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\&lt;WSL_USER&gt;
 </pre>
 
@@ -174,7 +173,7 @@ Done! Now you should be able to run GUI applications in WSL. For example, Emacs 
 </p>
 
 
-<div id="orgfda972a" class="figure">
+<div id="org48d3a0f" class="figure">
 <p><img src="../images/2019/08/image.png" alt="image.png" width="480px" />
 </p>
 </div>
@@ -184,7 +183,7 @@ Done! Now you should be able to run GUI applications in WSL. For example, Emacs 
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

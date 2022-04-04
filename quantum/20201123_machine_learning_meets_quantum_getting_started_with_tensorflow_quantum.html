@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Machine Learning Meets Quantum: Getting Started with TensorFlow Quantum</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -80,9 +79,9 @@
 Source: <a href="https://github.com/zhoupingjay/quantum/blob/main/Getting-Started-With-TensorFlow-Quantum.ipynb">My notebook</a>
 </p>
 
-<section id="outline-container-orgd73e4d9" class="outline-2">
-<h2 id="orgd73e4d9">Introduction</h2>
-<div class="outline-text-2" id="text-orgd73e4d9">
+<section id="outline-container-org2c660d5" class="outline-2">
+<h2 id="org2c660d5">Introduction</h2>
+<div class="outline-text-2" id="text-org2c660d5">
 <p>
 Earlier this year, Google announced <a href="https://www.tensorflow.org/quantum">TensorFlow Quantum</a>. It&rsquo;s a framework for building <b>Hybrid Quantum-Classical Machine Learning models</b>. So now we are entering the era of <b>Quantum Machine Learning</b> - sounds exciting!
 </p>
@@ -98,9 +97,9 @@ In this notebook, I&rsquo;m going to walk you through the &ldquo;<a href="https:
 </div>
 </section>
 
-<section id="outline-container-org83bd705" class="outline-2">
-<h2 id="org83bd705">Concepts</h2>
-<div class="outline-text-2" id="text-org83bd705">
+<section id="outline-container-org36b0a8a" class="outline-2">
+<h2 id="org36b0a8a">Concepts</h2>
+<div class="outline-text-2" id="text-org36b0a8a">
 <p>
 Before we start with the code, I&rsquo;m going to explain some basic concepts that are needed for understanding this example. Don&rsquo;t be scared by the math notations in this section - they are not as hard as they might appear!
 </p>
@@ -110,9 +109,9 @@ Please be noted that this notebook does not serve as a tutorial of quantum compu
 </p>
 </div>
 
-<div id="outline-container-org41602e2" class="outline-3">
-<h3 id="org41602e2">Qubit, State Vector and Bloch Sphere</h3>
-<div class="outline-text-3" id="text-org41602e2">
+<div id="outline-container-orgb1fc5e8" class="outline-3">
+<h3 id="orgb1fc5e8">Qubit, State Vector and Bloch Sphere</h3>
+<div class="outline-text-3" id="text-orgb1fc5e8">
 <p>
 Qubit: You might have already heard about the term &ldquo;qubit&rdquo;. Comparing to a classical bit that can be at either of the two states (e.g. 0 or 1) at any time, a qubit can be at a &ldquo;superposition&rdquo; of both states. The state of a qubit \(|\psi\rangle\) can be expressed as:
 </p>
@@ -162,7 +161,7 @@ Another useful way of representing qubit is using the <b><b>Bloch Sphere</b></b>
 </p>
 
 
-<div id="org37abd5a" class="figure">
+<div id="orgcfdf258" class="figure">
 <p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -181,22 +180,22 @@ e^{i\phi}\sin\frac{\theta}{2}
 </div>
 </div>
 
-<div id="outline-container-orgc2daa3f" class="outline-3">
-<h3 id="orgc2daa3f">Operators and Observables</h3>
-<div class="outline-text-3" id="text-orgc2daa3f">
+<div id="outline-container-org43006a2" class="outline-3">
+<h3 id="org43006a2">Operators and Observables</h3>
+<div class="outline-text-3" id="text-org43006a2">
 </div>
-<div id="outline-container-orgf5a5441" class="outline-4">
-<h4 id="orgf5a5441">Operators</h4>
-<div class="outline-text-4" id="text-orgf5a5441">
+<div id="outline-container-orgab36a32" class="outline-4">
+<h4 id="orgab36a32">Operators</h4>
+<div class="outline-text-4" id="text-orgab36a32">
 <p>
 What are &ldquo;operators&rdquo;? In short, an operator tranform qubit(s) from one state to another. Since qubits can be written as vectors, the operators are essentially matrices.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgb73e64f" class="outline-4">
-<h4 id="orgb73e64f">Observables</h4>
-<div class="outline-text-4" id="text-orgb73e64f">
+<div id="outline-container-org3abc1b0" class="outline-4">
+<h4 id="org3abc1b0">Observables</h4>
+<div class="outline-text-4" id="text-org3abc1b0">
 <p>
 Suppose we have a quantum system. How do we know about its state? The only way is through measurements.
 Physical quantities that can be measured are called <a href="https://en.wikipedia.org/wiki/Observable">Observables</a>.
@@ -222,9 +221,9 @@ If you apply Z operator on a qubit \(\begin{pmatrix}\alpha \\ \beta\end{pmatrix}
 </div>
 </div>
 
-<div id="outline-container-org55b7b16" class="outline-3">
-<h3 id="org55b7b16">Expectation Values</h3>
-<div class="outline-text-3" id="text-org55b7b16">
+<div id="outline-container-org304a3c2" class="outline-3">
+<h3 id="org304a3c2">Expectation Values</h3>
+<div class="outline-text-3" id="text-org304a3c2">
 <p>
 Being able to get state vectors of your system is nice - it means you know everything of your system.
 Unfortunately this is only available in simulator.
@@ -288,7 +287,7 @@ We can look at a few examples to validate this conclusion:
 </p>
 
 
-<div id="orgc771846" class="figure">
+<div id="orgd5e990e" class="figure">
 <p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -306,9 +305,9 @@ Things match up. Fantastic!
 </div>
 </section>
 
-<section id="outline-container-org8e1df83" class="outline-2">
-<h2 id="org8e1df83">What Are We Trying to Solve?</h2>
-<div class="outline-text-2" id="text-org8e1df83">
+<section id="outline-container-orgfc9c232" class="outline-2">
+<h2 id="orgfc9c232">What Are We Trying to Solve?</h2>
+<div class="outline-text-2" id="text-orgfc9c232">
 <p>
 To understand the hybrid model we are going to build, we need to first understand the problem we are trying to solve.
 </p>
@@ -323,7 +322,7 @@ But in the real world, our system is <b><b>noisy</b></b>. Therefore the qubits w
 </p>
 
 
-<div id="org4b93cc6" class="figure">
+<div id="org4fdc726" class="figure">
 <p><img src="../images/tfq-noisy-circuit.svg" alt="tfq-noisy-circuit.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -337,7 +336,7 @@ In order for any quantum computing circuit to run properly, we need to <b><b>cal
 </p>
 
 
-<div id="org69fbf0d" class="figure">
+<div id="org72a9965" class="figure">
 <p><img src="../images/tfq-calibration-circuit.svg" alt="tfq-calibration-circuit.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -348,9 +347,9 @@ In order for any quantum computing circuit to run properly, we need to <b><b>cal
 </div>
 </section>
 
-<section id="outline-container-orgd9c3f6d" class="outline-2">
-<h2 id="orgd9c3f6d">Quantum-Classical Hybrid Machine Learning Model</h2>
-<div class="outline-text-2" id="text-orgd9c3f6d">
+<section id="outline-container-org73f2ce0" class="outline-2">
+<h2 id="org73f2ce0">Quantum-Classical Hybrid Machine Learning Model</h2>
+<div class="outline-text-2" id="text-org73f2ce0">
 <p>
 The original notebook has lot of details and may not be very straightforward. I find it a better way to look from a high level first.
 </p>
@@ -360,7 +359,7 @@ What we want to achieve is a model that calibrates noisy qubit:
 </p>
 
 
-<div id="orgfb85c9f" class="figure">
+<div id="orgaeaf69d" class="figure">
 <p><img src="../images/hello-tfq-circuit.svg" alt="hello-tfq-circuit.svg" class="org-svg" width="560px" />
 </p>
 </div>
@@ -379,15 +378,15 @@ To help you understand the whole picture, I made an architectural diagram of our
 </p>
 
 
-<div id="org8f71462" class="figure">
+<div id="orgdb379ac" class="figure">
 <p><img src="../images/hello-tfq-1.svg" alt="hello-tfq-1.svg" class="org-svg" width="560px" />
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgeec609b" class="outline-3">
-<h3 id="orgeec609b">Datasets</h3>
-<div class="outline-text-3" id="text-orgeec609b">
+<div id="outline-container-org9ca74f8" class="outline-3">
+<h3 id="org9ca74f8">Datasets</h3>
+<div class="outline-text-3" id="text-org9ca74f8">
 <p>
 Our dataset includes two parts: commands and the noisy circuit.
 </p>
@@ -410,15 +409,15 @@ This is the circuit that emulates the noisy qubit that needs to be calibrated. T
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">circuit_tensor</span> = tfq.convert_to_tensor<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>circuit<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-variable-name">circuit_tensor</span> = tfq.convert_to_tensor([circuit])
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org446f0c2" class="outline-3">
-<h3 id="org446f0c2">Labels</h3>
-<div class="outline-text-3" id="text-org446f0c2">
+<div id="outline-container-orga5996a7" class="outline-3">
+<h3 id="orga5996a7">Labels</h3>
+<div class="outline-text-3" id="text-orga5996a7">
 <p>
 The labels are the <b><b>expecation values of the target states</b></b> we want our qubits to achieve.
 In this example, we want the qubit to be at \(|0\rangle\) (for input command 0) or \(|1\rangle\) (for input command 1). As we have seen earlier, expectation values at \(|0\rangle\) and \(|1\rangle\) are 1 and -1 respectively. Therefore our labels correspond to input commands are <code>[1, -1]</code>.
@@ -426,18 +425,18 @@ In this example, we want the qubit to be at \(|0\rangle\) (for input command 0) 
 </div>
 </div>
 
-<div id="outline-container-org7da4ed8" class="outline-3">
-<h3 id="org7da4ed8">Outputs</h3>
-<div class="outline-text-3" id="text-org7da4ed8">
+<div id="outline-container-org7bc651d" class="outline-3">
+<h3 id="org7bc651d">Outputs</h3>
+<div class="outline-text-3" id="text-org7bc651d">
 <p>
 The outputs of our hybrid model are the expecation values of the calibrated qubits.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgc90260e" class="outline-3">
-<h3 id="orgc90260e">Model</h3>
-<div class="outline-text-3" id="text-orgc90260e">
+<div id="outline-container-org68f217b" class="outline-3">
+<h3 id="org68f217b">Model</h3>
+<div class="outline-text-3" id="text-org68f217b">
 <p>
 Our model will include both classical and quantum parts.
 </p>
@@ -463,17 +462,17 @@ Does it make more sense now? :-)
 </div>
 </section>
 
-<section id="outline-container-org6b6ec02" class="outline-2">
-<h2 id="org6b6ec02">Code Walkthrough</h2>
-<div class="outline-text-2" id="text-org6b6ec02">
+<section id="outline-container-orgdac5383" class="outline-2">
+<h2 id="orgdac5383">Code Walkthrough</h2>
+<div class="outline-text-2" id="text-orgdac5383">
 <p>
 Now we have a decent understanding of the problem and our model. Let&rsquo;s get to the code.
 </p>
 </div>
 
-<div id="outline-container-orgbb3a714" class="outline-3">
-<h3 id="orgbb3a714">Setup</h3>
-<div class="outline-text-3" id="text-orgbb3a714">
+<div id="outline-container-orgc9e5cda" class="outline-3">
+<h3 id="orgc9e5cda">Setup</h3>
+<div class="outline-text-3" id="text-orgc9e5cda">
 <p>
 You&rsquo;ll need to install TensorFlow (2.3.1+) and TensorFlow Quantum on your computer. The easiest way is to use pip:
 </p>
@@ -486,9 +485,9 @@ pip install -q tensorflow-quantum
 </div>
 </div>
 
-<div id="outline-container-orge647c60" class="outline-3">
-<h3 id="orge647c60">Import modules</h3>
-<div class="outline-text-3" id="text-orge647c60">
+<div id="outline-container-org05049bd" class="outline-3">
+<h3 id="org05049bd">Import modules</h3>
+<div class="outline-text-3" id="text-org05049bd">
 <p>
 Import TFQ and the dependency modules:
 </p>
@@ -510,9 +509,9 @@ Import TFQ and the dependency modules:
 </div>
 </div>
 
-<div id="outline-container-org1e206f2" class="outline-3">
-<h3 id="org1e206f2">Prepare the Inputs</h3>
-<div class="outline-text-3" id="text-org1e206f2">
+<div id="outline-container-orgf0f18ae" class="outline-3">
+<h3 id="orgf0f18ae">Prepare the Inputs</h3>
+<div class="outline-text-3" id="text-orgf0f18ae">
 <p>
 First we&rsquo;ll create a qubit and prepare the dataset.
 </p>
@@ -520,13 +519,13 @@ First we&rsquo;ll create a qubit and prepare the dataset.
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">This creates a "perfect" qubit at |0&gt;.</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">It will be fed into the noisy preparation circuit to emulate a noisy qubit.</span>
-<span class="org-variable-name">qubit</span> = cirq.GridQubit<span class="org-rainbow-delimiters-depth-1">(</span>0, 0<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">qubit</span> = cirq.GridQubit(0, 0)
 </pre>
 </div>
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Dataset: commands_input (0 and 1)</span>
-<span class="org-variable-name">commands</span> = np.array<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span><span class="org-rainbow-delimiters-depth-3">[</span>0<span class="org-rainbow-delimiters-depth-3">]</span>, <span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">]</span>, dtype=np.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+commands = np.array([[0], [1]], dtype=np.float32)
 </pre>
 </div>
 
@@ -541,18 +540,18 @@ Note that we&rsquo;ll need two copies of the circuit because we have two entries
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Dataset: circuit_input (noisy preparation)</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">This emulates the noisy qubit by applying X/Y/Z rotations with random angles.</span>
-<span class="org-variable-name">random_rotations</span> = np.random.uniform<span class="org-rainbow-delimiters-depth-1">(</span>0, 2 * np.pi, 3<span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">noisy_preparation</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>
-  cirq.rx<span class="org-rainbow-delimiters-depth-2">(</span>random_rotations<span class="org-rainbow-delimiters-depth-3">[</span>0<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
-  cirq.ry<span class="org-rainbow-delimiters-depth-2">(</span>random_rotations<span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
-  cirq.rz<span class="org-rainbow-delimiters-depth-2">(</span>random_rotations<span class="org-rainbow-delimiters-depth-3">[</span>2<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>
-<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">random_rotations</span> = np.random.uniform(0, 2 * np.pi, 3)
+<span class="org-variable-name">noisy_preparation</span> = cirq.Circuit(
+  cirq.rx(random_rotations[0])(qubit),
+  cirq.ry(random_rotations[1])(qubit),
+  cirq.rz(random_rotations[2])(qubit)
+)
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">Convert the circuit object to tensor.</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">Two copies of the circuit because we have two commands (0 and 1) to train.</span>
-<span class="org-variable-name">datapoint_circuits</span> = tfq.convert_to_tensor<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>
+<span class="org-variable-name">datapoint_circuits</span> = tfq.convert_to_tensor([
   noisy_preparation
-<span class="org-rainbow-delimiters-depth-2">]</span> * 2<span class="org-rainbow-delimiters-depth-1">)</span>
+] * 2)
 </pre>
 </div>
 
@@ -562,12 +561,12 @@ Print out the noisy circuit. We can see that the &ldquo;perfect&rdquo; qubit has
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Print out the noisy qubit</span>
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>random_rotations<span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>noisy_preparation<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-builtin">print</span>(random_rotations)
+<span class="org-builtin">print</span>(noisy_preparation)
 </pre>
 </div>
 
-<pre class="example" id="org9e057c1">
+<pre class="example" id="org4f61b8b">
 [3.84902356 3.3647054  3.03737137]
 (0, 0): ───Rx(1.23π)───Ry(1.07π)───Rz(0.967π)───
 </pre>
@@ -579,36 +578,36 @@ These will be used when we call tf.keras.Model() later.
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Create keras inputs from the datasets</span>
-<span class="org-variable-name">circuits_input</span> = tf.keras.Input<span class="org-rainbow-delimiters-depth-1">(</span>shape=<span class="org-rainbow-delimiters-depth-2">()</span>,
+<span class="org-variable-name">circuits_input</span> = tf.keras.Input(shape=(),
                                 <span class="org-comment-delimiter"># </span><span class="org-comment">The circuit-tensor has dtype `tf.string` </span>
                                 dtype=tf.string,
-                                name=<span class="org-string">'circuits_input'</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">commands_input</span> = tf.keras.Input<span class="org-rainbow-delimiters-depth-1">(</span>shape=<span class="org-rainbow-delimiters-depth-2">(</span>1,<span class="org-rainbow-delimiters-depth-2">)</span>,
+                                name=<span class="org-string">'circuits_input'</span>)
+commands_input = tf.keras.Input(shape=(1,),
                                 dtype=tf.dtypes.float32,
-                                name=<span class="org-string">'commands_input'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                                name=<span class="org-string">'commands_input'</span>)
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org9b1289b" class="outline-3">
-<h3 id="org9b1289b">Prepare the Labels</h3>
-<div class="outline-text-3" id="text-org9b1289b">
+<div id="outline-container-org0829525" class="outline-3">
+<h3 id="org0829525">Prepare the Labels</h3>
+<div class="outline-text-3" id="text-org0829525">
 <p>
 The labels are the expectation values we want for each command. In this example, we want 1 for command 0 and -1 for command 1.
 </p>
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Labels: target expecation values (1 for command 0, -1 for command 1)</span>
-<span class="org-variable-name">expected_outputs</span> = np.array<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span><span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span>, <span class="org-rainbow-delimiters-depth-3">[</span>-1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">]</span>, dtype=np.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">expected_outputs</span> = np.array([[1], [-1]], dtype=np.float32)
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org3e4804f" class="outline-3">
-<h3 id="org3e4804f">Build our model</h3>
-<div class="outline-text-3" id="text-org3e4804f">
+<div id="outline-container-org6db9007" class="outline-3">
+<h3 id="org6db9007">Build our model</h3>
+<div class="outline-text-3" id="text-org6db9007">
 <p>
 Classical part of the model is a simple DNN. Since the problem is fairly small, a simple DNN with two layers will be good enough.
 </p>
@@ -616,10 +615,10 @@ Classical part of the model is a simple DNN. Since the problem is fairly small, 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Classical part of our model - "controller".</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">Since the problem is fairly small, a simple DNN is enough.</span>
-<span class="org-variable-name">controller</span> = tf.keras.Sequential<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>
-    tf.keras.layers.Dense<span class="org-rainbow-delimiters-depth-3">(</span>10, activation=<span class="org-string">'elu'</span><span class="org-rainbow-delimiters-depth-3">)</span>,
-    tf.keras.layers.Dense<span class="org-rainbow-delimiters-depth-3">(</span>3<span class="org-rainbow-delimiters-depth-3">)</span>
-<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">controller</span> = tf.keras.Sequential([
+    tf.keras.layers.Dense(10, activation=<span class="org-string">'elu'</span>),
+    tf.keras.layers.Dense(3)
+])
 </pre>
 </div>
 
@@ -630,21 +629,21 @@ Then the quantum part of our label. We first use the Cirq API to build our calib
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Quantum part of our model - "model_circuit"</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">Parameters that the classical NN will feed values into.</span>
-<span class="org-variable-name">control_params</span> = sympy.symbols<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">'theta_1 theta_2 theta_3'</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">control_params</span> = sympy.symbols(<span class="org-string">'theta_1 theta_2 theta_3'</span>)
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">Create the parameterized circuit.</span>
-<span class="org-variable-name">qubit</span> = cirq.GridQubit<span class="org-rainbow-delimiters-depth-1">(</span>0, 0<span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">model_circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>
-    cirq.rz<span class="org-rainbow-delimiters-depth-2">(</span>control_params<span class="org-rainbow-delimiters-depth-3">[</span>0<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
-    cirq.ry<span class="org-rainbow-delimiters-depth-2">(</span>control_params<span class="org-rainbow-delimiters-depth-3">[</span>1<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span>,
-    cirq.rx<span class="org-rainbow-delimiters-depth-2">(</span>control_params<span class="org-rainbow-delimiters-depth-3">[</span>2<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">qubit</span> = cirq.GridQubit(0, 0)
+<span class="org-variable-name">model_circuit</span> = cirq.Circuit(
+    cirq.rz(control_params[0])(qubit),
+    cirq.ry(control_params[1])(qubit),
+    cirq.rx(control_params[2])(qubit))
 
-SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>model_circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+SVGCircuit(model_circuit)
 </pre>
 </div>
 
 
-<div id="orgbe1a0e9" class="figure">
+<div id="org59d22f5" class="figure">
 <p><img src="../images/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -666,13 +665,13 @@ After <code>expectation_layer</code> is created, we then connect it with the noi
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">dense_2</span> = controller<span class="org-rainbow-delimiters-depth-1">(</span>commands_input<span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-variable-name">dense_2</span> = controller(commands_input)
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">TFQ layer for classically controlled circuits.</span>
-<span class="org-variable-name">expectation_layer</span> = tfq.layers.ControlledPQC<span class="org-rainbow-delimiters-depth-1">(</span>model_circuit,
+<span class="org-variable-name">expectation_layer</span> = tfq.layers.ControlledPQC(model_circuit,
                                              <span class="org-comment-delimiter"># </span><span class="org-comment">Observe Z</span>
-                                             operators = cirq.Z<span class="org-rainbow-delimiters-depth-2">(</span>qubit<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">expectation</span> = expectation_layer<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>circuits_input, dense_2<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                                             operators = cirq.Z(qubit))
+expectation = expectation_layer([circuits_input, dense_2])
 </pre>
 </div>
 
@@ -681,8 +680,8 @@ We then build the model in Keras just as usual.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">model</span> = tf.keras.Model<span class="org-rainbow-delimiters-depth-1">(</span>inputs=<span class="org-rainbow-delimiters-depth-2">[</span>circuits_input, commands_input<span class="org-rainbow-delimiters-depth-2">]</span>,
-                       outputs=expectation<span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-variable-name">model</span> = tf.keras.Model(inputs=[circuits_input, commands_input],
+                       outputs=expectation)
 </pre>
 </div>
 
@@ -691,34 +690,34 @@ A little visualization of our model&#x2026;
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">tf.keras.utils.plot_model<span class="org-rainbow-delimiters-depth-1">(</span>model, show_shapes=<span class="org-constant">True</span>, dpi=70<span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python">tf.keras.utils.plot_model(model, show_shapes=<span class="org-constant">True</span>, dpi=70)
 </pre>
 </div>
 
 
-<div id="org3d6b459" class="figure">
+<div id="org37c6a60" class="figure">
 <p><img src="../images/output_35_0.png" alt="output_35_0.png" width="560px" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org51f15f3" class="outline-3">
-<h3 id="org51f15f3">Train our model</h3>
-<div class="outline-text-3" id="text-org51f15f3">
+<div id="outline-container-org148c74a" class="outline-3">
+<h3 id="org148c74a">Train our model</h3>
+<div class="outline-text-3" id="text-org148c74a">
 <p>
 We then train our model just like a normal DNN, using Adam as optimizer and MSE as the loss function.
 </p>
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Now we can train the model...</span>
-<span class="org-variable-name">optimizer</span> = tf.keras.optimizers.Adam<span class="org-rainbow-delimiters-depth-1">(</span>learning_rate=0.05<span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">loss</span> = tf.keras.losses.MeanSquaredError<span class="org-rainbow-delimiters-depth-1">()</span>
-model.<span class="org-builtin">compile</span><span class="org-rainbow-delimiters-depth-1">(</span>optimizer=optimizer, loss=loss<span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">history</span> = model.fit<span class="org-rainbow-delimiters-depth-1">(</span>x=<span class="org-rainbow-delimiters-depth-2">[</span>datapoint_circuits, commands<span class="org-rainbow-delimiters-depth-2">]</span>,
+<span class="org-variable-name">optimizer</span> = tf.keras.optimizers.Adam(learning_rate=0.05)
+loss = tf.keras.losses.MeanSquaredError()
+model.<span class="org-builtin">compile</span>(optimizer=optimizer, loss=loss)
+history = model.fit(x=[datapoint_circuits, commands],
                     y=expected_outputs,
                     epochs=30,
-                    verbose=0<span class="org-rainbow-delimiters-depth-1">)</span>
+                    verbose=0)
 </pre>
 </div>
 
@@ -728,35 +727,35 @@ Training history shows that we are doing good&#x2026;
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Plot the history - looks good!</span>
-plt.plot<span class="org-rainbow-delimiters-depth-1">(</span>history.history<span class="org-rainbow-delimiters-depth-2">[</span><span class="org-string">'loss'</span><span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
-plt.title<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Learning to Control a Qubit"</span><span class="org-rainbow-delimiters-depth-1">)</span>
-plt.xlabel<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Iterations"</span><span class="org-rainbow-delimiters-depth-1">)</span>
-plt.ylabel<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Error in Control"</span><span class="org-rainbow-delimiters-depth-1">)</span>
-plt.show<span class="org-rainbow-delimiters-depth-1">()</span>
+plt.plot(history.history[<span class="org-string">'loss'</span>])
+plt.title(<span class="org-string">"Learning to Control a Qubit"</span>)
+plt.xlabel(<span class="org-string">"Iterations"</span>)
+plt.ylabel(<span class="org-string">"Error in Control"</span>)
+plt.show()
 </pre>
 </div>
 
 
-<div id="org9b11cd8" class="figure">
+<div id="org2416580" class="figure">
 <p><img src="../images/output_39_0.png" alt="output_39_0.png" width="480px" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org372cb33" class="outline-3">
-<h3 id="org372cb33">Verify our model</h3>
-<div class="outline-text-3" id="text-org372cb33">
+<div id="outline-container-orgd7591e8" class="outline-3">
+<h3 id="orgd7591e8">Verify our model</h3>
+<div class="outline-text-3" id="text-orgd7591e8">
 <p>
 We can verify our model by calling it with commands 0 and 1:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">model<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>datapoint_circuits, commands<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python">model([datapoint_circuits, commands])
 </pre>
 </div>
 
-<pre class="example" id="org7edd48a">
+<pre class="example" id="org6d7e057">
 &lt;tf.Tensor: shape=(2, 1), dtype=float32, numpy=
     array([[ 0.9891974],
            [-0.9958328]], dtype=float32)&gt;
@@ -781,9 +780,9 @@ Congratulations! You have successfully trained your first Hybrid Quantum-Classic
 </div>
 </section>
 
-<section id="outline-container-org67de50f" class="outline-2">
-<h2 id="org67de50f">Next Steps</h2>
-<div class="outline-text-2" id="text-org67de50f">
+<section id="outline-container-org9fdec6b" class="outline-2">
+<h2 id="org9fdec6b">Next Steps</h2>
+<div class="outline-text-2" id="text-org9fdec6b">
 <p>
 In the next step, I&rsquo;ll expand this example into a more generic case where we can calibrate qubit with expectation values on other operators.
 </p>
@@ -793,7 +792,7 @@ In the next step, I&rsquo;ll expand this example into a more generic case where 
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(3) Shor算法初探</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -78,9 +77,9 @@
 </h1>
 
 
-<section id="outline-container-org2ce86a8" class="outline-2">
-<h2 id="org2ce86a8">上文回顾：因式分解问题可以转化为Order Finding</h2>
-<div class="outline-text-2" id="text-org2ce86a8">
+<section id="outline-container-org7483833" class="outline-2">
+<h2 id="org7483833">上文回顾：因式分解问题可以转化为Order Finding</h2>
+<div class="outline-text-2" id="text-org7483833">
 <p>
 在<a href="shor_algorithm_2_order_finding.html">上文</a>中，我们分析了为什么因式分解问题可以转化为Order Finding，因此如果能高效求解Order Finding，也就能高效解决因式分解问题。
 </p>
@@ -95,9 +94,9 @@
 </div>
 </section>
 
-<section id="outline-container-orgeef010c" class="outline-2">
-<h2 id="orgeef010c">用量子计算机解决因式分解问题：Shor算法</h2>
-<div class="outline-text-2" id="text-orgeef010c">
+<section id="outline-container-org6a48a23" class="outline-2">
+<h2 id="org6a48a23">用量子计算机解决因式分解问题：Shor算法</h2>
+<div class="outline-text-2" id="text-org6a48a23">
 <p>
 Shor算法是Peter Shor在1994年提出的一种量子计算算法，可以在多项式时间内求解因式分解问题。
 </p>
@@ -120,7 +119,7 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </ol>
 
 
-<div id="org7c17fb8" class="figure">
+<div id="orge49d09a" class="figure">
 <p><img src="../images/shor1.png" alt="shor1.png" width="400px" />
 </p>
 </div>
@@ -135,9 +134,9 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </div>
 </section>
 
-<section id="outline-container-org9394e30" class="outline-2">
-<h2 id="org9394e30">用量子计算机求解Order Finding问题</h2>
-<div class="outline-text-2" id="text-org9394e30">
+<section id="outline-container-org1cf1f67" class="outline-2">
+<h2 id="org1cf1f67">用量子计算机求解Order Finding问题</h2>
+<div class="outline-text-2" id="text-org1cf1f67">
 <p>
 用量子计算机求解Order Finding问题，实质上是要找到函数 \(f(x)=a^x \mod N\) 的周期。看过我之前文章的朋友可能会想到，首先我们要考虑如何将这个函数整合到我们的量子电路里，也就是把它转换成一个量子电路能用的变换 \(U_f\) 。
 </p>
@@ -147,7 +146,7 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </p>
 
 
-<div id="orga6a7fbd" class="figure">
+<div id="org8343cc2" class="figure">
 <p><img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px" />
 </p>
 </div>
@@ -170,7 +169,7 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </p>
 
 
-<div id="org750b84f" class="figure">
+<div id="orgb781ac3" class="figure">
 <p><img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px" />
 </p>
 </div>
@@ -326,7 +325,7 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Understanding the Power of Quantum Computing 1: Deutsch Problem</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -78,9 +77,9 @@
 </h1>
 
 
-<section id="outline-container-org6b654cb" class="outline-2">
-<h2 id="org6b654cb">Introduction</h2>
-<div class="outline-text-2" id="text-org6b654cb">
+<section id="outline-container-orgc54dea8" class="outline-2">
+<h2 id="orgc54dea8">Introduction</h2>
+<div class="outline-text-2" id="text-orgc54dea8">
 <p>
 Quantum computing is one of the hottest topic these days. You might have already heard about hypes like &ldquo;quantum supremacy&rdquo;. But why quantum computers can be faster on solving some problems? And how does it work behind the scene?
 </p>
@@ -95,26 +94,26 @@ Ok, let&rsquo;s get started.
 </div>
 </section>
 
-<section id="outline-container-orgc92cf81" class="outline-2">
-<h2 id="orgc92cf81">Terms and Basic Concepts</h2>
-<div class="outline-text-2" id="text-orgc92cf81">
+<section id="outline-container-org7d9d8f2" class="outline-2">
+<h2 id="org7d9d8f2">Terms and Basic Concepts</h2>
+<div class="outline-text-2" id="text-org7d9d8f2">
 <p>
 Before we start discussing the problem, let&rsquo;s first review some basic terms and concepts.
 </p>
 </div>
 
-<div id="outline-container-orgecc3351" class="outline-3">
-<h3 id="orgecc3351">Qubits</h3>
-<div class="outline-text-3" id="text-orgecc3351">
+<div id="outline-container-orgc35efd2" class="outline-3">
+<h3 id="orgc35efd2">Qubits</h3>
+<div class="outline-text-3" id="text-orgc35efd2">
 <p>
 A single classical bit can be either 0 or 1 at any time. A qubit, similarly, can be at one of the&ldquo;base&rdquo; states - \(|0\rangle\), \(|1\rangle\). However, a qubit can also be in a <b>superposition</b> state which makes it look like on both \(|0\rangle\) and \(|1\rangle\) at same time. For example, a common state you might see in quantum computing is \(\frac{1}{\sqrt{2}}(|0\rangle+|1\rangle)\). Measuring the qubit at this state will give you 0 or 1 with same probability (i.e. 50% each).
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgfe283b7" class="outline-3">
-<h3 id="orgfe283b7">Quantum Gates</h3>
-<div class="outline-text-3" id="text-orgfe283b7">
+<div id="outline-container-orgb709b1b" class="outline-3">
+<h3 id="orgb709b1b">Quantum Gates</h3>
+<div class="outline-text-3" id="text-orgb709b1b">
 <p>
 Some of the quantum gates we&rsquo;ll use in this example:
 </p>
@@ -136,15 +135,15 @@ Some other useful theorems of these quantum gates (we&rsquo;ll need them later i
 </div>
 </div>
 
-<div id="outline-container-org1741e97" class="outline-3">
-<h3 id="org1741e97">Quantum Circuit</h3>
-<div class="outline-text-3" id="text-org1741e97">
+<div id="outline-container-org1b7e656" class="outline-3">
+<h3 id="org1b7e656">Quantum Circuit</h3>
+<div class="outline-text-3" id="text-org1b7e656">
 <p>
 A quantim circuit is like a blueprint of the algorithm. Each qubit is a line in the diagram, with quantum gates connect the lines (qubits) and time flows from left to right.
 </p>
 
 
-<div id="orgf0aca8c" class="figure">
+<div id="org429d170" class="figure">
 <p><img src="../images/qc_deutsch_en_circuit.png" alt="qc_deutsch_en_circuit.png" width="320px" />
 </p>
 </div>
@@ -152,9 +151,9 @@ A quantim circuit is like a blueprint of the algorithm. Each qubit is a line in 
 </div>
 </section>
 
-<section id="outline-container-orgf26492c" class="outline-2">
-<h2 id="orgf26492c">Deutsch Problem</h2>
-<div class="outline-text-2" id="text-orgf26492c">
+<section id="outline-container-orgb2ca399" class="outline-2">
+<h2 id="orgb2ca399">Deutsch Problem</h2>
+<div class="outline-text-2" id="text-orgb2ca399">
 <p>
 The problem we are going to solve with quantum computing is called the Deutsch Problem.
 It is, in my opinion, the simplest problem that we can use for demonstrating the advantage of quantum computing.
@@ -192,13 +191,13 @@ But if we are using a quantum computer, we just need to run our circuit <b>once<
 </div>
 </section>
 
-<section id="outline-container-org13b16b3" class="outline-2">
-<h2 id="org13b16b3">Solving Deutsch Problem with Quantum Computing</h2>
-<div class="outline-text-2" id="text-org13b16b3">
+<section id="outline-container-org6e70c3f" class="outline-2">
+<h2 id="org6e70c3f">Solving Deutsch Problem with Quantum Computing</h2>
+<div class="outline-text-2" id="text-org6e70c3f">
 </div>
-<div id="outline-container-org6fe4b95" class="outline-3">
-<h3 id="org6fe4b95">Transform the problem for quantum circuit</h3>
-<div class="outline-text-3" id="text-org6fe4b95">
+<div id="outline-container-org363231f" class="outline-3">
+<h3 id="org363231f">Transform the problem for quantum circuit</h3>
+<div class="outline-text-3" id="text-org363231f">
 <p>
 To solve Deutsch Problem with quantum computing, we need to somehow &ldquo;incorporate&rdquo; f(x) in our quantum circuit. However in quantum circuit, every operator must be <b>reversible</b> (i.e. you must be able to compute input back from output). The function we are given is not likely to meet this requirement - E.g. constant functions are not reversible. So how do we interact with f(x) in our quantum circuit?
 </p>
@@ -208,7 +207,7 @@ Fortunately there is a generic solution to this issue: We <b>transform</b> the f
 </p>
 
 
-<div id="org5388ec6" class="figure">
+<div id="org0691291" class="figure">
 <p><img src="../images/qc_deutsch_uf.png" alt="qc_deutsch_uf.png" width="160px" />
 </p>
 </div>
@@ -232,15 +231,15 @@ The person kindly wrapped f(x) into \(U_f\) and gave it to us. Fantastic! Now we
 </div>
 </div>
 
-<div id="outline-container-org11e8b3c" class="outline-3">
-<h3 id="org11e8b3c">Build our quantum circuit</h3>
-<div class="outline-text-3" id="text-org11e8b3c">
+<div id="outline-container-org59757fb" class="outline-3">
+<h3 id="org59757fb">Build our quantum circuit</h3>
+<div class="outline-text-3" id="text-org59757fb">
 <p>
 The quantum circuit for solving Deutsch Problem is actually pretty simple. We initialize two qubits to \(|0\rangle\) and \(|1\rangle\) states, put them through H gates, then plug in the \(U_f\) block and another H gate, and measure the first qubit for results:
 </p>
 
 
-<div id="orgc75c37c" class="figure">
+<div id="orgb61c912" class="figure">
 <p><img src="../images/qc_deutsch_en_orig.png" alt="qc_deutsch_en_orig.png" width="640px" />
 </p>
 </div>
@@ -256,9 +255,9 @@ That&rsquo;s it! We only run the circuit <b>once</b> and we get the result of De
 </div>
 </section>
 
-<section id="outline-container-org0ab32a2" class="outline-2">
-<h2 id="org0ab32a2">How it works</h2>
-<div class="outline-text-2" id="text-org0ab32a2">
+<section id="outline-container-org2cd5186" class="outline-2">
+<h2 id="org2cd5186">How it works</h2>
+<div class="outline-text-2" id="text-org2cd5186">
 <p>
 The quantum circuit worked like magic - we just need to run circuit once and it tells us whether the function is constant or balanced. But how it actually achieves this acceleration? In this section I&rsquo;ll walk you through the analysis.
 </p>
@@ -268,7 +267,7 @@ We split our circuit into time steps and check the system state of each time ste
 </p>
 
 
-<div id="orgc1d40e6" class="figure">
+<div id="org2a06ec4" class="figure">
 <p><img src="../images/qc_deutsch_en_1.png" alt="qc_deutsch_en_1.png" width="640px" />
 </p>
 </div>
@@ -363,7 +362,7 @@ Now let&rsquo;s measure the first qubit - guess what we&rsquo;ll get?
 </p>
 
 
-<div id="org63e7405" class="figure">
+<div id="org4afc32a" class="figure">
 <p><img src="../images/qc_deutsch_en.png" alt="qc_deutsch_en.png" width="640px" />
 </p>
 </div>
@@ -382,9 +381,9 @@ Now we know how quantum computing solves Deutsch Problem with just one run!
 </div>
 </section>
 
-<section id="outline-container-orgf652140" class="outline-2">
-<h2 id="orgf652140">Conclusion and Thoughts</h2>
-<div class="outline-text-2" id="text-orgf652140">
+<section id="outline-container-org606be52" class="outline-2">
+<h2 id="org606be52">Conclusion and Thoughts</h2>
+<div class="outline-text-2" id="text-org606be52">
 <p>
 What do we learn from this journey? We can see that superposition played a crucial role in solving the Deutsch Problem with just one run. By putting our qubits into superpositions and feeding them into \(U_f\), we <b>sort of</b> examined all 4 possibilities simultaneously and turned f(x)&rsquo;s attribute into the global phase of our system state. We then revealed the phase using transformations (\(HIH=I\) and \(HZH=X\)) and read it out from measurement.
 </p>
@@ -395,15 +394,15 @@ What do we learn from this journey? We can see that superposition played a cruci
 </div>
 </section>
 
-<section id="outline-container-orgd8b9965" class="outline-2">
-<h2 id="orgd8b9965">Appendix: How to construct \(U_f\)?</h2>
-<div class="outline-text-2" id="text-orgd8b9965">
+<section id="outline-container-orgef383f2" class="outline-2">
+<h2 id="orgef383f2">Appendix: How to construct \(U_f\)?</h2>
+<div class="outline-text-2" id="text-orgef383f2">
 <p>
 One question you may still have is: How does the person who gives us function f(x) contruct the corresponding \(U_f\) (a block of quantum circuit)? This is particularly important if you want to simulate the problem - after all, you need \(U_f\) to build your circuit.
 </p>
 
 
-<div id="orgc077348" class="figure">
+<div id="orgdd7e7af" class="figure">
 <p><img src="../images/qc_deutsch_uf.png" alt="qc_deutsch_uf.png" width="160px" />
 </p>
 </div>
@@ -450,7 +449,7 @@ So y is inversed if x is 1 and unchanged otherwise. Apparently \(U_f\) for this 
 </p>
 
 
-<div id="org4606429" class="figure">
+<div id="orga616f18" class="figure">
 <p><img src="../images/qc_deutsch_uf_x.jpg" alt="qc_deutsch_uf_x.jpg" width="200px" />
 </p>
 </div>
@@ -464,7 +463,7 @@ So y is inversed if x is 1 and unchanged otherwise. Apparently \(U_f\) for this 
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

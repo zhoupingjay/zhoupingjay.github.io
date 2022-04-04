@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Understanding the Power of Quantum Computing 2: Extending Deutsch Problem to 2-bits</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -78,9 +77,9 @@
 </h1>
 
 
-<section id="outline-container-org758bc4c" class="outline-2">
-<h2 id="org758bc4c">Two-Bit Deutsch Problem</h2>
-<div class="outline-text-2" id="text-org758bc4c">
+<section id="outline-container-orgdd83fe7" class="outline-2">
+<h2 id="orgdd83fe7">Two-Bit Deutsch Problem</h2>
+<div class="outline-text-2" id="text-orgdd83fe7">
 <p>
 My <a href="understand-quantum-computing-1bit-deutsch.html">previous article</a> discussed Deutsch Problem in its simplest form - determine attribute of an unknown 1-bit function. Now what if we extend the function to having 2-bit input?
 </p>
@@ -156,7 +155,7 @@ Instead of giving me function \(f(x_0, x_1)\), can you give me the corresponding
 </blockquote>
 
 
-<div id="orgc97b09f" class="figure">
+<div id="org4a16da2" class="figure">
 <p><img src="../images/qc_deutsch_2bit_uf.jpg" alt="qc_deutsch_2bit_uf.jpg" width="160px" />
 </p>
 </div>
@@ -171,15 +170,15 @@ On a quantum computer, on contrary, we&rsquo;ll still only need to run the circu
 </div>
 </section>
 
-<section id="outline-container-orgcedf4a7" class="outline-2">
-<h2 id="orgcedf4a7">Quantum Circuit for Two-Bit Deutsch Problem</h2>
-<div class="outline-text-2" id="text-orgcedf4a7">
+<section id="outline-container-org9b18130" class="outline-2">
+<h2 id="org9b18130">Quantum Circuit for Two-Bit Deutsch Problem</h2>
+<div class="outline-text-2" id="text-org9b18130">
 <p>
 If you have read my <a href="understand-quantum-computing-1bit-deutsch.html">prevoius note</a>, you&rsquo;ll notice that the quantum circuit for solving 2-Bit Deutsch Problem is very similar to the 1-bit version: It uses an auxilary qubit, puts H gates before and after the \(U_f\) block, then measures the two qubits.
 </p>
 
 
-<div id="org2dae8f3" class="figure">
+<div id="orga72242e" class="figure">
 <p><img src="../images/qc_deutsch_2bit_circuit.png" alt="qc_deutsch_2bit_circuit.png" width="560px" />
 </p>
 </div>
@@ -191,15 +190,15 @@ We just need to run this circuit <b>once</b> and measure the first two qubits. I
 </div>
 </section>
 
-<section id="outline-container-org41ec00e" class="outline-2">
-<h2 id="org41ec00e">How It Works?</h2>
-<div class="outline-text-2" id="text-org41ec00e">
+<section id="outline-container-org23d35f6" class="outline-2">
+<h2 id="org23d35f6">How It Works?</h2>
+<div class="outline-text-2" id="text-org23d35f6">
 <p>
 To understand how it works, we do&rsquo;ll do some time analysis on this circuit.
 </p>
 
 
-<div id="orgfa320ae" class="figure">
+<div id="org7191824" class="figure">
 <p><img src="../images/qc_deutsch_2bit_circuit.png" alt="qc_deutsch_2bit_circuit.png" width="560px" />
 </p>
 </div>
@@ -386,9 +385,9 @@ This is how our quantum circuit solves the 2-bit Deutsh Problem - we run the cir
 </div>
 </section>
 
-<section id="outline-container-orgd31b097" class="outline-2">
-<h2 id="orgd31b097">Conclusion</h2>
-<div class="outline-text-2" id="text-orgd31b097">
+<section id="outline-container-org9046cb2" class="outline-2">
+<h2 id="org9046cb2">Conclusion</h2>
+<div class="outline-text-2" id="text-org9046cb2">
 <p>
 In this article, we see how we could extend Deutsch Problem to 2-bits and solve it with quantum computing. When we expand the size of input, number of evaluations will grow exponentially on a classical computer (if we want to be 100% sure about the attribute of the function). But with quantum computing, we still only need to run the circuit once to get the answer.
 </p>
@@ -398,7 +397,7 @@ In this article, we see how we could extend Deutsch Problem to 2-bits and solve 
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

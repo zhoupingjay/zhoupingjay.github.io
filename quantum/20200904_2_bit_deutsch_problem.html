@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算编程实战 – 双比特Deutsch问题</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -80,9 +79,9 @@
 在上一篇 “一文看懂量子计算机的威力 – 从Deutsch问题说起” 中，我们看到了量子计算机只需一次查询就可以判断函数的特性。但是在那个例子中，我们讨论的是一个简单的单比特函数，如果把输入扩展到多比特，量子计算机是否仍然只需要一次查询呢？今天我们就结合谷歌的Cirq框架，看看量子计算的 <b>指数级</b> 加速。
 </p>
 
-<section id="outline-container-org37ba7c5" class="outline-2">
-<h2 id="org37ba7c5">双比特Deutsch问题</h2>
-<div class="outline-text-2" id="text-org37ba7c5">
+<section id="outline-container-org81921f6" class="outline-2">
+<h2 id="org81921f6">双比特Deutsch问题</h2>
+<div class="outline-text-2" id="text-org81921f6">
 <p>
 首先和上次一样，假设我们有个函数f，但这次函数f输入2个比特，输出1个比特。这个函数f对我们是黑盒，我们不知道这个函数内部是怎么运作的，只能通过喂给它不同的输入，观察输出。因为输入有2个比特，因此共有4种可能的输入00，01，10，11。
 </p>
@@ -160,7 +159,7 @@ U_f |x_0\rangle |x_1\rangle |y\rangle
 </p>
 
 
-<div id="org9f68c20" class="figure">
+<div id="orgf75133b" class="figure">
 <p><img src="../images/2020/09/image-1.png" alt="image-1.png" width="480px" />
 </p>
 </div>
@@ -175,9 +174,9 @@ U_f |x_0\rangle |x_1\rangle |y\rangle
 </div>
 </section>
 
-<section id="outline-container-orgbc472a1" class="outline-2">
-<h2 id="orgbc472a1">原理解析</h2>
-<div class="outline-text-2" id="text-orgbc472a1">
+<section id="outline-container-org8b698d8" class="outline-2">
+<h2 id="org8b698d8">原理解析</h2>
+<div class="outline-text-2" id="text-org8b698d8">
 <p>
 下面我们做一些推导，可以帮助您理解其中的原理。如果您不感兴趣，可以直接跳到下一篇的实战部分。其实推导并不难，不要被公式吓到 :-)
 </p>
@@ -335,7 +334,7 @@ H|0&rang;
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

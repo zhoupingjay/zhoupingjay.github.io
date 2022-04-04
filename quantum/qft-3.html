@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子傅里叶变换详解 (3) 电路实现</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -80,15 +79,15 @@
 今天来填个坑 :-) 前面Shor算法系列里大量用到的“量子傅立叶变换”，具体要怎么实现？这次来详细讨论一下。
 </p>
 
-<section id="outline-container-org17dd6e0" class="outline-2">
-<h2 id="org17dd6e0">量子傅立叶变换</h2>
-<div class="outline-text-2" id="text-org17dd6e0">
+<section id="outline-container-org9161dcb" class="outline-2">
+<h2 id="org9161dcb">量子傅立叶变换</h2>
+<div class="outline-text-2" id="text-org9161dcb">
 <p>
 <a href="qft-1.html">前文</a>说过，量子傅立叶变换QFT是这么一块电路：
 </p>
 
 
-<div id="orgad4f63d" class="figure">
+<div id="orge921f87" class="figure">
 <p><img src="../images/qft_box.jpg" alt="qft_box.jpg" width="560px" />
 </p>
 </div>
@@ -113,15 +112,15 @@ QFT|j\rangle = \\
 </div>
 </section>
 
-<section id="outline-container-org4470920" class="outline-2">
-<h2 id="org4470920">基本构件：受控旋转门</h2>
-<div class="outline-text-2" id="text-org4470920">
+<section id="outline-container-org4a48b40" class="outline-2">
+<h2 id="org4a48b40">基本构件：受控旋转门</h2>
+<div class="outline-text-2" id="text-org4a48b40">
 <p>
 就像搭积木一样，量子傅立叶变换的电路是由很多基本组件构成的。其中最重要的一个组件是“受控旋转门” \(R_k\) ：
 </p>
 
 
-<div id="org138aabe" class="figure">
+<div id="org7f51b64" class="figure">
 <p><img src="../images/qft_rk.jpg" alt="qft_rk.jpg" width="160px" />
 </p>
 </div>
@@ -137,9 +136,9 @@ QFT|j\rangle = \\
 </div>
 </section>
 
-<section id="outline-container-org6a1f336" class="outline-2">
-<h2 id="org6a1f336">量子傅立叶变换电路</h2>
-<div class="outline-text-2" id="text-org6a1f336">
+<section id="outline-container-orgad13b52" class="outline-2">
+<h2 id="orgad13b52">量子傅立叶变换电路</h2>
+<div class="outline-text-2" id="text-orgad13b52">
 <p>
 有了受控旋转门 \(R_k\) ，接下来我们就可以来搭建量子傅里叶变换电路了！
 </p>
@@ -152,7 +151,7 @@ QFT|j\rangle = \\
 然后把它们这样连接起来：
 </p>
 
-<div id="org79752ae" class="figure">
+<div id="org872837c" class="figure">
 <p><img src="../images/qft_circuit.jpg" alt="qft_circuit.jpg" width="720px" />
 </p>
 </div>
@@ -222,9 +221,9 @@ QFT|j\rangle = \\
 </div>
 </section>
 
-<section id="outline-container-org008f30a" class="outline-2">
-<h2 id="org008f30a">复杂度</h2>
-<div class="outline-text-2" id="text-org008f30a">
+<section id="outline-container-org7d36842" class="outline-2">
+<h2 id="org7d36842">复杂度</h2>
+<div class="outline-text-2" id="text-org7d36842">
 <p>
 实现这个量子傅立叶变换电路，需要多少个基本量子门？从前面的电路就可以看出，我们对每个输入量子位，需要制备一些受控旋转门 \(R_k\) ，总共需要的数量是 \(O(n^2)\) 级别。其余的辅助量子门，例如H门和SWAP门，数量是 \(O(n)\) 级别。所以量子傅立叶变换的总体复杂度（即需要的基本量子门数量）是 \(O(n^2)\) 。
 </p>
@@ -246,7 +245,7 @@ QFT的这个坑填完了，感谢阅读！
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

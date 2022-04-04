@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>用Cirq模拟量子隐形传态过程</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -84,15 +83,15 @@
 关于量子隐形传态的原理，请参见<a href="https://mp.weixin.qq.com/s?__biz=MzI4ODYxNDY5NA==&amp;mid=2247484394&amp;idx=1&amp;sn=e167ed2e9427fe35ed5a0bc320b19a45&amp;chksm=ec3af3a3db4d7ab5281f3d17ce86cd56e9043316667c9f51d23643cbd444b02535f2faf26cc1&amp;scene=178&amp;cur_album_id=1504407355969617921#rd">我的相关文章</a>。
 </p>
 
-<section id="outline-container-orgdf5530e" class="outline-2">
-<h2 id="orgdf5530e">制备纠缠态的量子比特</h2>
-<div class="outline-text-2" id="text-orgdf5530e">
+<section id="outline-container-org1ae4dd1" class="outline-2">
+<h2 id="org1ae4dd1">制备纠缠态的量子比特</h2>
+<div class="outline-text-2" id="text-org1ae4dd1">
 <p>
 要在Alice和Bob之间实现量子隐形传态，首先需要用到一对纠缠态的量子比特。这可以通过一个H门和一个CNOT门来实现：
 </p>
 
 
-<div id="org3ad3820" class="figure">
+<div id="orga9da2d4" class="figure">
 <p><img src="../images/Entanglement.svg" alt="Entanglement.svg" class="org-svg" width="320px" />
 </p>
 </div>
@@ -107,16 +106,16 @@
 <span class="org-keyword">import</span> numpy <span class="org-keyword">as</span> np
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">&#21019;&#24314;&#19968;&#20010;&#33258;&#23450;&#20041;&#38376; - &#8220;&#32416;&#32544;&#38376;&#8221;&#65292;&#36755;&#20837;2&#20010;&#37327;&#23376;&#27604;&#29305;</span>
-<span class="org-keyword">class</span> <span class="org-type">EntangleGate</span><span class="org-rainbow-delimiters-depth-1">(</span>cirq.ops.gate_features.TwoQubitGate<span class="org-rainbow-delimiters-depth-1">)</span>:
+<span class="org-keyword">class</span> <span class="org-type">EntangleGate</span>(cirq.ops.gate_features.TwoQubitGate):
     <span class="org-comment-delimiter"># </span><span class="org-comment">&#20869;&#37096;&#23601;&#26159;&#19968;&#20010;H&#38376;&#21644;&#19968;&#20010;CNOT&#38376;</span>
-    <span class="org-keyword">def</span> <span class="org-function-name">_decompose_</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>, qubits<span class="org-rainbow-delimiters-depth-1">)</span>:
+    <span class="org-keyword">def</span> <span class="org-function-name">_decompose_</span>(<span class="org-keyword">self</span>, qubits):
         <span class="org-variable-name">q0</span>, <span class="org-variable-name">q1</span> = qubits
-        <span class="org-keyword">yield</span> cirq.H<span class="org-rainbow-delimiters-depth-1">(</span>q0<span class="org-rainbow-delimiters-depth-1">)</span>,
-        <span class="org-keyword">yield</span> cirq.CNOT<span class="org-rainbow-delimiters-depth-1">(</span>q0, q1<span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">yield</span> cirq.H(q0),
+        <span class="org-keyword">yield</span> cirq.CNOT(q0, q1)
 
     <span class="org-comment-delimiter"># </span><span class="org-comment">&#25171;&#21360;&#30340;&#26102;&#20505;&#22914;&#20309;&#26174;&#31034;&#36825;&#20010;&#38376;&#65311;</span>
-    <span class="org-keyword">def</span> <span class="org-function-name">_circuit_diagram_info_</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>, args<span class="org-rainbow-delimiters-depth-1">)</span>:
-        <span class="org-keyword">return</span> cirq.protocols.CircuitDiagramInfo<span class="org-rainbow-delimiters-depth-1">(</span>wire_symbols=<span class="org-rainbow-delimiters-depth-2">(</span><span class="org-string">'E'</span>, <span class="org-string">'E'</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">def</span> <span class="org-function-name">_circuit_diagram_info_</span>(<span class="org-keyword">self</span>, args):
+        <span class="org-keyword">return</span> cirq.protocols.CircuitDiagramInfo(wire_symbols=(<span class="org-string">'E'</span>, <span class="org-string">'E'</span>))
 </pre>
 </div>
 
@@ -125,15 +124,15 @@
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">&#120601;0</span> = cirq.NamedQubit<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"&#120601;0"</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">&#120601;1</span> = cirq.NamedQubit<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"&#120601;1"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-variable-name">&#120601;0</span> = cirq.NamedQubit(<span class="org-string">"&#120601;0"</span>)
+<span class="org-variable-name">&#120601;1</span> = cirq.NamedQubit(<span class="org-string">"&#120601;1"</span>)
 
-<span class="org-variable-name">circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>EntangleGate<span class="org-rainbow-delimiters-depth-2">()</span>.on<span class="org-rainbow-delimiters-depth-2">(</span>&#120601;0, &#120601;1<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">circuit</span> = cirq.Circuit(EntangleGate().on(&#120601;0, &#120601;1))
+<span class="org-builtin">print</span>(circuit)
 </pre>
 </div>
 
-<pre class="example" id="org0bec64b">
+<pre class="example" id="org8e670e4">
 𝜙0: ───E───
        │
 𝜙1: ───E───
@@ -145,24 +144,24 @@
 </div>
 </section>
 
-<section id="outline-container-orge2d0898" class="outline-2">
-<h2 id="orge2d0898">量子隐形传态</h2>
-<div class="outline-text-2" id="text-orge2d0898">
+<section id="outline-container-orge5a3a67" class="outline-2">
+<h2 id="orge5a3a67">量子隐形传态</h2>
+<div class="outline-text-2" id="text-orge5a3a67">
 <p>
 完整的量子隐形传态的电路如下图所示：
 </p>
 
 
-<div id="orgfa7e4c2" class="figure">
+<div id="org5154df5" class="figure">
 <p><img src="../images/Quantum Teleportation.svg" alt="Quantum Teleportation.svg" class="org-svg" width="600px" />
 </p>
 </div>
 </div>
 </section>
 
-<section id="outline-container-org6b6f028" class="outline-2">
-<h2 id="org6b6f028">Alice这边的电路</h2>
-<div class="outline-text-2" id="text-org6b6f028">
+<section id="outline-container-orgead929a" class="outline-2">
+<h2 id="orgead929a">Alice这边的电路</h2>
+<div class="outline-text-2" id="text-orgead929a">
 <p>
 Alice这边，除了一对纠缠态量子比特 \(|\phi_0\rangle\), \(|\phi_1\rangle\) 外，还有一个要传送的量子比特 \(|\psi\rangle\) 。量子隐形传态的目的，就是在Bob那里得到一个与 \(|\psi\rangle\) 状态相同的量子比特。
 </p>
@@ -178,15 +177,15 @@ Alice这边要做的事：
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">&#35201;&#20256;&#36865;&#30340;&#37327;&#23376;&#27604;&#29305;</span>
-<span class="org-variable-name">&#120595;</span> = cirq.NamedQubit<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"&#120595;"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">&#120595;</span> = cirq.NamedQubit(<span class="org-string">"&#120595;"</span>)
 <span class="org-comment-delimiter"># </span><span class="org-comment">&#32416;&#32544;&#24577;&#30340;&#37327;&#23376;&#27604;&#29305;&#23545;</span>
-<span class="org-variable-name">&#120601;0</span> = cirq.NamedQubit<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"&#120601;0"</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">&#120601;1</span> = cirq.NamedQubit<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"&#120601;1"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">&#120601;0</span> = cirq.NamedQubit(<span class="org-string">"&#120601;0"</span>)
+<span class="org-variable-name">&#120601;1</span> = cirq.NamedQubit(<span class="org-string">"&#120601;1"</span>)
 </pre>
 </div>
 
 <p>
-Cirq里面量子比特初始状态都是 \(|0\rangle\) ，所以Alice这边 \(|\psi\rangle\) 初始状态也是$|0&rang;$。
+Cirq里面量子比特初始状态都是 \(|0\rangle\) ，所以Alice这边 \(|\psi\rangle\) 初始状态也是\(|0\rangle\)。
 为了验证隐形传态的过程，我们需要对 \(|\psi\rangle\) 做一些变换，让它变成非 \(|0\rangle\) ，然后到Bob那边去验证收到的状态。
 </p>
 
@@ -196,23 +195,23 @@ Cirq里面量子比特初始状态都是 \(|0\rangle\) ，所以Alice这边 \(|\
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">&#23545;|&#120595;&#10217;&#36827;&#34892;&#20219;&#24847;&#35282;&#24230;&#30340;RX&#21464;&#25442;</span>
-<span class="org-keyword">def</span> <span class="org-function-name">prepare_psi</span><span class="org-rainbow-delimiters-depth-1">(</span>rx<span class="org-rainbow-delimiters-depth-1">)</span>:
-    <span class="org-keyword">return</span> cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>cirq.rx<span class="org-rainbow-delimiters-depth-2">(</span>rx<span class="org-rainbow-delimiters-depth-2">)</span>.on<span class="org-rainbow-delimiters-depth-2">(</span>&#120595;<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-keyword">def</span> <span class="org-function-name">prepare_psi</span>(rx):
+    <span class="org-keyword">return</span> cirq.Circuit(cirq.rx(rx).on(&#120595;))
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">&#35201;&#20256;&#36865;&#30340;&#37327;&#23376;&#27604;&#29305;|&#120595;&#10217;&#65306;|0&#10217;&#32469;X&#36724;&#26059;&#36716; &#960;/2</span>
-<span class="org-variable-name">circuit</span> = prepare_psi<span class="org-rainbow-delimiters-depth-1">(</span>rx=np.pi/2<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">circuit</span> = prepare_psi(rx=np.pi/2)
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">&#39318;&#20808;&#36305;&#19968;&#19979;&#36825;&#20010;&#20934;&#22791;&#30005;&#36335;&#65292;&#25226;|&#120595;&#10217;&#30340;&#29366;&#24577;&#35760;&#19979;&#26469;&#65292;&#20197;&#22791;&#21518;&#38754;&#39564;&#35777;</span>
-<span class="org-variable-name">result</span> = cirq.Simulator<span class="org-rainbow-delimiters-depth-1">()</span>.simulate<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+result = cirq.Simulator().simulate(circuit)
 
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>np.<span class="org-builtin">round</span><span class="org-rainbow-delimiters-depth-2">(</span>result.final_state,3<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-builtin">print</span>(np.<span class="org-builtin">round</span>(result.final_state,3))
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">&#25226;|&#120595;&#10217;&#36825;&#26102;&#30340;&#29366;&#24577;&#35760;&#19979;&#26469;&#65292;&#20197;&#22791;&#21518;&#38754;&#39564;&#35777;</span>
-<span class="org-variable-name">psi_state</span> = result.final_state
+psi_state = result.final_state
 </pre>
 </div>
 
-<pre class="example" id="org2c11019">
+<pre class="example" id="org3d8ec0a">
 [0.707+0.j    0.   -0.707j]
 </pre>
 
@@ -225,23 +224,23 @@ Cirq里面量子比特初始状态都是 \(|0\rangle\) ，所以Alice这边 \(|\
 <pre class="src src-python"><span class="org-keyword">from</span> cirq.contrib.svg <span class="org-keyword">import</span> SVGCircuit
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">&#20934;&#22791;&#32416;&#32544;&#24577;&#30340;&#37327;&#23376;&#27604;&#29305;&#23545;|&#120601;0&#10217;, |&#120601;1&#10217;</span>
-circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>EntangleGate<span class="org-rainbow-delimiters-depth-2">()</span>.on<span class="org-rainbow-delimiters-depth-2">(</span>&#120601;0, &#120601;1<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+circuit.append(EntangleGate().on(&#120601;0, &#120601;1))
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">CNOT&#38376;&#65306;|&#120595;&#10217;-|&#120601;0&#10217;&#65292;&#28982;&#21518;|&#120595;&#10217;&#19978;&#21152;H&#38376;</span>
-circuit.append<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>cirq.CNOT<span class="org-rainbow-delimiters-depth-3">(</span>&#120595;, &#120601;0<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.H<span class="org-rainbow-delimiters-depth-3">(</span>&#120595;<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,
-               strategy=cirq.InsertStrategy.NEW_THEN_INLINE<span class="org-rainbow-delimiters-depth-1">)</span>
+circuit.append([cirq.CNOT(&#120595;, &#120601;0), cirq.H(&#120595;)],
+               strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">&#23545;|&#120595;&#10217;&#65292;|&#120601;0&#10217;&#36827;&#34892;&#27979;&#37327;</span>
-circuit.append<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>cirq.measure<span class="org-rainbow-delimiters-depth-3">(</span>&#120601;0<span class="org-rainbow-delimiters-depth-3">)</span>, cirq.measure<span class="org-rainbow-delimiters-depth-3">(</span>&#120595;<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">]</span>,
-               strategy=cirq.InsertStrategy.NEW_THEN_INLINE<span class="org-rainbow-delimiters-depth-1">)</span> 
+circuit.append([cirq.measure(&#120601;0), cirq.measure(&#120595;)],
+               strategy=cirq.InsertStrategy.NEW_THEN_INLINE) 
 
-SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+SVGCircuit(circuit)
 <span class="org-comment-delimiter"># </span><span class="org-comment">print(circuit)</span>
 </pre>
 </div>
 
 
-<div id="org6ed2323" class="figure">
+<div id="org979b0fd" class="figure">
 <p><img src="../images/quantum_teleportation_output_11_0.svg" alt="quantum_teleportation_output_11_0.svg" class="org-svg" />
 </p>
 </div>
@@ -251,22 +250,22 @@ Alice运行这个电路，得到 \(|\psi\phi_0\rangle\) 的测量值：
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">result_alice</span> = cirq.Simulator<span class="org-rainbow-delimiters-depth-1">()</span>.simulate<span class="org-rainbow-delimiters-depth-1">(</span>circuit, qubit_order=<span class="org-rainbow-delimiters-depth-2">[</span>&#120595;, &#120601;0, &#120601;1<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">m_psi</span> = <span class="org-builtin">int</span><span class="org-rainbow-delimiters-depth-1">(</span>result_alice.measurements<span class="org-rainbow-delimiters-depth-2">[</span><span class="org-string">'&#120595;'</span><span class="org-rainbow-delimiters-depth-2">][</span>0<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">m_phi0</span> = <span class="org-builtin">int</span><span class="org-rainbow-delimiters-depth-1">(</span>result_alice.measurements<span class="org-rainbow-delimiters-depth-2">[</span><span class="org-string">'&#120601;0'</span><span class="org-rainbow-delimiters-depth-2">][</span>0<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Alice: Measure(&#120595;) = {}, Measure(&#120601;0) = {}"</span>.<span class="org-builtin">format</span><span class="org-rainbow-delimiters-depth-2">(</span>m_psi, m_phi0<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-variable-name">result_alice</span> = cirq.Simulator().simulate(circuit, qubit_order=[&#120595;, &#120601;0, &#120601;1])
+m_psi = <span class="org-builtin">int</span>(result_alice.measurements[<span class="org-string">'&#120595;'</span>][0])
+m_phi0 = <span class="org-builtin">int</span>(result_alice.measurements[<span class="org-string">'&#120601;0'</span>][0])
+<span class="org-builtin">print</span>(<span class="org-string">"Alice: Measure(&#120595;) = {}, Measure(&#120601;0) = {}"</span>.<span class="org-builtin">format</span>(m_psi, m_phi0))
 </pre>
 </div>
 
-<pre class="example" id="org6458c28">
+<pre class="example" id="org5c6ec8d">
 Alice: Measure(𝜓) = 0, Measure(𝜙0) = 0
 </pre>
 </div>
 </section>
 
-<section id="outline-container-org3e265c5" class="outline-2">
-<h2 id="org3e265c5">Bob这边的电路</h2>
-<div class="outline-text-2" id="text-org3e265c5">
+<section id="outline-container-orgca73b46" class="outline-2">
+<h2 id="orgca73b46">Bob这边的电路</h2>
+<div class="outline-text-2" id="text-orgca73b46">
 <p>
 假设要传送的量子比特状态是 \(|\psi\rangle=(\alpha|0\rangle+\beta|1\rangle)\) 。
 Alice把前面测量得到的结果告诉Bob，然后Bob根据得到的信息，对手里的 \(|\phi_1\rangle\) 进行相应的变换，从而把它的状态变成和 \(|\psi\rangle\) 一样：
@@ -288,26 +287,26 @@ Bob这里有一个量子比特 \(|\phi_1\rangle\) ，当Bob得到Alice发来的�
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">&#26681;&#25454;Alice&#27979;&#37327;|&#120595;&#120601;0&#10217; &#30340;&#32467;&#26524;&#65292;&#36820;&#22238;&#35201;&#23545;&#120601;1&#36827;&#34892;&#30340;&#21464;&#25442;</span>
-<span class="org-keyword">def</span> <span class="org-function-name">generate_bob_circuit</span><span class="org-rainbow-delimiters-depth-1">(</span>m_psi, m_phi0<span class="org-rainbow-delimiters-depth-1">)</span>:
+<span class="org-keyword">def</span> <span class="org-function-name">generate_bob_circuit</span>(m_psi, m_phi0):
     <span class="org-keyword">if</span> m_psi == 0 <span class="org-keyword">and</span> m_phi0 == 0:
         <span class="org-comment-delimiter"># </span><span class="org-comment">&#27979;&#37327; |&#120595;&#120601;0&#10217; &#24471;&#21040;00&#65292;&#20160;&#20040;&#20063;&#19981;&#29992;&#20570;</span>
-        <span class="org-keyword">return</span> cirq.Circuit<span class="org-rainbow-delimiters-depth-1">()</span>
+        <span class="org-keyword">return</span> cirq.Circuit()
     <span class="org-keyword">elif</span> m_psi == 0 <span class="org-keyword">and</span> m_phi0 == 1:
         <span class="org-comment-delimiter"># </span><span class="org-comment">&#27979;&#37327; |&#120595;&#120601;0&#10217; &#24471;&#21040;01&#65292;&#23545;|&#120601;1&#10217;&#20570;&#19968;&#20010;X&#21464;&#25442;</span>
-        <span class="org-keyword">return</span> cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>cirq.X<span class="org-rainbow-delimiters-depth-2">(</span>&#120601;1<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">return</span> cirq.Circuit(cirq.X(&#120601;1))
     <span class="org-keyword">elif</span> m_psi == 1 <span class="org-keyword">and</span> m_phi0 == 0:
         <span class="org-comment-delimiter"># </span><span class="org-comment">&#27979;&#37327; |&#120595;&#120601;0&#10217; &#24471;&#21040;10&#65292;&#23545;|&#120601;1&#10217;&#20570;&#19968;&#20010;Z&#21464;&#25442;</span>
-        <span class="org-keyword">return</span> cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>cirq.Z<span class="org-rainbow-delimiters-depth-2">(</span>&#120601;1<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">return</span> cirq.Circuit(cirq.Z(&#120601;1))
     <span class="org-keyword">elif</span> m_psi == 1 <span class="org-keyword">and</span> m_phi0 == 1:
         <span class="org-comment-delimiter"># </span><span class="org-comment">&#27979;&#37327; |&#120595;&#120601;0&#10217; &#24471;&#21040;11&#65292;&#23545;|&#120601;1&#10217;&#20570;&#19968;&#20010;X&#21464;&#25442;&#20877;&#21152;Z&#21464;&#25442;</span>
-        <span class="org-keyword">return</span> cirq.Circuit<span class="org-rainbow-delimiters-depth-1">(</span>cirq.X<span class="org-rainbow-delimiters-depth-2">(</span>&#120601;1<span class="org-rainbow-delimiters-depth-2">)</span>, cirq.Z<span class="org-rainbow-delimiters-depth-2">(</span>&#120601;1<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+        <span class="org-keyword">return</span> cirq.Circuit(cirq.X(&#120601;1), cirq.Z(&#120601;1))
 
-<span class="org-variable-name">circuit_bob</span> = generate_bob_circuit<span class="org-rainbow-delimiters-depth-1">(</span>m_psi, m_phi0<span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Alice: Measure(&#120595;) = {}, Measure(&#120601;0) = {}"</span>.<span class="org-builtin">format</span><span class="org-rainbow-delimiters-depth-2">(</span>m_psi, m_phi0<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+circuit_bob = generate_bob_circuit(m_psi, m_phi0)
+<span class="org-builtin">print</span>(<span class="org-string">"Alice: Measure(&#120595;) = {}, Measure(&#120601;0) = {}"</span>.<span class="org-builtin">format</span>(m_psi, m_phi0))
 </pre>
 </div>
 
-<pre class="example" id="org9ea5f7c">
+<pre class="example" id="org52229c7">
 Alice: Measure(𝜓) = 0, Measure(𝜙0) = 0
 </pre>
 
@@ -332,9 +331,9 @@ Alice: Measure(𝜓) = 0, Measure(𝜙0) = 0
 </ul>
 </div>
 
-<div id="outline-container-orgf3b0686" class="outline-3">
-<h3 id="orgf3b0686">关于Cirq里的状态向量</h3>
-<div class="outline-text-3" id="text-orgf3b0686">
+<div id="outline-container-org13423c5" class="outline-3">
+<h3 id="org13423c5">关于Cirq里的状态向量</h3>
+<div class="outline-text-3" id="text-org13423c5">
 <p>
 关于状态向量，这里多解释几句。例如我们有个系统，其中有3个量子比特，分别表示成
 </p>
@@ -397,7 +396,7 @@ begin{pmatrix}
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">result_alice</span> = cirq.Simulator<span class="org-rainbow-delimiters-depth-1">()</span>.simulate<span class="org-rainbow-delimiters-depth-1">(</span>circuit, qubit_order=<span class="org-rainbow-delimiters-depth-2">[</span>&#120595;, &#120601;0, &#120601;1<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-variable-name">result_alice</span> = cirq.Simulator().simulate(circuit, qubit_order=[&#120595;, &#120601;0, &#120601;1])
 </pre>
 </div>
 
@@ -458,17 +457,17 @@ begin{pmatrix}
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">&#26681;&#25454;Alice&#30340;&#27979;&#37327;&#32467;&#26524;&#65292;&#36820;&#22238;|&#120601;1&#10217;&#30340;&#29366;&#24577;&#21521;&#37327;&#65292;&#29992;&#26469;&#21021;&#22987;&#21270;Bob&#30340;&#30005;&#36335;</span>
-<span class="org-keyword">def</span> <span class="org-function-name">bob_phi_1_state</span><span class="org-rainbow-delimiters-depth-1">(</span>m_psi, m_phi0, result_alice<span class="org-rainbow-delimiters-depth-1">)</span>:
+<span class="org-keyword">def</span> <span class="org-function-name">bob_phi_1_state</span>(m_psi, m_phi0, result_alice):
     <span class="org-keyword">if</span> m_psi == 0 <span class="org-keyword">and</span> m_phi0 == 0:
-        <span class="org-keyword">return</span> result_alice.final_state<span class="org-rainbow-delimiters-depth-1">[</span>0:2<span class="org-rainbow-delimiters-depth-1">]</span>
+        <span class="org-keyword">return</span> result_alice.final_state[0:2]
     <span class="org-keyword">elif</span> m_psi == 0 <span class="org-keyword">and</span> m_phi0 == 1:
-        <span class="org-keyword">return</span> result_alice.final_state<span class="org-rainbow-delimiters-depth-1">[</span>2:4<span class="org-rainbow-delimiters-depth-1">]</span>
+        <span class="org-keyword">return</span> result_alice.final_state[2:4]
     <span class="org-keyword">elif</span> m_psi == 1 <span class="org-keyword">and</span> m_phi0 == 0:
-        <span class="org-keyword">return</span> result_alice.final_state<span class="org-rainbow-delimiters-depth-1">[</span>4:6<span class="org-rainbow-delimiters-depth-1">]</span>
+        <span class="org-keyword">return</span> result_alice.final_state[4:6]
     <span class="org-keyword">elif</span> m_psi == 1 <span class="org-keyword">and</span> m_phi0 == 1:
-        <span class="org-keyword">return</span> result_alice.final_state<span class="org-rainbow-delimiters-depth-1">[</span>6:8<span class="org-rainbow-delimiters-depth-1">]</span>
+        <span class="org-keyword">return</span> result_alice.final_state[6:8]
 
-<span class="org-variable-name">bob_initial_state</span> = bob_phi_1_state<span class="org-rainbow-delimiters-depth-1">(</span>m_psi, m_phi0, result_alice<span class="org-rainbow-delimiters-depth-1">)</span>
+bob_initial_state = bob_phi_1_state(m_psi, m_phi0, result_alice)
 </pre>
 </div>
 
@@ -477,16 +476,16 @@ begin{pmatrix}
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">result_bob</span> = cirq.Simulator<span class="org-rainbow-delimiters-depth-1">()</span>.simulate<span class="org-rainbow-delimiters-depth-1">(</span>circuit_bob,
-                                       qubit_order=<span class="org-rainbow-delimiters-depth-2">[</span>&#120601;1<span class="org-rainbow-delimiters-depth-2">]</span>,
-                                       initial_state=bob_initial_state<span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-variable-name">result_bob</span> = cirq.Simulator().simulate(circuit_bob,
+                                       qubit_order=[&#120601;1],
+                                       initial_state=bob_initial_state)
 
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Bob     |&#120601;1&#10217;:"</span>, np.<span class="org-builtin">round</span><span class="org-rainbow-delimiters-depth-2">(</span>result_bob.final_state, 3<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Alice   |&#120595;&#10217;: "</span>, np.<span class="org-builtin">round</span><span class="org-rainbow-delimiters-depth-2">(</span>psi_state, 3<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-builtin">print</span>(<span class="org-string">"Bob     |&#120601;1&#10217;:"</span>, np.<span class="org-builtin">round</span>(result_bob.final_state, 3))
+<span class="org-builtin">print</span>(<span class="org-string">"Alice   |&#120595;&#10217;: "</span>, np.<span class="org-builtin">round</span>(psi_state, 3))
 </pre>
 </div>
 
-<pre class="example" id="orgaa7f1a5">
+<pre class="example" id="orgdd82631">
 Bob     |𝜙1⟩: [0.707+0.j    0.   -0.707j]
 Alice   |𝜓⟩:  [0.707+0.j    0.   -0.707j]
 </pre>
@@ -502,9 +501,9 @@ Alice   |𝜓⟩:  [0.707+0.j    0.   -0.707j]
 </div>
 </section>
 
-<section id="outline-container-orgcc321c3" class="outline-2">
-<h2 id="orgcc321c3">备注：Tensor Product</h2>
-<div class="outline-text-2" id="text-orgcc321c3">
+<section id="outline-container-org981111a" class="outline-2">
+<h2 id="org981111a">备注：Tensor Product</h2>
+<div class="outline-text-2" id="text-org981111a">
 \begin{matrix}
 A \otimes B =
 \begin{bmatrix}
@@ -519,7 +518,7 @@ a_{1m}B & \cdots & a_{mn}B \\
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

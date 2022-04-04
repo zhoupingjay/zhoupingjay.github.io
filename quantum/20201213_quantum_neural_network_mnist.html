@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子神经网络</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -104,7 +103,7 @@
 </p>
 
 
-<div id="org29631a4" class="figure">
+<div id="org4c2712a" class="figure">
 <p><img src="../images/2020/12/QNN-MNIST.png" alt="QNN-MNIST.png" width="500px" />
 </p>
 </div>
@@ -147,13 +146,13 @@
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-rainbow-delimiters-depth-1">(</span>x_train, y_train<span class="org-rainbow-delimiters-depth-1">)</span>, <span class="org-rainbow-delimiters-depth-1">(</span>x_test, y_test<span class="org-rainbow-delimiters-depth-1">)</span> = tf.keras.datasets.mnist.load_data<span class="org-rainbow-delimiters-depth-1">()</span>
+<pre class="src src-python">(x_train, y_train), (<span class="org-variable-name">x_test</span>, <span class="org-variable-name">y_test</span>) = tf.keras.datasets.mnist.load_data()
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">Rescale the images from [0,255] to the [0.0,1.0] range.</span>
-<span class="org-variable-name">x_train</span>, <span class="org-variable-name">x_test</span> = x_train<span class="org-rainbow-delimiters-depth-1">[</span>..., np.newaxis<span class="org-rainbow-delimiters-depth-1">]</span>/255.0, x_test<span class="org-rainbow-delimiters-depth-1">[</span>..., np.newaxis<span class="org-rainbow-delimiters-depth-1">]</span>/255.0
+<span class="org-variable-name">x_train</span>, <span class="org-variable-name">x_test</span> = x_train[..., np.newaxis]/255.0, x_test[..., np.newaxis]/255.0
 
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of original training examples:"</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>x_train<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of original test examples:"</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>x_test<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-builtin">print</span>(<span class="org-string">"Number of original training examples:"</span>, <span class="org-builtin">len</span>(x_train))
+<span class="org-builtin">print</span>(<span class="org-string">"Number of original test examples:"</span>, <span class="org-builtin">len</span>(x_test))
 </pre>
 </div>
 
@@ -167,21 +166,21 @@ Number of original test examples: 10000
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">filter_36</span><span class="org-rainbow-delimiters-depth-1">(</span>x, y<span class="org-rainbow-delimiters-depth-1">)</span>:
-    <span class="org-variable-name">keep</span> = <span class="org-rainbow-delimiters-depth-1">(</span>y == 3<span class="org-rainbow-delimiters-depth-1">)</span> | <span class="org-rainbow-delimiters-depth-1">(</span>y == 6<span class="org-rainbow-delimiters-depth-1">)</span>
-    <span class="org-variable-name">x</span>, <span class="org-variable-name">y</span> = x<span class="org-rainbow-delimiters-depth-1">[</span>keep<span class="org-rainbow-delimiters-depth-1">]</span>, y<span class="org-rainbow-delimiters-depth-1">[</span>keep<span class="org-rainbow-delimiters-depth-1">]</span>
-    <span class="org-variable-name">y</span> = y == 3
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">filter_36</span>(x, y):
+    <span class="org-variable-name">keep</span> = (y == 3) | (y == 6)
+    <span class="org-variable-name">x</span>, <span class="org-variable-name">y</span> = x[keep], y[keep]
+    y = y == 3
     <span class="org-keyword">return</span> x,y
 
-<span class="org-variable-name">x_train</span>, <span class="org-variable-name">y_train</span> = filter_36<span class="org-rainbow-delimiters-depth-1">(</span>x_train, y_train<span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">x_test</span>, <span class="org-variable-name">y_test</span> = filter_36<span class="org-rainbow-delimiters-depth-1">(</span>x_test, y_test<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">x_train</span>, <span class="org-variable-name">y_train</span> = filter_36(x_train, y_train)
+<span class="org-variable-name">x_test</span>, <span class="org-variable-name">y_test</span> = filter_36(x_test, y_test)
 
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of filtered training examples:"</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>x_train<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of filtered test examples:"</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>x_test<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-builtin">print</span>(<span class="org-string">"Number of filtered training examples:"</span>, <span class="org-builtin">len</span>(x_train))
+<span class="org-builtin">print</span>(<span class="org-string">"Number of filtered test examples:"</span>, <span class="org-builtin">len</span>(x_test))
 </pre>
 </div>
 
-<pre class="example" id="orgf1eeeb1">
+<pre class="example" id="org44c9828">
 Number of filtered training examples: 12049
 Number of filtered test examples: 1968
 </pre>
@@ -193,15 +192,15 @@ Number of filtered test examples: 1968
 
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>y_train<span class="org-rainbow-delimiters-depth-2">[</span>0<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-builtin">print</span>(y_train[0])
 
-plt.imshow<span class="org-rainbow-delimiters-depth-1">(</span>x_train<span class="org-rainbow-delimiters-depth-2">[</span>0, :, :, 0<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
-plt.colorbar<span class="org-rainbow-delimiters-depth-1">()</span>
+plt.imshow(x_train[0, :, :, 0])
+plt.colorbar()
 </pre>
 </div>
 
 
-<div id="orgae85db1" class="figure">
+<div id="org1e32663" class="figure">
 <p><img src="../images/2020/12/output_9_2.png" alt="output_9_2.png" width="320px" />
 </p>
 </div>
@@ -211,13 +210,13 @@ plt.colorbar<span class="org-rainbow-delimiters-depth-1">()</span>
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">x_train_small</span> = tf.image.resize<span class="org-rainbow-delimiters-depth-1">(</span>x_train, <span class="org-rainbow-delimiters-depth-2">(</span>4,4<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>.numpy<span class="org-rainbow-delimiters-depth-1">()</span>
-<span class="org-variable-name">x_test_small</span> = tf.image.resize<span class="org-rainbow-delimiters-depth-1">(</span>x_test, <span class="org-rainbow-delimiters-depth-2">(</span>4,4<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>.numpy<span class="org-rainbow-delimiters-depth-1">()</span>
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>x_train_small.shape<span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-variable-name">x_train_small</span> = tf.image.resize(x_train, (4,4)).numpy()
+<span class="org-variable-name">x_test_small</span> = tf.image.resize(x_test, (4,4)).numpy()
+<span class="org-builtin">print</span>(x_train_small.shape)
 </pre>
 </div>
 
-<pre class="example" id="orgc79a586">
+<pre class="example" id="org7705f36">
 (12049, 4, 4, 1)
 </pre>
 
@@ -226,15 +225,15 @@ plt.colorbar<span class="org-rainbow-delimiters-depth-1">()</span>
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>y_train<span class="org-rainbow-delimiters-depth-2">[</span>0<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-builtin">print</span>(y_train[0])
 
-plt.imshow<span class="org-rainbow-delimiters-depth-1">(</span>x_train_small<span class="org-rainbow-delimiters-depth-2">[</span>0,:,:,0<span class="org-rainbow-delimiters-depth-2">]</span>, vmin=0, vmax=1<span class="org-rainbow-delimiters-depth-1">)</span>
-plt.colorbar<span class="org-rainbow-delimiters-depth-1">()</span>
+plt.imshow(x_train_small[0,:,:,0], vmin=0, vmax=1)
+plt.colorbar()
 </pre>
 </div>
 
 
-<div id="org7e08370" class="figure">
+<div id="orgf278ec3" class="figure">
 <p><img src="../images/2020/12/output_13_2.png" alt="output_13_2.png" width="320px" />
 </p>
 </div>
@@ -244,42 +243,42 @@ plt.colorbar<span class="org-rainbow-delimiters-depth-1">()</span>
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">remove_contradicting</span><span class="org-rainbow-delimiters-depth-1">(</span>xs, ys<span class="org-rainbow-delimiters-depth-1">)</span>:
-    <span class="org-variable-name">mapping</span> = collections.defaultdict<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-builtin">set</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">remove_contradicting</span>(xs, ys):
+    <span class="org-variable-name">mapping</span> = collections.defaultdict(<span class="org-builtin">set</span>)
     <span class="org-comment-delimiter"># </span><span class="org-comment">Determine the set of labels for each unique image:</span>
-    <span class="org-keyword">for</span> x,y <span class="org-keyword">in</span> <span class="org-builtin">zip</span><span class="org-rainbow-delimiters-depth-1">(</span>xs,ys<span class="org-rainbow-delimiters-depth-1">)</span>:
-       mapping<span class="org-rainbow-delimiters-depth-1">[</span><span class="org-builtin">tuple</span><span class="org-rainbow-delimiters-depth-2">(</span>x.flatten<span class="org-rainbow-delimiters-depth-3">()</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">]</span>.add<span class="org-rainbow-delimiters-depth-1">(</span>y<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">for</span> x,y <span class="org-keyword">in</span> <span class="org-builtin">zip</span>(xs,ys):
+       mapping[<span class="org-builtin">tuple</span>(x.flatten())].add(y)
 
-    <span class="org-variable-name">new_x</span> = <span class="org-rainbow-delimiters-depth-1">[]</span>
-    <span class="org-variable-name">new_y</span> = <span class="org-rainbow-delimiters-depth-1">[]</span>
-    <span class="org-keyword">for</span> x,y <span class="org-keyword">in</span> <span class="org-builtin">zip</span><span class="org-rainbow-delimiters-depth-1">(</span>xs, ys<span class="org-rainbow-delimiters-depth-1">)</span>:
-      <span class="org-variable-name">labels</span> = mapping<span class="org-rainbow-delimiters-depth-1">[</span><span class="org-builtin">tuple</span><span class="org-rainbow-delimiters-depth-2">(</span>x.flatten<span class="org-rainbow-delimiters-depth-3">()</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">]</span>
-      <span class="org-keyword">if</span> <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-1">(</span>labels<span class="org-rainbow-delimiters-depth-1">)</span> == 1:
-          new_x.append<span class="org-rainbow-delimiters-depth-1">(</span>x<span class="org-rainbow-delimiters-depth-1">)</span>
-          new_y.append<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-builtin">list</span><span class="org-rainbow-delimiters-depth-2">(</span>labels<span class="org-rainbow-delimiters-depth-2">)[</span>0<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    new_x = []
+    <span class="org-variable-name">new_y</span> = []
+    <span class="org-keyword">for</span> x,y <span class="org-keyword">in</span> <span class="org-builtin">zip</span>(xs, ys):
+      <span class="org-variable-name">labels</span> = mapping[<span class="org-builtin">tuple</span>(x.flatten())]
+      <span class="org-keyword">if</span> <span class="org-builtin">len</span>(labels) == 1:
+          new_x.append(x)
+          new_y.append(<span class="org-builtin">list</span>(labels)[0])
       <span class="org-keyword">else</span>:
           <span class="org-comment-delimiter"># </span><span class="org-comment">Throw out images that match more than one label.</span>
           <span class="org-keyword">pass</span>
 
-    <span class="org-variable-name">num_3</span> = <span class="org-builtin">sum</span><span class="org-rainbow-delimiters-depth-1">(</span>1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values<span class="org-rainbow-delimiters-depth-2">()</span> <span class="org-keyword">if</span> <span class="org-constant">True</span> <span class="org-keyword">in</span> value<span class="org-rainbow-delimiters-depth-1">)</span>
-    <span class="org-variable-name">num_6</span> = <span class="org-builtin">sum</span><span class="org-rainbow-delimiters-depth-1">(</span>1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values<span class="org-rainbow-delimiters-depth-2">()</span> <span class="org-keyword">if</span> <span class="org-constant">False</span> <span class="org-keyword">in</span> value<span class="org-rainbow-delimiters-depth-1">)</span>
-    <span class="org-variable-name">num_both</span> = <span class="org-builtin">sum</span><span class="org-rainbow-delimiters-depth-1">(</span>1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values<span class="org-rainbow-delimiters-depth-2">()</span> <span class="org-keyword">if</span> <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>value<span class="org-rainbow-delimiters-depth-2">)</span> == 2<span class="org-rainbow-delimiters-depth-1">)</span>
+    num_3 = <span class="org-builtin">sum</span>(1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values() <span class="org-keyword">if</span> <span class="org-constant">True</span> <span class="org-keyword">in</span> value)
+    <span class="org-variable-name">num_6</span> = <span class="org-builtin">sum</span>(1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values() <span class="org-keyword">if</span> <span class="org-constant">False</span> <span class="org-keyword">in</span> value)
+    <span class="org-variable-name">num_both</span> = <span class="org-builtin">sum</span>(1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values() <span class="org-keyword">if</span> <span class="org-builtin">len</span>(value) == 2)
 
-    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of unique images:"</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>mapping.values<span class="org-rainbow-delimiters-depth-3">()</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of 3s: "</span>, num_3<span class="org-rainbow-delimiters-depth-1">)</span>
-    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of 6s: "</span>, num_6<span class="org-rainbow-delimiters-depth-1">)</span>
-    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Number of contradictory images: "</span>, num_both<span class="org-rainbow-delimiters-depth-1">)</span>
-    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">()</span>
-    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Initial number of examples: "</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>xs<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-    <span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-string">"Remaining non-contradictory examples: "</span>, <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-2">(</span>new_x<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-builtin">print</span>(<span class="org-string">"Number of unique images:"</span>, <span class="org-builtin">len</span>(mapping.values()))
+    <span class="org-builtin">print</span>(<span class="org-string">"Number of 3s: "</span>, num_3)
+    <span class="org-builtin">print</span>(<span class="org-string">"Number of 6s: "</span>, num_6)
+    <span class="org-builtin">print</span>(<span class="org-string">"Number of contradictory images: "</span>, num_both)
+    <span class="org-builtin">print</span>()
+    <span class="org-builtin">print</span>(<span class="org-string">"Initial number of examples: "</span>, <span class="org-builtin">len</span>(xs))
+    <span class="org-builtin">print</span>(<span class="org-string">"Remaining non-contradictory examples: "</span>, <span class="org-builtin">len</span>(new_x))
 
-    <span class="org-keyword">return</span> np.array<span class="org-rainbow-delimiters-depth-1">(</span>new_x<span class="org-rainbow-delimiters-depth-1">)</span>, np.array<span class="org-rainbow-delimiters-depth-1">(</span>new_y<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">return</span> np.array(new_x), np.array(new_y)
 
-<span class="org-variable-name">x_train_nocon</span>, <span class="org-variable-name">y_train_nocon</span> = remove_contradicting<span class="org-rainbow-delimiters-depth-1">(</span>x_train_small, y_train<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">x_train_nocon</span>, <span class="org-variable-name">y_train_nocon</span> = remove_contradicting(x_train_small, y_train)
 </pre>
 </div>
 
-<pre class="example" id="org9e35dd2">
+<pre class="example" id="org73e667f">
 Number of unique images: 10387
 Number of 3s:  4961
 Number of 6s:  5475
@@ -296,8 +295,8 @@ Remaining non-contradictory examples:  11520
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-variable-name">THRESHOLD</span> = 0.5
 
-<span class="org-variable-name">x_train_bin</span> = np.array<span class="org-rainbow-delimiters-depth-1">(</span>x_train_nocon &gt; THRESHOLD, dtype=np.float32<span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">x_test_bin</span> = np.array<span class="org-rainbow-delimiters-depth-1">(</span>x_test_small &gt; THRESHOLD, dtype=np.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">x_train_bin</span> = np.array(x_train_nocon &gt; THRESHOLD, dtype=np.float32)
+x_test_bin = np.array(x_test_small &gt; THRESHOLD, dtype=np.float32)
 </pre>
 </div>
 
@@ -306,25 +305,25 @@ Remaining non-contradictory examples:  11520
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">convert_to_circuit</span><span class="org-rainbow-delimiters-depth-1">(</span>image<span class="org-rainbow-delimiters-depth-1">)</span>:
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">convert_to_circuit</span>(image):
     <span class="org-doc">"""Encode truncated classical image into quantum datapoint."""</span>
-    <span class="org-variable-name">values</span> = np.ndarray.flatten<span class="org-rainbow-delimiters-depth-1">(</span>image<span class="org-rainbow-delimiters-depth-1">)</span>
-    <span class="org-variable-name">qubits</span> = cirq.GridQubit.rect<span class="org-rainbow-delimiters-depth-1">(</span>4, 4<span class="org-rainbow-delimiters-depth-1">)</span>
-    <span class="org-variable-name">circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">()</span>
-    <span class="org-keyword">for</span> i, value <span class="org-keyword">in</span> <span class="org-builtin">enumerate</span><span class="org-rainbow-delimiters-depth-1">(</span>values<span class="org-rainbow-delimiters-depth-1">)</span>:
-        <span class="org-keyword">if</span> value:
-            circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>cirq.X<span class="org-rainbow-delimiters-depth-2">(</span>qubits<span class="org-rainbow-delimiters-depth-3">[</span>i<span class="org-rainbow-delimiters-depth-3">]</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-variable-name">values</span> = np.ndarray.flatten(image)
+    <span class="org-variable-name">qubits</span> = cirq.GridQubit.rect(4, 4)
+    <span class="org-variable-name">circuit</span> = cirq.Circuit()
+    <span class="org-keyword">for</span> i, value <span class="org-keyword">in</span> <span class="org-builtin">enumerate</span>(values):
+        <span class="org-keyword">if</span> <span class="org-variable-name">value</span>:
+            circuit.append(cirq.X(qubits[i]))
     <span class="org-keyword">return</span> circuit
 
 
-<span class="org-variable-name">x_train_circ</span> = <span class="org-rainbow-delimiters-depth-1">[</span>convert_to_circuit<span class="org-rainbow-delimiters-depth-2">(</span>x<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-keyword">for</span> x <span class="org-keyword">in</span> x_train_bin<span class="org-rainbow-delimiters-depth-1">]</span>
-<span class="org-variable-name">x_test_circ</span> = <span class="org-rainbow-delimiters-depth-1">[</span>convert_to_circuit<span class="org-rainbow-delimiters-depth-2">(</span>x<span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-keyword">for</span> x <span class="org-keyword">in</span> x_test_bin<span class="org-rainbow-delimiters-depth-1">]</span>
+x_train_circ = [convert_to_circuit(x) <span class="org-keyword">for</span> x <span class="org-keyword">in</span> x_train_bin]
+<span class="org-variable-name">x_test_circ</span> = [convert_to_circuit(x) <span class="org-keyword">for</span> x <span class="org-keyword">in</span> x_test_bin]
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">x_train_tfcirc</span> = tfq.convert_to_tensor<span class="org-rainbow-delimiters-depth-1">(</span>x_train_circ<span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-variable-name">x_test_tfcirc</span> = tfq.convert_to_tensor<span class="org-rainbow-delimiters-depth-1">(</span>x_test_circ<span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-variable-name">x_train_tfcirc</span> = tfq.convert_to_tensor(x_train_circ)
+<span class="org-variable-name">x_test_tfcirc</span> = tfq.convert_to_tensor(x_test_circ)
 </pre>
 </div>
 
@@ -333,15 +332,15 @@ Remaining non-contradictory examples:  11520
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">class</span> <span class="org-type">CircuitLayerBuilder</span><span class="org-rainbow-delimiters-depth-1">()</span>:
-    <span class="org-keyword">def</span> <span class="org-function-name">__init__</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>, data_qubits, readout<span class="org-rainbow-delimiters-depth-1">)</span>:
-        <span class="org-keyword">self</span>.data_qubits = data_qubits
-        <span class="org-keyword">self</span>.readout = readout
+<pre class="src src-python"><span class="org-keyword">class</span> <span class="org-type">CircuitLayerBuilder</span>():
+    <span class="org-keyword">def</span> <span class="org-function-name">__init__</span>(<span class="org-keyword">self</span>, data_qubits, readout):
+        <span class="org-keyword">self</span>.<span class="org-variable-name">data_qubits</span> = data_qubits
+        <span class="org-keyword">self</span>.<span class="org-variable-name">readout</span> = readout
 
-    <span class="org-keyword">def</span> <span class="org-function-name">add_layer</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>, circuit, gate, prefix<span class="org-rainbow-delimiters-depth-1">)</span>:
-        <span class="org-keyword">for</span> i, qubit <span class="org-keyword">in</span> <span class="org-builtin">enumerate</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">self</span>.data_qubits<span class="org-rainbow-delimiters-depth-1">)</span>:
-            <span class="org-variable-name">symbol</span> = sympy.Symbol<span class="org-rainbow-delimiters-depth-1">(</span>prefix + <span class="org-string">'-'</span> + <span class="org-builtin">str</span><span class="org-rainbow-delimiters-depth-2">(</span>i<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-            circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>gate<span class="org-rainbow-delimiters-depth-2">(</span>qubit, <span class="org-keyword">self</span>.readout<span class="org-rainbow-delimiters-depth-2">)</span>**symbol<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">def</span> <span class="org-function-name">add_layer</span>(<span class="org-keyword">self</span>, circuit, gate, prefix):
+        <span class="org-keyword">for</span> i, qubit <span class="org-keyword">in</span> <span class="org-builtin">enumerate</span>(<span class="org-keyword">self</span>.data_qubits):
+            <span class="org-variable-name">symbol</span> = sympy.Symbol(prefix + <span class="org-string">'-'</span> + <span class="org-builtin">str</span>(i))
+            circuit.append(gate(qubit, <span class="org-keyword">self</span>.readout)**symbol)
 </pre>
 </div>
 
@@ -351,17 +350,17 @@ Remaining non-contradictory examples:  11520
 
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">demo_builder</span> = CircuitLayerBuilder<span class="org-rainbow-delimiters-depth-1">(</span>data_qubits = cirq.GridQubit.rect<span class="org-rainbow-delimiters-depth-2">(</span>4,1<span class="org-rainbow-delimiters-depth-2">)</span>,
-                                   readout=cirq.GridQubit<span class="org-rainbow-delimiters-depth-2">(</span>-1,-1<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-variable-name">demo_builder</span> = CircuitLayerBuilder(data_qubits = cirq.GridQubit.rect(4,1),
+                                   readout=cirq.GridQubit(-1,-1))
 
-<span class="org-variable-name">circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">()</span>
-demo_builder.add_layer<span class="org-rainbow-delimiters-depth-1">(</span>circuit, gate = cirq.XX, prefix=<span class="org-string">'xx'</span><span class="org-rainbow-delimiters-depth-1">)</span>
-SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+circuit = cirq.Circuit()
+demo_builder.add_layer(circuit, gate = cirq.XX, prefix=<span class="org-string">'xx'</span>)
+SVGCircuit(circuit)
 </pre>
 </div>
 
 
-<div id="org5e20208" class="figure">
+<div id="org1e45ac2" class="figure">
 <p><img src="../images/2020/12/output_24_0.svg" alt="output_24_0.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -371,33 +370,33 @@ SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span clas
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">create_quantum_model</span><span class="org-rainbow-delimiters-depth-1">()</span>:
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">create_quantum_model</span>():
     <span class="org-doc">"""Create a QNN model circuit and readout operation to go along with it."""</span>
-    <span class="org-variable-name">data_qubits</span> = cirq.GridQubit.rect<span class="org-rainbow-delimiters-depth-1">(</span>4, 4<span class="org-rainbow-delimiters-depth-1">)</span>  <span class="org-comment-delimiter"># </span><span class="org-comment">a 4x4 grid.</span>
-    <span class="org-variable-name">readout</span> = cirq.GridQubit<span class="org-rainbow-delimiters-depth-1">(</span>-1, -1<span class="org-rainbow-delimiters-depth-1">)</span>         <span class="org-comment-delimiter"># </span><span class="org-comment">a single qubit at [-1,-1]</span>
-    <span class="org-variable-name">circuit</span> = cirq.Circuit<span class="org-rainbow-delimiters-depth-1">()</span>
+    <span class="org-variable-name">data_qubits</span> = cirq.GridQubit.rect(4, 4)  <span class="org-comment-delimiter"># </span><span class="org-comment">a 4x4 grid.</span>
+    <span class="org-variable-name">readout</span> = cirq.GridQubit(-1, -1)         <span class="org-comment-delimiter"># </span><span class="org-comment">a single qubit at [-1,-1]</span>
+    <span class="org-variable-name">circuit</span> = cirq.Circuit()
 
     <span class="org-comment-delimiter"># </span><span class="org-comment">Prepare the readout qubit.</span>
-    circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>cirq.X<span class="org-rainbow-delimiters-depth-2">(</span>readout<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-    circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>cirq.H<span class="org-rainbow-delimiters-depth-2">(</span>readout<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    circuit.append(cirq.X(readout))
+    circuit.append(cirq.H(readout))
 
-    <span class="org-variable-name">builder</span> = CircuitLayerBuilder<span class="org-rainbow-delimiters-depth-1">(</span>
+    <span class="org-variable-name">builder</span> = CircuitLayerBuilder(
         data_qubits = data_qubits,
-        readout=readout<span class="org-rainbow-delimiters-depth-1">)</span>
+        readout=readout)
 
     <span class="org-comment-delimiter"># </span><span class="org-comment">Then add layers (experiment by adding more).</span>
-    builder.add_layer<span class="org-rainbow-delimiters-depth-1">(</span>circuit, cirq.XX, <span class="org-string">"xx1"</span><span class="org-rainbow-delimiters-depth-1">)</span>
-    builder.add_layer<span class="org-rainbow-delimiters-depth-1">(</span>circuit, cirq.ZZ, <span class="org-string">"zz1"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    builder.add_layer(circuit, cirq.XX, <span class="org-string">"xx1"</span>)
+    builder.add_layer(circuit, cirq.ZZ, <span class="org-string">"zz1"</span>)
 
     <span class="org-comment-delimiter"># </span><span class="org-comment">Finally, prepare the readout qubit.</span>
-    circuit.append<span class="org-rainbow-delimiters-depth-1">(</span>cirq.H<span class="org-rainbow-delimiters-depth-2">(</span>readout<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    circuit.append(cirq.H(readout))
 
-    <span class="org-keyword">return</span> circuit, cirq.Z<span class="org-rainbow-delimiters-depth-1">(</span>readout<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">return</span> circuit, cirq.Z(readout)
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">model_circuit</span>, <span class="org-variable-name">model_readout</span> = create_quantum_model<span class="org-rainbow-delimiters-depth-1">()</span>
+<pre class="src src-python"><span class="org-variable-name">model_circuit</span>, <span class="org-variable-name">model_readout</span> = create_quantum_model()
 </pre>
 </div>
 
@@ -406,12 +405,12 @@ SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span clas
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>model_circuit<span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python">SVGCircuit(model_circuit)
 </pre>
 </div>
 
 
-<div id="org572d3a7" class="figure">
+<div id="org7864c55" class="figure">
 <p><img src="../images/2020/12/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="1024px" />
 </p>
 </div>
@@ -422,13 +421,13 @@ SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span clas
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Build the Keras model.</span>
-<span class="org-variable-name">model</span> = tf.keras.Sequential<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span>
+<span class="org-variable-name">model</span> = tf.keras.Sequential([
     <span class="org-comment-delimiter"># </span><span class="org-comment">The input is the data-circuit, encoded as a tf.string</span>
-    tf.keras.layers.Input<span class="org-rainbow-delimiters-depth-3">(</span>shape=<span class="org-rainbow-delimiters-depth-4">()</span>, dtype=tf.string<span class="org-rainbow-delimiters-depth-3">)</span>,
+    tf.keras.layers.Input(shape=(), dtype=tf.string),
     <span class="org-comment-delimiter"># </span><span class="org-comment">The PQC layer returns the expected value of the readout gate, range [-1,1].</span>
     <span class="org-comment-delimiter"># </span><span class="org-comment">model_readout is operator cirq.Z(readout)</span>
-    tfq.layers.PQC<span class="org-rainbow-delimiters-depth-3">(</span>model_circuit, model_readout<span class="org-rainbow-delimiters-depth-3">)</span>,
-<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    tfq.layers.PQC(model_circuit, model_readout),
+])
 
 </pre>
 </div>
@@ -449,12 +448,12 @@ SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span clas
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">hinge_accuracy</span><span class="org-rainbow-delimiters-depth-1">(</span>y_true, y_pred<span class="org-rainbow-delimiters-depth-1">)</span>:
-    <span class="org-variable-name">y_true</span> = tf.squeeze<span class="org-rainbow-delimiters-depth-1">(</span>y_true<span class="org-rainbow-delimiters-depth-1">)</span> &gt; 0.0
-    <span class="org-variable-name">y_pred</span> = tf.squeeze<span class="org-rainbow-delimiters-depth-1">(</span>y_pred<span class="org-rainbow-delimiters-depth-1">)</span> &gt; 0.0
-    <span class="org-variable-name">result</span> = tf.cast<span class="org-rainbow-delimiters-depth-1">(</span>y_true == y_pred, tf.float32<span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">hinge_accuracy</span>(y_true, y_pred):
+    <span class="org-variable-name">y_true</span> = tf.squeeze(y_true) &gt; 0.0
+    <span class="org-variable-name">y_pred</span> = tf.squeeze(y_pred) &gt; 0.0
+    <span class="org-variable-name">result</span> = tf.cast(y_true == y_pred, tf.float32)
 
-    <span class="org-keyword">return</span> tf.reduce_mean<span class="org-rainbow-delimiters-depth-1">(</span>result<span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-keyword">return</span> tf.reduce_mean(result)
 </pre>
 </div>
 
@@ -463,16 +462,16 @@ SVGCircuit<span class="org-rainbow-delimiters-depth-1">(</span>circuit<span clas
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">model.<span class="org-builtin">compile</span><span class="org-rainbow-delimiters-depth-1">(</span>
-    loss=tf.keras.losses.Hinge<span class="org-rainbow-delimiters-depth-2">()</span>,
-    optimizer=tf.keras.optimizers.Adam<span class="org-rainbow-delimiters-depth-2">()</span>,
-    metrics=<span class="org-rainbow-delimiters-depth-2">[</span>hinge_accuracy<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-python">model.<span class="org-builtin">compile</span>(
+    loss=tf.keras.losses.Hinge(),
+    optimizer=tf.keras.optimizers.Adam(),
+    metrics=[hinge_accuracy])
 
-<span class="org-keyword">print</span><span class="org-rainbow-delimiters-depth-1">(</span>model.summary<span class="org-rainbow-delimiters-depth-2">()</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-builtin">print</span>(model.summary())
 </pre>
 </div>
 
-<pre class="example" id="org184e64e">
+<pre class="example" id="org7c6e5fe">
 Model: "sequential"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -501,7 +500,7 @@ None
 <span class="org-comment-delimiter"># </span><span class="org-comment">x_train_tfcirc = tfq.convert_to_tensor(x_train_circ)</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">x_test_tfcirc = tfq.convert_to_tensor(x_test_circ)</span>
 
-<span class="org-variable-name">NUM_EXAMPLES</span> = <span class="org-builtin">len</span><span class="org-rainbow-delimiters-depth-1">(</span>x_train_tfcirc<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-variable-name">NUM_EXAMPLES</span> = <span class="org-builtin">len</span>(x_train_tfcirc)
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">Use a smaller subset for shorter training, for example:</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">NUM_EXAMPLES = 500</span>
@@ -509,21 +508,21 @@ None
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">x_train_tfcirc_sub</span> = x_train_tfcirc<span class="org-rainbow-delimiters-depth-1">[</span>:NUM_EXAMPLES<span class="org-rainbow-delimiters-depth-1">]</span>
-<span class="org-variable-name">y_train_hinge_sub</span> = y_train_hinge<span class="org-rainbow-delimiters-depth-1">[</span>:NUM_EXAMPLES<span class="org-rainbow-delimiters-depth-1">]</span>
+<pre class="src src-python"><span class="org-variable-name">x_train_tfcirc_sub</span> = x_train_tfcirc[:NUM_EXAMPLES]
+<span class="org-variable-name">y_train_hinge_sub</span> = y_train_hinge[:NUM_EXAMPLES]
 
-<span class="org-variable-name">qnn_history</span> = model.fit<span class="org-rainbow-delimiters-depth-1">(</span>
+<span class="org-variable-name">qnn_history</span> = model.fit(
       x_train_tfcirc_sub, y_train_hinge_sub,
       batch_size=32,
       epochs=EPOCHS,
       verbose=1,
-      validation_data=<span class="org-rainbow-delimiters-depth-2">(</span>x_test_tfcirc, y_test_hinge<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+      validation_data=(x_test_tfcirc, y_test_hinge))
 
-<span class="org-variable-name">qnn_results</span> = model.evaluate<span class="org-rainbow-delimiters-depth-1">(</span>x_test_tfcirc, y_test<span class="org-rainbow-delimiters-depth-1">)</span>
+qnn_results = model.evaluate(x_test_tfcirc, y_test)
 </pre>
 </div>
 
-<pre class="example" id="org3030530">
+<pre class="example" id="orgbb01413">
 Epoch 1/3
 360/360 [==============================] - 260s 724ms/step - loss: 0.5884 - hinge_accuracy: 0.7721 - val_loss: 0.3951 - val_hinge_accuracy: 0.8135
 Epoch 2/3
@@ -546,25 +545,25 @@ Epoch 3/3
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">create_fair_classical_model</span><span class="org-rainbow-delimiters-depth-1">()</span>:
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">create_fair_classical_model</span>():
     <span class="org-comment-delimiter"># </span><span class="org-comment">A simple model based off LeNet from https://keras.io/examples/mnist_cnn/</span>
-    <span class="org-variable-name">model</span> = tf.keras.Sequential<span class="org-rainbow-delimiters-depth-1">()</span>
-    model.add<span class="org-rainbow-delimiters-depth-1">(</span>tf.keras.layers.Flatten<span class="org-rainbow-delimiters-depth-2">(</span>input_shape=<span class="org-rainbow-delimiters-depth-3">(</span>4,4,1<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-    model.add<span class="org-rainbow-delimiters-depth-1">(</span>tf.keras.layers.Dense<span class="org-rainbow-delimiters-depth-2">(</span>2, activation=<span class="org-string">'relu'</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-    model.add<span class="org-rainbow-delimiters-depth-1">(</span>tf.keras.layers.Dense<span class="org-rainbow-delimiters-depth-2">(</span>1<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+    <span class="org-variable-name">model</span> = tf.keras.Sequential()
+    model.add(tf.keras.layers.Flatten(input_shape=(4,4,1)))
+    model.add(tf.keras.layers.Dense(2, activation=<span class="org-string">'relu'</span>))
+    model.add(tf.keras.layers.Dense(1))
     <span class="org-keyword">return</span> model
 
 
-<span class="org-variable-name">model</span> = create_fair_classical_model<span class="org-rainbow-delimiters-depth-1">()</span>
-model.<span class="org-builtin">compile</span><span class="org-rainbow-delimiters-depth-1">(</span>loss=tf.keras.losses.BinaryCrossentropy<span class="org-rainbow-delimiters-depth-2">(</span>from_logits=<span class="org-constant">True</span><span class="org-rainbow-delimiters-depth-2">)</span>,
-              optimizer=tf.keras.optimizers.Adam<span class="org-rainbow-delimiters-depth-2">()</span>,
-              metrics=<span class="org-rainbow-delimiters-depth-2">[</span><span class="org-string">'accuracy'</span><span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+model = create_fair_classical_model()
+model.<span class="org-builtin">compile</span>(loss=tf.keras.losses.BinaryCrossentropy(from_logits=<span class="org-constant">True</span>),
+              optimizer=tf.keras.optimizers.Adam(),
+              metrics=[<span class="org-string">'accuracy'</span>])
 
-model.summary<span class="org-rainbow-delimiters-depth-1">()</span>
+model.summary()
 </pre>
 </div>
 
-<pre class="example" id="org51d8336">
+<pre class="example" id="org4eb49fb">
 Model: "sequential_2"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -582,33 +581,33 @@ _________________________________________________________________
 </pre>
 
 <div class="org-src-container">
-<pre class="src src-python">model.fit<span class="org-rainbow-delimiters-depth-1">(</span>x_train_bin,
+<pre class="src src-python">model.fit(x_train_bin,
           y_train_nocon,
           batch_size=128,
           epochs=20,
           verbose=0,
-          validation_data=<span class="org-rainbow-delimiters-depth-2">(</span>x_test_bin, y_test<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+          validation_data=(x_test_bin, y_test))
 
-<span class="org-variable-name">fair_nn_results</span> = model.evaluate<span class="org-rainbow-delimiters-depth-1">(</span>x_test_bin, y_test<span class="org-rainbow-delimiters-depth-1">)</span>
+fair_nn_results = model.evaluate(x_test_bin, y_test)
 </pre>
 </div>
 
-<pre class="example" id="org6eebd3f">
+<pre class="example" id="org80e7c8b">
 62/62 [==============================] - 0s 511us/step - loss: 0.2666 - accuracy: 0.9141
 </pre>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">qnn_accuracy</span> = qnn_results<span class="org-rainbow-delimiters-depth-1">[</span>1<span class="org-rainbow-delimiters-depth-1">]</span>
+<pre class="src src-python"><span class="org-variable-name">qnn_accuracy</span> = qnn_results[1]
 <span class="org-comment-delimiter"># </span><span class="org-comment">cnn_accuracy = cnn_results[1]</span>
-<span class="org-variable-name">fair_nn_accuracy</span> = fair_nn_results<span class="org-rainbow-delimiters-depth-1">[</span>1<span class="org-rainbow-delimiters-depth-1">]</span>
+<span class="org-variable-name">fair_nn_accuracy</span> = fair_nn_results[1]
 
-sns.barplot<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-rainbow-delimiters-depth-2">[</span><span class="org-string">"Quantum"</span>, <span class="org-string">"Classical, fair"</span><span class="org-rainbow-delimiters-depth-2">]</span>,
-            <span class="org-rainbow-delimiters-depth-2">[</span>qnn_accuracy, fair_nn_accuracy<span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">)</span>
+sns.barplot([<span class="org-string">"Quantum"</span>, <span class="org-string">"Classical, fair"</span>],
+            [qnn_accuracy, fair_nn_accuracy])
 </pre>
 </div>
 
 
-<div id="orga20db0b" class="figure">
+<div id="org5ade0fc" class="figure">
 <p><img src="../images/2020/12/output_45_1.png" alt="output_45_1.png" width="480px" />
 </p>
 </div>
@@ -624,7 +623,7 @@ sns.barplot<span class="org-rainbow-delimiters-depth-1">(</span><span class="org
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

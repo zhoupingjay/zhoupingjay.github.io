@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子傅里叶变换详解 (2) 逆傅里叶变换</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -80,9 +79,9 @@
 既然有『量子傅立叶变换』，那么自然也有它的逆变换，今天就来聊聊这个话题。
 </p>
 
-<section id="outline-container-orge8d452c" class="outline-2">
-<h2 id="orge8d452c">量子傅立叶变换和逆变换</h2>
-<div class="outline-text-2" id="text-orge8d452c">
+<section id="outline-container-org3e39627" class="outline-2">
+<h2 id="org3e39627">量子傅立叶变换和逆变换</h2>
+<div class="outline-text-2" id="text-org3e39627">
 <p>
 前文说过，对于任意状态 \(|\psi\rangle\) ：
 </p>
@@ -128,9 +127,9 @@ g(j) = \frac{1}{\sqrt{N}} \sum_{k=0}^{N} \omega^{-jk} \tilde f(k) \\\
 </div>
 </section>
 
-<section id="outline-container-org3e5a773" class="outline-2">
-<h2 id="org3e5a773">量子傅立叶逆变换的验证</h2>
-<div class="outline-text-2" id="text-org3e5a773">
+<section id="outline-container-orge5a2286" class="outline-2">
+<h2 id="orge5a2286">量子傅立叶逆变换的验证</h2>
+<div class="outline-text-2" id="text-orge5a2286">
 <p>
 假如我们对一个状态 \(|\psi\rangle\) 作了QFT：
 </p>
@@ -156,7 +155,7 @@ QFT^{-1} QFT|\psi\rangle = \sum_{j=0}^{N-1} g(j) |j\rangle \\\
 </p>
 
 
-<div id="orgace374e" class="figure">
+<div id="org56c34bd" class="figure">
 <p><img src="../images/qft_inverse.png" alt="qft_inverse.png" width="320px" />
 </p>
 </div>
@@ -294,7 +293,7 @@ g(j) = \frac{1}{N} N f(j) = f(j)
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

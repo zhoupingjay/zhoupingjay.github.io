@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Markdown in Emacs: Live Preview, Math and Images</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -77,9 +76,9 @@
 <span class="subtitle">Ping Zhou, 2020-11-11</span>
 </h1>
 
-<section id="outline-container-org2a25b0f" class="outline-2">
-<h2 id="org2a25b0f">Introduction</h2>
-<div class="outline-text-2" id="text-org2a25b0f">
+<section id="outline-container-org989b8e9" class="outline-2">
+<h2 id="org989b8e9">Introduction</h2>
+<div class="outline-text-2" id="text-org989b8e9">
 <p>
 Emacs has a Markdown mode, but I need a more comprehensive setup with features like:
 </p>
@@ -95,9 +94,9 @@ Basically I need a setup that provides similar functionality as VS Code + Markdo
 </div>
 </section>
 
-<section id="outline-container-orgdb22e34" class="outline-2">
-<h2 id="orgdb22e34">Install dependencies</h2>
-<div class="outline-text-2" id="text-orgdb22e34">
+<section id="outline-container-orga66bc42" class="outline-2">
+<h2 id="orga66bc42">Install dependencies</h2>
+<div class="outline-text-2" id="text-orga66bc42">
 <p>
 Emacs packages needed:
 </p>
@@ -126,13 +125,13 @@ Get MathJax:
 </div>
 </section>
 
-<section id="outline-container-orge7f4698" class="outline-2">
-<h2 id="orge7f4698">Configure Emacs</h2>
-<div class="outline-text-2" id="text-orge7f4698">
+<section id="outline-container-orgcf53b53" class="outline-2">
+<h2 id="orgcf53b53">Configure Emacs</h2>
+<div class="outline-text-2" id="text-orgcf53b53">
 </div>
-<div id="outline-container-orgaa1e3c5" class="outline-3">
-<h3 id="orgaa1e3c5">Markdown settings</h3>
-<div class="outline-text-3" id="text-orgaa1e3c5">
+<div id="outline-container-org26a7236" class="outline-3">
+<h3 id="org26a7236">Markdown settings</h3>
+<div class="outline-text-3" id="text-org26a7236">
 <p>
 Add these customization to Emacs config:
 </p>
@@ -146,34 +145,34 @@ Add these customization to Emacs config:
 This can be done with Emacs Customization UI (M-x customize), or by manually editing custom-set-variables:
 </p>
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>custom-set-variables
+<pre class="src src-emacs-lisp">(custom-set-variables
  <span class="org-comment-delimiter">;;</span>
  <span class="org-comment-delimiter">;; </span><span class="org-comment">Other custom values...</span>
  <span class="org-comment-delimiter">;;</span>
- '<span class="org-rainbow-delimiters-depth-2">(</span>markdown-command <span class="org-string">"/usr/local/bin/pandoc --mathjax"</span><span class="org-rainbow-delimiters-depth-2">)</span>
- '<span class="org-rainbow-delimiters-depth-2">(</span>markdown-display-remote-images t<span class="org-rainbow-delimiters-depth-2">)</span>
- '<span class="org-rainbow-delimiters-depth-2">(</span>markdown-enable-math t<span class="org-rainbow-delimiters-depth-2">)</span>
+ '(markdown-command <span class="org-string">"/usr/local/bin/pandoc --mathjax"</span>)
+ '(markdown-display-remote-images t)
+ '(markdown-enable-math t)
  <span class="org-comment-delimiter">;;</span>
  <span class="org-comment-delimiter">;; </span><span class="org-comment">...</span>
- <span class="org-rainbow-delimiters-depth-1">)</span>
+ )
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org6be9c00" class="outline-3">
-<h3 id="org6be9c00">Simple HTTPD</h3>
-<div class="outline-text-3" id="text-org6be9c00">
+<div id="outline-container-orgc52cb86" class="outline-3">
+<h3 id="orgc52cb86">Simple HTTPD</h3>
+<div class="outline-text-3" id="text-orgc52cb86">
 <p>
 Add this to Emacs config file to enable simple-httpd (a simple Web server inside Emacs):
 </p>
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">require</span> '<span class="org-constant">simple-httpd</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-emacs-lisp">(<span class="org-keyword">require</span> '<span class="org-constant">simple-httpd</span>)
 
-<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">use-package</span> <span class="org-constant">simple-httpd</span>
+(<span class="org-keyword">use-package</span> simple-httpd
   <span class="org-builtin">:ensure</span> t
   <span class="org-builtin">:config</span>
-  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">setq</span> httpd-port 7070<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+  (<span class="org-keyword">setq</span> httpd-port 7070))
 </pre>
 </div>
 
@@ -188,38 +187,38 @@ Default root folder of simple-httpd is <code>~/public_html</code>. This can also
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">Add this to custom-set-variables:</span>
 <span class="org-comment-delimiter">;;</span>
-  '<span class="org-rainbow-delimiters-depth-1">(</span>httpd-root <span class="org-string">"~/www"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+  '(httpd-root <span class="org-string">"~/www"</span>)
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgbcf83d5" class="outline-3">
-<h3 id="orgbcf83d5">Impatient Mode</h3>
-<div class="outline-text-3" id="text-orgbcf83d5">
+<div id="outline-container-orgd64ece3" class="outline-3">
+<h3 id="orgd64ece3">Impatient Mode</h3>
+<div class="outline-text-3" id="text-orgd64ece3">
 <p>
 Add these to Emacs config file to configure markdown filter for impatient-mode:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">markdown-filter</span> <span class="org-rainbow-delimiters-depth-2">(</span>buffer<span class="org-rainbow-delimiters-depth-2">)</span>
-  <span class="org-rainbow-delimiters-depth-2">(</span>princ
-   <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">with-temp-buffer</span>
-     <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-rainbow-delimiters-depth-6">(</span>tmp <span class="org-rainbow-delimiters-depth-7">(</span>buffer-name<span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
-       <span class="org-rainbow-delimiters-depth-5">(</span>set-buffer buffer<span class="org-rainbow-delimiters-depth-5">)</span>
-       <span class="org-rainbow-delimiters-depth-5">(</span>set-buffer <span class="org-rainbow-delimiters-depth-6">(</span>markdown tmp<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
-       <span class="org-rainbow-delimiters-depth-5">(</span>format <span class="org-string">"&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;title&gt;Markdown preview&lt;/title&gt;</span>
-<span class="org-string">&lt;body&gt;&lt;article class=\"markdown-body\" style=\"box-sizing: border-box;min-width: 200px;max-width: 800px;margin: 0 auto;padding: 45px;\"&gt;%s&lt;/article&gt;&lt;/body&gt;&lt;script src=\"/mathjax/es5/tex-chtml-full.js\"&gt;&lt;/script&gt;&lt;/html&gt;"</span> <span class="org-rainbow-delimiters-depth-6">(</span>buffer-string<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
-   <span class="org-rainbow-delimiters-depth-3">(</span>current-buffer<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">markdown-filter</span> (buffer)
+  (princ
+   (<span class="org-keyword">with-temp-buffer</span>
+     (<span class="org-keyword">let</span> ((tmp (buffer-name)))
+       (set-buffer buffer)
+       (set-buffer (markdown tmp))
+       (format <span class="org-string">"&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;title&gt;Markdown preview&lt;/title&gt;</span>
+<span class="org-string">&lt;body&gt;&lt;article class=\"markdown-body\" style=\"box-sizing: border-box;min-width: 200px;max-width: 800px;margin: 0 auto;padding: 45px;\"&gt;%s&lt;/article&gt;&lt;/body&gt;&lt;script src=\"/mathjax/es5/tex-chtml-full.js\"&gt;&lt;/script&gt;&lt;/html&gt;"</span> (buffer-string))))
+   (current-buffer)))
 
-<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">markdown-live-preview</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+(<span class="org-keyword">defun</span> <span class="org-function-name">markdown-live-preview</span> ()
   <span class="org-doc">"Preview markdown."</span>
-  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
-  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">unless</span> <span class="org-rainbow-delimiters-depth-3">(</span>process-status <span class="org-string">"httpd"</span><span class="org-rainbow-delimiters-depth-3">)</span>
-    <span class="org-rainbow-delimiters-depth-3">(</span>httpd-start<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
-  <span class="org-rainbow-delimiters-depth-2">(</span>impatient-mode<span class="org-rainbow-delimiters-depth-2">)</span>
-  <span class="org-rainbow-delimiters-depth-2">(</span>imp-set-user-filter 'my-markdown-filter<span class="org-rainbow-delimiters-depth-2">)</span>
-  <span class="org-rainbow-delimiters-depth-2">(</span>imp-visit-buffer<span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+  (<span class="org-keyword">interactive</span>)
+  (<span class="org-keyword">unless</span> (process-status <span class="org-string">"httpd"</span>)
+    (httpd-start))
+  (impatient-mode)
+  (imp-set-user-filter 'my-markdown-filter)
+  (imp-visit-buffer))
 </pre>
 </div>
 
@@ -231,7 +230,7 @@ The filter will insert MathJax script in the generated HTML so that math symbols
 You can point it to any URL that hosts MathJax (if you trust the source), but I decide to host MathJax locally in simple-httpd:
 </p>
 
-<pre class="example" id="org9cf1281">
+<pre class="example" id="org41f6bb4">
 &lt;script src=\"/mathjax/es5/tex-chtml-full.js\"&gt;&lt;/script&gt;
 </pre>
 
@@ -251,9 +250,9 @@ Now MathJax script should be available to impatient-mode.
 </div>
 </section>
 
-<section id="outline-container-org00c123a" class="outline-2">
-<h2 id="org00c123a">(Optional) Add GitHub Style</h2>
-<div class="outline-text-2" id="text-org00c123a">
+<section id="outline-container-orgaecf773" class="outline-2">
+<h2 id="orgaecf773">(Optional) Add GitHub Style</h2>
+<div class="outline-text-2" id="text-orgaecf773">
 <p>
 The rendered HTML seems to be plain. So I added a GitHub-style CSS to the impatient-mode filter:
 </p>
@@ -271,7 +270,7 @@ The CSS file is also hosted locally in simple-httpd.
 <p>
 Add this line to my filter:
 </p>
-<pre class="example" id="orge2f6d95">
+<pre class="example" id="org48a3b40">
 &lt;link rel=\"stylesheet\" href = \"/github-markdown.css\"/&gt;
 </pre>
 
@@ -280,32 +279,32 @@ Now the filter is like this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">markdown-filter</span> <span class="org-rainbow-delimiters-depth-2">(</span>buffer<span class="org-rainbow-delimiters-depth-2">)</span>
-  <span class="org-rainbow-delimiters-depth-2">(</span>princ
-   <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">with-temp-buffer</span>
-     <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-5">(</span><span class="org-rainbow-delimiters-depth-6">(</span>tmp <span class="org-rainbow-delimiters-depth-7">(</span>buffer-name<span class="org-rainbow-delimiters-depth-7">)</span><span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
-       <span class="org-rainbow-delimiters-depth-5">(</span>set-buffer buffer<span class="org-rainbow-delimiters-depth-5">)</span>
-       <span class="org-rainbow-delimiters-depth-5">(</span>set-buffer <span class="org-rainbow-delimiters-depth-6">(</span>markdown tmp<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span>
-       <span class="org-rainbow-delimiters-depth-5">(</span>format <span class="org-string">"&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;title&gt;Markdown preview&lt;/title&gt;&lt;link rel=\"stylesheet\" href = \"/github-markdown.css\"/&gt;</span>
-<span class="org-string">&lt;body&gt;&lt;article class=\"markdown-body\" style=\"box-sizing: border-box;min-width: 200px;max-width: 800px;margin: 0 auto;padding: 45px;\"&gt;%s&lt;/article&gt;&lt;/body&gt;&lt;script src=\"/mathjax/es5/tex-chtml-full.js\"&gt;&lt;/script&gt;&lt;/html&gt;"</span> <span class="org-rainbow-delimiters-depth-6">(</span>buffer-string<span class="org-rainbow-delimiters-depth-6">)</span><span class="org-rainbow-delimiters-depth-5">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
-   <span class="org-rainbow-delimiters-depth-3">(</span>current-buffer<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">markdown-filter</span> (buffer)
+  (princ
+   (<span class="org-keyword">with-temp-buffer</span>
+     (<span class="org-keyword">let</span> ((tmp (buffer-name)))
+       (set-buffer buffer)
+       (set-buffer (markdown tmp))
+       (format <span class="org-string">"&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;title&gt;Markdown preview&lt;/title&gt;&lt;link rel=\"stylesheet\" href = \"/github-markdown.css\"/&gt;</span>
+<span class="org-string">&lt;body&gt;&lt;article class=\"markdown-body\" style=\"box-sizing: border-box;min-width: 200px;max-width: 800px;margin: 0 auto;padding: 45px;\"&gt;%s&lt;/article&gt;&lt;/body&gt;&lt;script src=\"/mathjax/es5/tex-chtml-full.js\"&gt;&lt;/script&gt;&lt;/html&gt;"</span> (buffer-string))))
+   (current-buffer)))
 </pre>
 </div>
 </div>
 </section>
 
-<section id="outline-container-org6f66b06" class="outline-2">
-<h2 id="org6f66b06">Test Run</h2>
-<div class="outline-text-2" id="text-org6f66b06">
+<section id="outline-container-org6ad01b2" class="outline-2">
+<h2 id="org6ad01b2">Test Run</h2>
+<div class="outline-text-2" id="text-org6ad01b2">
 </div>
-<div id="outline-container-orgde07bc9" class="outline-3">
-<h3 id="orgde07bc9">Live Preview</h3>
-<div class="outline-text-3" id="text-orgde07bc9">
+<div id="outline-container-orgb1467d5" class="outline-3">
+<h3 id="orgb1467d5">Live Preview</h3>
+<div class="outline-text-3" id="text-orgb1467d5">
 <p>
 Open a Markdown file, and then start live preview:
 </p>
 
-<pre class="example" id="org8472a85">
+<pre class="example" id="org93cb87c">
 M-x markdown-live-preview
 </pre>
 
@@ -319,9 +318,9 @@ As you type in the Markdown file, live preview also changes accordingly.
 </div>
 </div>
 
-<div id="outline-container-org9df874e" class="outline-3">
-<h3 id="org9df874e">Images</h3>
-<div class="outline-text-3" id="text-org9df874e">
+<div id="outline-container-org8fd19cb" class="outline-3">
+<h3 id="org8fd19cb">Images</h3>
+<div class="outline-text-3" id="text-org8fd19cb">
 <p>
 To add images, just insert the &lt;img&gt; tag in Markdown:
 </p>
@@ -337,14 +336,14 @@ This relative path works for impatient-mode too (i.e. it will look for test.png 
 </div>
 </div>
 
-<div id="outline-container-org71a6234" class="outline-3">
-<h3 id="org71a6234">Math Equations</h3>
-<div class="outline-text-3" id="text-org71a6234">
+<div id="outline-container-org4705f19" class="outline-3">
+<h3 id="org4705f19">Math Equations</h3>
+<div class="outline-text-3" id="text-org4705f19">
 <p>
 Try math equations in Markdown:
 </p>
 
-<pre class="example" id="orgead9c9b">
+<pre class="example" id="orge2cce4b">
 $$
 \begin{pmatrix}
 aa &amp; bb \\
@@ -384,7 +383,7 @@ Looking good!
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

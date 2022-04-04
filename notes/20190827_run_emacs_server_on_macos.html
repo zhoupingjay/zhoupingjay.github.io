@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Run Emacs Server on MacOS</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -67,9 +66,9 @@ One possible option is to start Emacs with “-Q” argument. This tells Emacs t
 Another option is to start Emacs as a server, and just launch a client (“emacsclient”) when you need the editor. In this way you get both quick startup time and a fully configured Emacs environment. I already use this approach on Linux, can I do this on MacOS?
 </p>
 
-<section id="outline-container-org6080d7f" class="outline-2">
-<h2 id="org6080d7f">Create “plist” file</h2>
-<div class="outline-text-2" id="text-org6080d7f">
+<section id="outline-container-org613161c" class="outline-2">
+<h2 id="org613161c">Create “plist” file</h2>
+<div class="outline-text-2" id="text-org613161c">
 <p>
 First, I created a “plist” file in my LaunchAgents folder: ~/Library/LaunchAgents/emacs.daemon.plist
 </p>
@@ -78,7 +77,7 @@ First, I created a “plist” file in my LaunchAgents folder: ~/Library/LaunchA
 Here is an example of the plist file for Emacs server. Assuming Emacs binary is at /Applications/Emacs.app/Contents/MacOS/Emacs and the argument “–daemon” launches Emacs in server (daemon) mode.
 </p>
 
-<pre class="example" id="orge2edca9">
+<pre class="example" id="orgd3f4619">
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
     "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
@@ -101,9 +100,9 @@ Here is an example of the plist file for Emacs server. Assuming Emacs binary is 
 </div>
 </section>
 
-<section id="outline-container-org9dfc775" class="outline-2">
-<h2 id="org9dfc775">Add to launchctl</h2>
-<div class="outline-text-2" id="text-org9dfc775">
+<section id="outline-container-orgef27176" class="outline-2">
+<h2 id="orgef27176">Add to launchctl</h2>
+<div class="outline-text-2" id="text-orgef27176">
 <p>
 Load the “plist” file to launchctl, so that it will be launched automatically.
 </p>
@@ -142,9 +141,9 @@ That’s it! Emacs should be running as a server now. You can check this with a 
 </div>
 </section>
 
-<section id="outline-container-orgf5e6995" class="outline-2">
-<h2 id="orgf5e6995">Launch Emacs client</h2>
-<div class="outline-text-2" id="text-orgf5e6995">
+<section id="outline-container-org884c3f5" class="outline-2">
+<h2 id="org884c3f5">Launch Emacs client</h2>
+<div class="outline-text-2" id="text-org884c3f5">
 <p>
 Now that Emacs server is up and running, you can launch emacsclient just like any other editor. E.g. emacsclient ~/.bash<sub>profile</sub>
 </p>
@@ -153,7 +152,7 @@ Now that Emacs server is up and running, you can launch emacsclient just like an
 One caveat is that if you have multiple emacs installed (e.g. MacOS comes with an old version of Emacs, and you installed Emacs 26.x), you need to make sure client and server are from the same Emacs installation. For example, if Emacs server is at:
 </p>
 
-<pre class="example" id="orge12f46f">
+<pre class="example" id="org53345d8">
 /Applications/Emacs.app/Contents/MacOS/Emacs
 </pre>
 
@@ -184,7 +183,7 @@ A note about GUI – By default emacsclient is launched in console. To launch em
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

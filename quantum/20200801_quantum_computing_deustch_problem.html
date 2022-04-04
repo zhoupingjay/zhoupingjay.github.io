@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>看懂量子计算机的威力 - 从Deutsch问题说起</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -77,18 +76,18 @@
 <span class="subtitle">Ping Zhou, 2020-08-01</span>
 </h1>
 
-<section id="outline-container-orgea5c77f" class="outline-2">
-<h2 id="orgea5c77f">简介</h2>
-<div class="outline-text-2" id="text-orgea5c77f">
+<section id="outline-container-org26fbfd5" class="outline-2">
+<h2 id="org26fbfd5">简介</h2>
+<div class="outline-text-2" id="text-org26fbfd5">
 <p>
 量子计算是现在的热门话题之一，很多人可能听说过诸如“量子霸权”之类的名词，那么量子计算为什么会被认为有可能比经典计算机更快呢？这里就从最简单的Deutsch问题入手，解析量子计算的一些基本思路，相信看完后你会对量子计算的潜力有更直观的认识。
 </p>
 </div>
 </section>
 
-<section id="outline-container-org9c5f4c4" class="outline-2">
-<h2 id="org9c5f4c4">一些术语和基础</h2>
-<div class="outline-text-2" id="text-org9c5f4c4">
+<section id="outline-container-org54a0e18" class="outline-2">
+<h2 id="org54a0e18">一些术语和基础</h2>
+<div class="outline-text-2" id="text-org54a0e18">
 <p>
 首先要先解释一下后面讨论中用到的一些术语和基础知识。
 </p>
@@ -123,15 +122,15 @@
 </div>
 </section>
 
-<section id="outline-container-org64de777" class="outline-2">
-<h2 id="org64de777">问题的提出：如何判断单比特函数的性质？</h2>
-<div class="outline-text-2" id="text-org64de777">
+<section id="outline-container-orgb8f1026" class="outline-2">
+<h2 id="orgb8f1026">问题的提出：如何判断单比特函数的性质？</h2>
+<div class="outline-text-2" id="text-orgb8f1026">
 <p>
 假设我们有个函数f，输入和输出都是1个比特： \(y=f(x)\) ：
 </p>
 
 
-<div id="org3611bc4" class="figure">
+<div id="org3c91710" class="figure">
 <p><img src="../images/2020/08/image-300x66.png" alt="image-300x66.png" width="320px" />
 </p>
 </div>
@@ -177,9 +176,9 @@
 </div>
 </section>
 
-<section id="outline-container-org4d24ee4" class="outline-2">
-<h2 id="org4d24ee4">量子计算加速：Deutsch-Jozsa算法</h2>
-<div class="outline-text-2" id="text-org4d24ee4">
+<section id="outline-container-orgc6d49a5" class="outline-2">
+<h2 id="orgc6d49a5">量子计算加速：Deutsch-Jozsa算法</h2>
+<div class="outline-text-2" id="text-orgc6d49a5">
 <p>
 在量子计算里，所有的变换都必须是 <b>可逆</b> 的，也就是“从输出能倒推出输入”。显然f(x)不一定能满足这个条件，所以首先要对它进行一下“包装处理”。
 </p>
@@ -191,7 +190,7 @@
 </p>
 
 
-<div id="orgf5d577f" class="figure">
+<div id="org6889c92" class="figure">
 <p><img src="../images/2020/08/image-1-254x300.png" alt="image-1-254x300.png" width="160px" />
 </p>
 </div>
@@ -372,7 +371,7 @@ Z|x\rangle|-\rangle\)
 </p>
 
 
-<div id="orgd2ef754" class="figure">
+<div id="orgee0c2df" class="figure">
 <p><img src="../images/2020/08/image-2-1536x549.png" alt="image-2-1536x549.png" width="900px" />
 </p>
 </div>
@@ -391,9 +390,9 @@ Z|x\rangle|-\rangle\)
 </div>
 </section>
 
-<section id="outline-container-org1dbdc80" class="outline-2">
-<h2 id="org1dbdc80">总结</h2>
-<div class="outline-text-2" id="text-org1dbdc80">
+<section id="outline-container-org85e0559" class="outline-2">
+<h2 id="org85e0559">总结</h2>
+<div class="outline-text-2" id="text-org85e0559">
 <p>
 当然，Deutsch问题本身没有太多实用价值，但它显示了在某些场景下量子计算机可以比经典计算机更快。理解Deutsch算法可以帮助我们更好的理解量子计算的内在并行性。至于有潜力实用化的量子计算算法，例如Grover搜索，Shor因式分解等，以后有空再说。
 </p>
@@ -403,7 +402,7 @@ Z|x\rangle|-\rangle\)
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>C++ vector容器强制释放内存</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -63,9 +62,9 @@
 C++用户经常会用STL里的vector容器来管理一组动态对象。STL vector的使用和C语言的数组类似，很方便：
 </p>
 <div class="org-src-container">
-<pre class="src src-c++"><span class="org-constant">std</span>::<span class="org-type">vector</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">int</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-variable-name">buf</span> = <span class="org-rainbow-delimiters-depth-1">{</span> 0, 1, 2, 3, 4, 5 <span class="org-rainbow-delimiters-depth-1">}</span>;
-buf<span class="org-rainbow-delimiters-depth-1">[</span>0<span class="org-rainbow-delimiters-depth-1">]</span>++;
-buf<span class="org-rainbow-delimiters-depth-1">[</span>1<span class="org-rainbow-delimiters-depth-1">]</span> = 10;
+<pre class="src src-c++"><span class="org-constant">std</span>::<span class="org-type">vector</span>&lt;<span class="org-type">int</span>&gt; <span class="org-variable-name">buf</span> = { 0, 1, 2, 3, 4, 5 };
+buf[0]++;
+buf[1] = 10;
 </pre>
 </div>
 
@@ -94,10 +93,10 @@ buf<span class="org-rainbow-delimiters-depth-1">[</span>1<span class="org-rainbo
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++">buf.clear<span class="org-rainbow-delimiters-depth-1">()</span>;
+<pre class="src src-c++">buf.clear();
 
-<span class="org-constant">std</span>::cout &lt;&lt; buf.size<span class="org-rainbow-delimiters-depth-1">()</span>;      <span class="org-comment-delimiter">// </span><span class="org-comment">size&#21464;&#25104;&#20102;0</span>
-<span class="org-constant">std</span>::cout &lt;&lt; buf.capacity<span class="org-rainbow-delimiters-depth-1">()</span>;  <span class="org-comment-delimiter">// </span><span class="org-comment">capacity&#36824;&#26159;6</span>
+<span class="org-constant">std</span>::cout &lt;&lt; buf.size();      <span class="org-comment-delimiter">// </span><span class="org-comment">size&#21464;&#25104;&#20102;0</span>
+<span class="org-constant">std</span>::cout &lt;&lt; buf.capacity();  <span class="org-comment-delimiter">// </span><span class="org-comment">capacity&#36824;&#26159;6</span>
 </pre>
 </div>
 
@@ -106,11 +105,11 @@ buf<span class="org-rainbow-delimiters-depth-1">[</span>1<span class="org-rainbo
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++"><span class="org-constant">std</span>::<span class="org-type">vector</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">int</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-variable-name">buf</span> = <span class="org-rainbow-delimiters-depth-1">{</span> 0, 1, 2, 3, 4, 5 <span class="org-rainbow-delimiters-depth-1">}</span>;
+<pre class="src src-c++"><span class="org-constant">std</span>::<span class="org-type">vector</span>&lt;<span class="org-type">int</span>&gt; <span class="org-variable-name">buf</span> = { 0, 1, 2, 3, 4, 5 };
 <span class="org-comment-delimiter">// </span><span class="org-comment">......</span>
 
 <span class="org-comment-delimiter">// </span><span class="org-comment">&#24378;&#21046;&#37322;&#25918;buf&#21344;&#29992;&#30340;&#20869;&#23384;</span>
-<span class="org-constant">std</span>::vector<span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">int</span><span class="org-rainbow-delimiters-depth-1">&gt;()</span>.swap<span class="org-rainbow-delimiters-depth-1">(</span>buf<span class="org-rainbow-delimiters-depth-1">)</span>;
+<span class="org-constant">std</span>::vector&lt;<span class="org-type">int</span>&gt;().swap(buf);
 </pre>
 </div>
 
@@ -135,7 +134,7 @@ buf<span class="org-rainbow-delimiters-depth-1">[</span>1<span class="org-rainbo
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

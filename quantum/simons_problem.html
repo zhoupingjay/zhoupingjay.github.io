@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子算法之Simon问题</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -80,9 +79,9 @@
 随手翻到一个Simon问题，今天就来聊聊它。Simon问题和之前讨论的Deutsch问题有点类似，也是一个用量子计算机能够达到指数级加速的问题。
 </p>
 
-<section id="outline-container-org2f62db0" class="outline-2">
-<h2 id="org2f62db0">什么是Simon问题？</h2>
-<div class="outline-text-2" id="text-org2f62db0">
+<section id="outline-container-org1d9fc51" class="outline-2">
+<h2 id="org1d9fc51">什么是Simon问题？</h2>
+<div class="outline-text-2" id="text-org1d9fc51">
 <p>
 和Deutsch问题类似，假设有人给我们一个函数f(x)，内部实现未知，只知道它输入n位二进制数，输出也是n位二进制数。用数学语言描述就是这样：
 </p>
@@ -109,15 +108,15 @@ Simon问题要解决的，就是求解这个周期a的值。
 </div>
 </section>
 
-<section id="outline-container-orgb279aeb" class="outline-2">
-<h2 id="orgb279aeb">Simon问题的量子算法</h2>
-<div class="outline-text-2" id="text-orgb279aeb">
+<section id="outline-container-org20e43ec" class="outline-2">
+<h2 id="org20e43ec">Simon问题的量子算法</h2>
+<div class="outline-text-2" id="text-org20e43ec">
 <p>
 和之前的其他量子算法一样，首先我们得把函数f(x)包装成可逆变换 \(U_f\) ：
 </p>
 
 
-<div id="org6bbe780" class="figure">
+<div id="org975bbfb" class="figure">
 <p><img src="../images/simon_uf.jpg" alt="simon_uf.jpg" width="240px" />
 </p>
 </div>
@@ -126,7 +125,7 @@ Simon问题要解决的，就是求解这个周期a的值。
 然后放到Simon问题的量子电路里：
 </p>
 
-<div id="orgcdd889d" class="figure">
+<div id="orgc624626" class="figure">
 <p><img src="../images/simon_circuit.jpg" alt="simon_circuit.jpg" width="480px" />
 </p>
 </div>
@@ -136,9 +135,9 @@ Simon问题要解决的，就是求解这个周期a的值。
 </p>
 </div>
 
-<div id="outline-container-org022bfe3" class="outline-3">
-<h3 id="org022bfe3">t0时刻</h3>
-<div class="outline-text-3" id="text-org022bfe3">
+<div id="outline-container-org4464660" class="outline-3">
+<h3 id="org4464660">t0时刻</h3>
+<div class="outline-text-3" id="text-org4464660">
 <p>
 第一个寄存器经过n位的H变换，变成 \(|0\rangle\) 到 \(|2^n-1\rangle\) 的叠加态，即 \(\frac{1}{2^{n/2}}\sum_{x=0}^{2^n-1}|x\rangle\) 。
 </p>
@@ -153,9 +152,9 @@ Simon问题要解决的，就是求解这个周期a的值。
 </div>
 </div>
 
-<div id="outline-container-orgdb1dd07" class="outline-3">
-<h3 id="orgdb1dd07">t1时刻</h3>
-<div class="outline-text-3" id="text-orgdb1dd07">
+<div id="outline-container-org41e291a" class="outline-3">
+<h3 id="org41e291a">t1时刻</h3>
+<div class="outline-text-3" id="text-org41e291a">
 <p>
 经过 \(U_f\) 变换，两个寄存器进入纠缠态，第一个寄存器还是 \(\frac{1}{2^{n/2}}\sum_{x=0}^{2^n-1}|x\rangle\) ，第二个寄存器变成了 \(|f(x)\rangle\) 。所以系统状态是：
 </p>
@@ -166,9 +165,9 @@ Simon问题要解决的，就是求解这个周期a的值。
 </div>
 </div>
 
-<div id="outline-container-orgc8967cd" class="outline-3">
-<h3 id="orgc8967cd">t2时刻</h3>
-<div class="outline-text-3" id="text-orgc8967cd">
+<div id="outline-container-orgd9cca7e" class="outline-3">
+<h3 id="orgd9cca7e">t2时刻</h3>
+<div class="outline-text-3" id="text-orgd9cca7e">
 <p>
 对第二个寄存器进行测量，使它坍缩到某个值 \(z=f(x_0)\) 。
 </p>
@@ -183,9 +182,9 @@ Simon问题要解决的，就是求解这个周期a的值。
 </div>
 </div>
 
-<div id="outline-container-org37ac510" class="outline-3">
-<h3 id="org37ac510">t3时刻</h3>
-<div class="outline-text-3" id="text-org37ac510">
+<div id="outline-container-orgcbceb71" class="outline-3">
+<h3 id="orgcbceb71">t3时刻</h3>
+<div class="outline-text-3" id="text-orgcbceb71">
 <p>
 对第一个寄存器再作H变换。这里要讨论一下n位H变换的意义。
 </p>
@@ -327,9 +326,9 @@ a \cdot y_n = 0
 </div>
 </section>
 
-<section id="outline-container-org128ab65" class="outline-2">
-<h2 id="org128ab65">性能分析</h2>
-<div class="outline-text-2" id="text-org128ab65">
+<section id="outline-container-org283fefe" class="outline-2">
+<h2 id="org283fefe">性能分析</h2>
+<div class="outline-text-2" id="text-org283fefe">
 <p>
 我们需要重复运行这个量子电路的次数，取决于我们什么时候能得到需要的线性独立的y值。
 </p>
@@ -372,7 +371,7 @@ Simon算法就聊到这里，感谢阅读！
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

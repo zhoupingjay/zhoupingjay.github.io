@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(5.1) Shor算法详解</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -80,9 +79,9 @@
 在前文“回到Shor算法”中我们用QFT提取函数周期信息，但是​这个过程的原理是什么？本文接着详解……
 </p>
 
-<section id="outline-container-org7428b95" class="outline-2">
-<h2 id="org7428b95">Shor算法关键：如何用QFT提取函数周期信息？</h2>
-<div class="outline-text-2" id="text-org7428b95">
+<section id="outline-container-org3a2bc23" class="outline-2">
+<h2 id="org3a2bc23">Shor算法关键：如何用QFT提取函数周期信息？</h2>
+<div class="outline-text-2" id="text-org3a2bc23">
 <p>
 用量子计算机求解Order Finding问题，实质上是要找到函数 \(f(x)=a^x \mod N\) 的周期。
 </p>
@@ -92,7 +91,7 @@ Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这
 </p>
 
 
-<div id="org7d25fdc" class="figure">
+<div id="orge939a2c" class="figure">
 <p><img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px" />
 </p>
 </div>
@@ -102,7 +101,7 @@ Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这
 </p>
 
 
-<div id="org32ff384" class="figure">
+<div id="orgb5d46dc" class="figure">
 <p><img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px" />
 </p>
 </div>
@@ -129,9 +128,9 @@ Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这
 </div>
 </section>
 
-<section id="outline-container-org9bcb68a" class="outline-2">
-<h2 id="org9bcb68a">先考虑一个简化情况</h2>
-<div class="outline-text-2" id="text-org9bcb68a">
+<section id="outline-container-orgdcd956c" class="outline-2">
+<h2 id="orgdcd956c">先考虑一个简化情况</h2>
+<div class="outline-text-2" id="text-orgdcd956c">
 <p>
 先考虑一个简化情况：
 </p>
@@ -276,9 +275,9 @@ QFT|\alpha\rangle = \frac{1}{\sqrt{r}} \sum_{k=0}^{r-1} e^{\frac{2\pi ilk}{r}} |
 </div>
 </section>
 
-<section id="outline-container-org46303b6" class="outline-2">
-<h2 id="org46303b6">简化条件不成立？</h2>
-<div class="outline-text-2" id="text-org46303b6">
+<section id="outline-container-orga1fff2d" class="outline-2">
+<h2 id="orga1fff2d">简化条件不成立？</h2>
+<div class="outline-text-2" id="text-orga1fff2d">
 <p>
 这个故事就长了，下次再说，免得把你绕晕了。:-)
 </p>
@@ -288,7 +287,7 @@ QFT|\alpha\rangle = \frac{1}{\sqrt{r}} \sum_{k=0}^{r-1} e^{\frac{2\pi ilk}{r}} |
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>

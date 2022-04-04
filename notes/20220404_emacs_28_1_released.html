@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-04 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Emacs 28.1  正式发布，elisp原生编译支持来了！</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Emacs 28.1  正式发布，elisp原生编译支持来了！
+<br />
+<span class="subtitle">Ping Zhou, 2022-04-04</span>
+</h1>
+<p>
+期待已久的 Emacs 28.1 版本来了！这个版本中引入了一系列新特性，其中最引人注目，也最受期待的恐怕就是对Emacs Lisp（elisp）的原生编译支持（native compilation）。
+</p>
+
+<p>
+目前 Emacs 28.1 还没有apk等二进制包，需要从源代码安装，方法和以前版本类似。但需要注意的是，原生elisp编译特性默认是不打开的，需要在 <code>configure</code> 时候加上 <code>--with-native-compilation</code> 参数。
+</p>
+
+<p>
+另外，这个特性还依赖 <code>libgccjit</code> 和 <code>gcc-10</code> 包，需要先安装这些依赖包，否则 <code>--with-native-compilation</code> 参数会被拒绝：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">sudo apt install -y libgccjit0 libgccjit-10-dev gcc-10
+</pre>
+</div>
+
+<p>
+安装完依赖包，就可以编译 Emacs 28.1 了：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span class="org-builtin">export</span> <span class="org-variable-name">CC</span>=<span class="org-string">"gcc-10"</span>
+./autogen.sh
+./configure --prefix=$<span class="org-variable-name">HOME</span>/local/ --with-imagemagick --with-native-compilation
+make -j2
+make install
+</pre>
+</div>
+
+<p>
+安装完成！
+</p>
+
+
+<div id="org77fd345" class="figure">
+<p><img src="../images/2022-04-04_14-26-54_screenshot.png" alt="2022-04-04_14-26-54_screenshot.png" width="640px" />
+</p>
+</div>
+
+<p>
+试试看这个 native elisp compilation ，随便写个简单的 elisp 文件然后用 <code>native-compile</code> 函数编译：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span>native-compile <span class="org-string">"serve.el"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+生成的原生二进制文件会保存在 <code>~/.emacs.d/eln-cache/</code> 目录下。用 <code>file</code> 命令查看，可以看到它被编译成了原生的ELF文件：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">file ~/.emacs.d/eln-cache/28.1-18b24ab0/serve-902d1548-7e0cb452.eln 
+</pre>
+</div>
+
+<pre class="example" id="org23c7483">
+.../serve-902d1548-7e0cb452.eln: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, BuildID[sha1]=92a81b6c71e5cfee84e9763d9ac0625a0164875c, not stripped
+</pre>
+
+<p>
+除了原生elisp编译外，Emacs 28.1 还有很多新特性，以后有空慢慢探索。 :-)
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

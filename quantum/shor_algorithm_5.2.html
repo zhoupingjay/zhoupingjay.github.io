@@ -3,13 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-01 -->
+<!-- 2022-04-04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(5.2) Shor算法详解</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
-<title>Ping Zhou's Website</title>
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
@@ -80,15 +79,15 @@
 前文『<a href="shor_algorithm_5.1.html">5.1 Shor算法详解</a>』讨论了在简化条件下，QFT如何提取函数周期信息，但是如果简化条件不满足呢？今天接着这个话题继续讨论。推导过程较长，涉及的知识点也比较多，我会根据我的学习经验，尽可能写的简明易懂。
 </p>
 
-<section id="outline-container-org558f6e8" class="outline-2">
-<h2 id="org558f6e8">回顾：简化条件</h2>
-<div class="outline-text-2" id="text-org558f6e8">
+<section id="outline-container-org1d66a02" class="outline-2">
+<h2 id="org1d66a02">回顾：简化条件</h2>
+<div class="outline-text-2" id="text-org1d66a02">
 <p>
 在前文中，我们构造周期函数 \(f(x)\) 的可逆变换 \(U_f\) ，给它制备适当的输入：
 </p>
 
 
-<div id="org2c91a73" class="figure">
+<div id="org63bc7d8" class="figure">
 <p><img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px" />
 </p>
 </div>
@@ -123,9 +122,9 @@
 </div>
 </section>
 
-<section id="outline-container-org9a2a959" class="outline-2">
-<h2 id="org9a2a959">简化条件不成立？</h2>
-<div class="outline-text-2" id="text-org9a2a959">
+<section id="outline-container-org9997a6a" class="outline-2">
+<h2 id="org9997a6a">简化条件不成立？</h2>
+<div class="outline-text-2" id="text-org9997a6a">
 <p>
 还是从QFT前的状态开始推导，QFT的作用是什么？
 </p>
@@ -232,15 +231,15 @@ e^{2\pi i ry/q} \\\
 </div>
 </section>
 
-<section id="outline-container-orgab8835d" class="outline-2">
-<h2 id="orgab8835d">喘口气接着讲</h2>
-<div class="outline-text-2" id="text-orgab8835d">
+<section id="outline-container-org3a0d197" class="outline-2">
+<h2 id="org3a0d197">喘口气接着讲</h2>
+<div class="outline-text-2" id="text-org3a0d197">
 <p>
 我们画两条从0到rq的数轴，然后在上面分别标上 \(q,2q,\dots,rq\) ，以及 \(r,2r,\dots,qr\) ：
 </p>
 
 
-<div id="orgc919947" class="figure">
+<div id="orgf34af84" class="figure">
 <p><img src="../images/shor_ry_mod_q.png" alt="shor_ry_mod_q.png" width="400px" />
 </p>
 </div>
@@ -308,9 +307,9 @@ e^{2\pi i ry/q} \\\
 </div>
 </section>
 
-<section id="outline-container-org8debe09" class="outline-2">
-<h2 id="org8debe09">算一下概率</h2>
-<div class="outline-text-2" id="text-org8debe09">
+<section id="outline-container-orgab4a156" class="outline-2">
+<h2 id="orgab4a156">算一下概率</h2>
+<div class="outline-text-2" id="text-orgab4a156">
 <p>
 假如某个y值满足我们要的不等式 \(|ry - kq| \le r/2\) ，我们有多大概率测量得到它？这其实是问， \(|y\rangle\) 对应的分量 \(\tilde f(y)\) 的模 \(|\tilde f(y)|^2\) 有多大？我们来算一下。
 </p>
@@ -395,7 +394,7 @@ e^{2\pi i ry/q} \\\
 </ol>
 
 
-<div id="org23ea51c" class="figure">
+<div id="orgee60ccf" class="figure">
 <p><img src="../images/sin_x.png" alt="sin_x.png" width="400px" />
 </p>
 </div>
@@ -412,7 +411,7 @@ e^{2\pi i ry/q} \\\
 用类似的作图方法，可以证明在0到 \(2\pi\) 范围内， \(\sin \frac{\theta}{2} \le \frac{\theta}{2}\) ：
 </p>
 
-<div id="org02e8bb7" class="figure">
+<div id="org38e8f08" class="figure">
 <p><img src="../images/sin_theta_2.png" alt="sin_theta_2.png" width="400px" />
 </p>
 </div>
@@ -472,7 +471,7 @@ e^{2\pi i ry/q} \\\
 因为A是 \(\frac{q-1}{r}\) 内的最大整数，因此， \(Ar\) 是小于q的最大的r倍数， \((A+1)r \gt q\) ：
 </p>
 
-<div id="orgb4f3e0e" class="figure">
+<div id="org63214b9" class="figure">
 <p><img src="../images/shor_Ar.png" alt="shor_Ar.png" width="240px" />
 </p>
 </div>
@@ -513,7 +512,7 @@ Shor算法简化条件不成立的情况，总算推导完了！
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 27.2 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
     </div>
 </footer>
 </body>
