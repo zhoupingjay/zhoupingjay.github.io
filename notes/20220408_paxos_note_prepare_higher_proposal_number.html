@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-04-09 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Paxos 讨论：Phase-1 收到更高的 proposal number 该怎么办?</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Paxos 讨论：Phase-1 收到更高的 proposal number 该怎么办?
+<br />
+<span class="subtitle">Ping Zhou, 2022-04-08</span>
+</h1>
+<p>
+最近研究了一下Paxos，这个协议本身并不难懂，但 Lamport 的文章比较抽象，在具体实现上有一些细节没有充分讨论到，这里就讨论其中之一。
+</p>
+
+<p>
+先聊一下背景：我们知道，每次运行Paxos（也就是一个Paxos实例，Paxos Instance）都由两个阶段（phase）组成。在phase-1，proposer 向 acceptor 发送 prepare 消息，并根据收到的回应决定是否可以进入下一阶段 phase-2 。
+</p>
+
+<p>
+这个prepare消息主要内容是 proposer 的 proposal number （有些地方也称为 ballot number），例如在 Lamport 的 <a href="https://www.microsoft.com/en-us/research/publication/paxos-made-simple/">Paxos Made Simple</a> 文章里：
+</p>
+
+<blockquote>
+<p>
+(a) A proposer selects a proposal number n and sends a prepare request with number n to a majority of acceptors.
+</p>
+</blockquote>
+
+<p>
+当一个 acceptor 收到这个 prepare 请求时，它会把这个 proposal number 与它之前见过（承诺过） 的值比较，如果小于它之前见过的，则拒绝这个 prepare 请求，否则就接受这个 proposal ，并承诺 (promise) 它不再接受比这个 proposal number 更小的 proposal 。同样还是 Lamport 的这篇文章：
+</p>
+
+<blockquote>
+<p>
+(b) If an acceptor receives a prepare request with number n greater than that of any prepare request to which it has already responded, then it responds to the request with a promise not to accept any more proposals numbered less than n and with the highest-numbered proposal (if any) that it has accepted.
+</p>
+</blockquote>
+
+<p>
+当 proposer 收到足够多（也就是多数派）的 acceptor 接受它的 proposal ，它的这次 phase-1 就成功了，可以进入 phase-2 继续提交。
+</p>
+
+<p>
+那么这里有个问题：如果某些 acceptor 曾经看到过（承诺过）更高的 proposal number ，它们拒绝了 proposer 的请求，但也有更多的 acceptor 接受了 proposer 的请求，并且接受请求的 acceptor 达到了多数派，这种情况下，proposer 应该怎么做？
+</p>
+
+<p>
+根据经典Paxos协议，最简单的选择是认为这次 phase-1 失败了，放弃这次 prepare 请求。为什么呢？因为如果有 acceptor 看到过更高的 proposal number ，这就意味着这时候可能有其他 proposer 也在运行 Paxos 。所以 Lamport 在他的文章里是这么建议的：
+</p>
+
+<blockquote>
+<p>
+It is probably a good idea to abandon a proposal if some proposer has begun trying to issue a higher-numbered one. Therefore, if an acceptor ignores a prepare or accept request because it has already received a prepare request with a higher number, then it should probably inform the proposer, who should then abandon its proposal. This is a performance optimization that does not affect correctness.
+</p>
+</blockquote>
+
+<p>
+但是，如果 proposer 已经拿到了多数派的同意呢？是否还需要放弃这次 prepare 请求？
+</p>
+
+<p>
+比如说，一共5个acceptor，其中2个回答说看到过更高的 proposal number ，拒绝了请求，但其余3个都接受了我的 prepare 请求。这种情况下，我是否还要放弃？
+</p>
+
+<p>
+分析一下，如果有acceptor看到过更高的proposal number，但是我又拿到了quorum，这说明另外那位 proposer 虽然有更高的proposal number，但他并没有成功完成 phase-1 ，否则的话，他必然已经拿到了 quorum ，于是我就不可能拿到 quorum了。在这种情况下，我可以安全的进入下一阶段 phase-2 ，不用担心造成不一致的问题。
+</p>
+
+<p>
+那这个做法是否违反了Paxos协议呢？其实没有。在经典Paxos中，我们放弃了这次 prepare ，然后还会重新发起 Paxos，并且我们会选个更高的 proposal number ，不断重试直到phase-1成功。和前面我们拿到quorum后成功进入phase-2相比，这其实是等价的，或者说我们是把经典Paxos里的 ”放弃－重试“ 两步合并在一起了，这样可以节省不必要的重试带来的网络开销。
+</p>
+
+<p>
+还有个相关的问题，我们拿到 quorum 进入 phase-2 后，那些拒绝了我们的 acceptor 会怎样处理我们的 phase-2 请求（Accept消息）？
+</p>
+
+<p>
+还是回到Paxos协议，这些拒绝我们的 acceptor 承诺过更高的 proposal number ，因此它们也会拒绝我们的 Accept 请求。但是，由于这些 accepter 是少数，它们不会影响我们的 phase-2 提交，也不会影响提交后状态的正确性。这些少数 acceptor 对更高 proposal number 的承诺，其实是无效的承诺。并且这些无效承诺是不会持续的，随着系统的运行，必然会发生两者之一：我们要么会看到不断升高的 proposal number ，最终覆盖掉这些无效的承诺；又或者会开始新的 Paxos 实例，这些无效的承诺也就被废弃了。
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>
