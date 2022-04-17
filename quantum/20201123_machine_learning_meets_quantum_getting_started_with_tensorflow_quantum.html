@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-04 -->
+<!-- 2022-04-17 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Machine Learning Meets Quantum: Getting Started with TensorFlow Quantum</title>
@@ -161,7 +161,7 @@ Another useful way of representing qubit is using the <b><b>Bloch Sphere</b></b>
 </p>
 
 
-<div id="org0740787" class="figure">
+<div id="org604c0d2" class="figure">
 <p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -252,7 +252,7 @@ For example, we won&rsquo;t say
 </p>
 <blockquote>
 <p>
-&ldquo;Expecation value of this state vector is 0.5&rdquo;
+&ldquo;Expectation value of this state vector is 0.5&rdquo;
 </p>
 </blockquote>
 
@@ -287,7 +287,7 @@ We can look at a few examples to validate this conclusion:
 </p>
 
 
-<div id="org92e0e2a" class="figure">
+<div id="orgf3c270b" class="figure">
 <p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -322,7 +322,7 @@ But in the real world, our system is <b><b>noisy</b></b>. Therefore the qubits w
 </p>
 
 
-<div id="org261e2ed" class="figure">
+<div id="orgeefe92f" class="figure">
 <p><img src="../images/tfq-noisy-circuit.svg" alt="tfq-noisy-circuit.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -336,7 +336,7 @@ In order for any quantum computing circuit to run properly, we need to <b><b>cal
 </p>
 
 
-<div id="org5b8aec5" class="figure">
+<div id="orge0a3c4b" class="figure">
 <p><img src="../images/tfq-calibration-circuit.svg" alt="tfq-calibration-circuit.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -359,7 +359,7 @@ What we want to achieve is a model that calibrates noisy qubit:
 </p>
 
 
-<div id="orgef1209b" class="figure">
+<div id="orgf631ae2" class="figure">
 <p><img src="../images/hello-tfq-circuit.svg" alt="hello-tfq-circuit.svg" class="org-svg" width="560px" />
 </p>
 </div>
@@ -378,7 +378,7 @@ To help you understand the whole picture, I made an architectural diagram of our
 </p>
 
 
-<div id="org9db9649" class="figure">
+<div id="org54c291c" class="figure">
 <p><img src="../images/hello-tfq-1.svg" alt="hello-tfq-1.svg" class="org-svg" width="560px" />
 </p>
 </div>
@@ -419,7 +419,7 @@ This is the circuit that emulates the noisy qubit that needs to be calibrated. T
 <h3 id="org8234a0e">Labels</h3>
 <div class="outline-text-3" id="text-org8234a0e">
 <p>
-The labels are the <b><b>expecation values of the target states</b></b> we want our qubits to achieve.
+The labels are the <b><b>expectation values of the target states</b></b> we want our qubits to achieve.
 In this example, we want the qubit to be at \(|0\rangle\) (for input command 0) or \(|1\rangle\) (for input command 1). As we have seen earlier, expectation values at \(|0\rangle\) and \(|1\rangle\) are 1 and -1 respectively. Therefore our labels correspond to input commands are <code>[1, -1]</code>.
 </p>
 </div>
@@ -429,7 +429,7 @@ In this example, we want the qubit to be at \(|0\rangle\) (for input command 0) 
 <h3 id="orgcc3d3b5">Outputs</h3>
 <div class="outline-text-3" id="text-orgcc3d3b5">
 <p>
-The outputs of our hybrid model are the expecation values of the calibrated qubits.
+The outputs of our hybrid model are the expectation values of the calibrated qubits.
 </p>
 </div>
 </div>
@@ -442,7 +442,7 @@ Our model will include both classical and quantum parts.
 </p>
 <ul class="org-ul">
 <li>The <b><b>classical part</b></b> is the &ldquo;controller&rdquo; in the diagram. It&rsquo;s a normal DNN, nothing special. Its outputs are the parameters (\(\theta_1\), \(\theta_2\), \(\theta_3\)) for calibration circuit.</li>
-<li>The <b><b>quantum part</b></b> is the &ldquo;ControllPQC&rdquo; layer (we&rsquo;ll name it &ldquo;expection<sub>layer</sub>&rdquo;). It takes the parameters (\(\theta_1\), \(\theta_2\), \(\theta_3\)) from controller, uses them to run the calibration circuit (&ldquo;model<sub>circuit</sub>&rdquo;), and feeds back the outputs (expectation values) to the controller for training.</li>
+<li>The <b><b>quantum part</b></b> is the <code>ControllPQC</code> layer (we&rsquo;ll name it <code>expection_layer</code>). It takes the parameters (\(\theta_1\), \(\theta_2\), \(\theta_3\)) from controller, uses them to run the calibration circuit (<code>model_circuit</code>), and feeds back the outputs (expectation values) to the controller for training.</li>
 </ul>
 
 <p>
@@ -566,7 +566,7 @@ Print out the noisy circuit. We can see that the &ldquo;perfect&rdquo; qubit has
 </pre>
 </div>
 
-<pre class="example" id="orgaf29e3e">
+<pre class="example" id="org83de58a">
 [3.84902356 3.3647054  3.03737137]
 (0, 0): ───Rx(1.23π)───Ry(1.07π)───Rz(0.967π)───
 </pre>
@@ -598,7 +598,7 @@ The labels are the expectation values we want for each command. In this example,
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Labels: target expecation values (1 for command 0, -1 for command 1)</span>
+<pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Labels: target expectation values (1 for command 0, -1 for command 1)</span>
 <span class="org-variable-name">expected_outputs</span> = np.array([[1], [-1]], dtype=np.float32)
 </pre>
 </div>
@@ -643,7 +643,7 @@ SVGCircuit(model_circuit)
 </div>
 
 
-<div id="orge4723b8" class="figure">
+<div id="org4f504f4" class="figure">
 <p><img src="../images/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -695,7 +695,7 @@ A little visualization of our model&#x2026;
 </div>
 
 
-<div id="orgee042e3" class="figure">
+<div id="orgae7d555" class="figure">
 <p><img src="../images/output_35_0.png" alt="output_35_0.png" width="560px" />
 </p>
 </div>
@@ -736,7 +736,7 @@ plt.show()
 </div>
 
 
-<div id="org1589d92" class="figure">
+<div id="org3e87597" class="figure">
 <p><img src="../images/output_39_0.png" alt="output_39_0.png" width="480px" />
 </p>
 </div>
@@ -755,7 +755,7 @@ We can verify our model by calling it with commands 0 and 1:
 </pre>
 </div>
 
-<pre class="example" id="org939c003">
+<pre class="example" id="orged89257">
 &lt;tf.Tensor: shape=(2, 1), dtype=float32, numpy=
     array([[ 0.9891974],
            [-0.9958328]], dtype=float32)&gt;
