@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-04 -->
+<!-- 2022-05-21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Run Emacs Server on MacOS</title>
@@ -66,9 +66,9 @@ One possible option is to start Emacs with “-Q” argument. This tells Emacs t
 Another option is to start Emacs as a server, and just launch a client (“emacsclient”) when you need the editor. In this way you get both quick startup time and a fully configured Emacs environment. I already use this approach on Linux, can I do this on MacOS?
 </p>
 
-<section id="outline-container-org4d2a1dd" class="outline-2">
-<h2 id="org4d2a1dd">Create “plist” file</h2>
-<div class="outline-text-2" id="text-org4d2a1dd">
+<section id="outline-container-org1489f14" class="outline-2">
+<h2 id="org1489f14">Create “plist” file</h2>
+<div class="outline-text-2" id="text-org1489f14">
 <p>
 First, I created a “plist” file in my LaunchAgents folder: ~/Library/LaunchAgents/emacs.daemon.plist
 </p>
@@ -77,7 +77,7 @@ First, I created a “plist” file in my LaunchAgents folder: ~/Library/LaunchA
 Here is an example of the plist file for Emacs server. Assuming Emacs binary is at /Applications/Emacs.app/Contents/MacOS/Emacs and the argument “–daemon” launches Emacs in server (daemon) mode.
 </p>
 
-<pre class="example" id="org0505263">
+<pre class="example" id="orgb486af7">
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
     "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
@@ -100,9 +100,9 @@ Here is an example of the plist file for Emacs server. Assuming Emacs binary is 
 </div>
 </section>
 
-<section id="outline-container-orgfb1fe55" class="outline-2">
-<h2 id="orgfb1fe55">Add to launchctl</h2>
-<div class="outline-text-2" id="text-orgfb1fe55">
+<section id="outline-container-org64d01d0" class="outline-2">
+<h2 id="org64d01d0">Add to launchctl</h2>
+<div class="outline-text-2" id="text-org64d01d0">
 <p>
 Load the “plist” file to launchctl, so that it will be launched automatically.
 </p>
@@ -141,9 +141,9 @@ That’s it! Emacs should be running as a server now. You can check this with a 
 </div>
 </section>
 
-<section id="outline-container-org1555e50" class="outline-2">
-<h2 id="org1555e50">Launch Emacs client</h2>
-<div class="outline-text-2" id="text-org1555e50">
+<section id="outline-container-org7cb6707" class="outline-2">
+<h2 id="org7cb6707">Launch Emacs client</h2>
+<div class="outline-text-2" id="text-org7cb6707">
 <p>
 Now that Emacs server is up and running, you can launch emacsclient just like any other editor. E.g. emacsclient ~/.bash<sub>profile</sub>
 </p>
@@ -152,7 +152,7 @@ Now that Emacs server is up and running, you can launch emacsclient just like an
 One caveat is that if you have multiple emacs installed (e.g. MacOS comes with an old version of Emacs, and you installed Emacs 26.x), you need to make sure client and server are from the same Emacs installation. For example, if Emacs server is at:
 </p>
 
-<pre class="example" id="org498a841">
+<pre class="example" id="org7acdbd5">
 /Applications/Emacs.app/Contents/MacOS/Emacs
 </pre>
 

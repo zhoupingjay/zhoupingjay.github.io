@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-04 -->
+<!-- 2022-05-21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(3) Shor算法初探</title>
@@ -77,9 +77,9 @@
 </h1>
 
 
-<section id="outline-container-org394d571" class="outline-2">
-<h2 id="org394d571">上文回顾：因式分解问题可以转化为Order Finding</h2>
-<div class="outline-text-2" id="text-org394d571">
+<section id="outline-container-orgc336062" class="outline-2">
+<h2 id="orgc336062">上文回顾：因式分解问题可以转化为Order Finding</h2>
+<div class="outline-text-2" id="text-orgc336062">
 <p>
 在<a href="shor_algorithm_2_order_finding.html">上文</a>中，我们分析了为什么因式分解问题可以转化为Order Finding，因此如果能高效求解Order Finding，也就能高效解决因式分解问题。
 </p>
@@ -94,9 +94,9 @@
 </div>
 </section>
 
-<section id="outline-container-org1ea4f3e" class="outline-2">
-<h2 id="org1ea4f3e">用量子计算机解决因式分解问题：Shor算法</h2>
-<div class="outline-text-2" id="text-org1ea4f3e">
+<section id="outline-container-org0ba6d4b" class="outline-2">
+<h2 id="org0ba6d4b">用量子计算机解决因式分解问题：Shor算法</h2>
+<div class="outline-text-2" id="text-org0ba6d4b">
 <p>
 Shor算法是Peter Shor在1994年提出的一种量子计算算法，可以在多项式时间内求解因式分解问题。
 </p>
@@ -119,7 +119,7 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </ol>
 
 
-<div id="orgedc5ce7" class="figure">
+<div id="org2b97843" class="figure">
 <p><img src="../images/shor1.png" alt="shor1.png" width="400px" />
 </p>
 </div>
@@ -134,9 +134,9 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </div>
 </section>
 
-<section id="outline-container-orgbf5015d" class="outline-2">
-<h2 id="orgbf5015d">用量子计算机求解Order Finding问题</h2>
-<div class="outline-text-2" id="text-orgbf5015d">
+<section id="outline-container-org0b4c3d0" class="outline-2">
+<h2 id="org0b4c3d0">用量子计算机求解Order Finding问题</h2>
+<div class="outline-text-2" id="text-org0b4c3d0">
 <p>
 用量子计算机求解Order Finding问题，实质上是要找到函数 \(f(x)=a^x \mod N\) 的周期。看过我之前文章的朋友可能会想到，首先我们要考虑如何将这个函数整合到我们的量子电路里，也就是把它转换成一个量子电路能用的变换 \(U_f\) 。
 </p>
@@ -146,7 +146,7 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </p>
 
 
-<div id="org6d736d5" class="figure">
+<div id="orgdd1c92d" class="figure">
 <p><img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px" />
 </p>
 </div>
@@ -169,7 +169,7 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </p>
 
 
-<div id="org02e2d85" class="figure">
+<div id="org88c372e" class="figure">
 <p><img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px" />
 </p>
 </div>

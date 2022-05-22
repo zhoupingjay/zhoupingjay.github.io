@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-04 -->
+<!-- 2022-05-21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(2) 因式分解和Order Finding问题</title>
@@ -77,15 +77,15 @@
 </h1>
 
 
-<section id="outline-container-orgc3ee08d" class="outline-2">
-<h2 id="orgc3ee08d">上文回顾：RSA公钥加密算法</h2>
-<div class="outline-text-2" id="text-orgc3ee08d">
+<section id="outline-container-org4619b10" class="outline-2">
+<h2 id="org4619b10">上文回顾：RSA公钥加密算法</h2>
+<div class="outline-text-2" id="text-org4619b10">
 <p>
 在<a href="shor_algorithm_1_rsa.html">上文</a>中我们讲了以RSA为代表的公钥加密算法，以及为什么其安全性的核心是因式分解问题。
 </p>
 
 
-<div id="orgc76db90" class="figure">
+<div id="org4161326" class="figure">
 <p><img src="../images/RSA.png" alt="RSA.png" width="480px" />
 </p>
 </div>
@@ -100,9 +100,9 @@
 </div>
 </section>
 
-<section id="outline-container-org5e8eedd" class="outline-2">
-<h2 id="org5e8eedd">Order Finding问题</h2>
-<div class="outline-text-2" id="text-org5e8eedd">
+<section id="outline-container-orgcab9c85" class="outline-2">
+<h2 id="orgcab9c85">Order Finding问题</h2>
+<div class="outline-text-2" id="text-orgcab9c85">
 <p>
 给定两个互质的数N和a，求使得 \(a^r=1 \mod N\) 的最小整数r，这就是所谓的Order Finding问题。求出的r，称为&ldquo;the order of a modulo N&rdquo;。
 </p>
@@ -183,9 +183,9 @@
 </div>
 </section>
 
-<section id="outline-container-org075c999" class="outline-2">
-<h2 id="org075c999">为什么因式分解问题可以转化为Order Finding？</h2>
-<div class="outline-text-2" id="text-org075c999">
+<section id="outline-container-org4a62a0d" class="outline-2">
+<h2 id="org4a62a0d">为什么因式分解问题可以转化为Order Finding？</h2>
+<div class="outline-text-2" id="text-org4a62a0d">
 <p>
 假设要分解的大数是N，如何把它转化为Order Finding问题呢？
 </p>

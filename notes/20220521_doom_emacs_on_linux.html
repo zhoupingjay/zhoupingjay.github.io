@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-05-21 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Doom Emacs on Ubuntu Linux 尝鲜</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Doom Emacs on Ubuntu Linux 尝鲜
+<br />
+<span class="subtitle">Ping Zhou, 2022-05-21</span>
+</h1>
+
+<section id="outline-container-org9f96635" class="outline-2">
+<h2 id="org9f96635">Doom Emacs简介</h2>
+<div class="outline-text-2" id="text-org9f96635">
+<p>
+Doom Emacs 是一个 Emacs 的配置框架，相比原厂的 Emacs 配置，Doom Emacs 提供了更方便完善的默认设置，预装了常用的包，并且提供了一个很容易自定义的框架。同时，Doom Emacs 启动速度也很快。最近在 Ubuntu 上试用了一下，感觉不错，正在考虑将我原有的配置移到 Doom Emacs 上去。
+</p>
+
+
+<div id="org76553e6" class="figure">
+<p><img src="../images/2022/2022-05-21_19-14-11_screenshot.png" alt="2022-05-21_19-14-11_screenshot.png" width="640px" />
+</p>
+</div>
+
+<p>
+注意，Doom Emacs 不是 Emacs 发行版，只是一组 Emacs 配置，你运行 Doom Emacs 时，运行的还是系统上安装的 Emacs。Doom Emacs 需要 Emacs 27.1 以上，如果你的 Emacs 版本太低，需要先升级才能使用。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgfe9e7e1" class="outline-2">
+<h2 id="orgfe9e7e1">在 Ubuntu 上安装 Doom Emacs</h2>
+<div class="outline-text-2" id="text-orgfe9e7e1">
+<p>
+首先你需要 Emacs 27.1 以上，个人推荐最新的 28.1 ，并带上 native-compilation 。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./configure --prefix=$<span class="org-variable-name">HOME</span>/local <span class="org-sh-escaped-newline">\</span>
+            --with-native-compilation <span class="org-sh-escaped-newline">\</span>
+            --with-x --with-json <span class="org-sh-escaped-newline">\</span>
+            --with-jpeg --with-tiff --with-png
+make -j4
+make install
+</pre>
+</div>
+
+<p>
+根据Doom Emacs的建议，加上 <code>--with-json</code> 可以提高运行速度。安装完成后确保 <code>~/.local/bin</code> 在PATH里。
+</p>
+
+<p>
+此外，还有一些依赖包：
+</p>
+<ul class="org-ul">
+<li>Git 2.23+</li>
+<li>ripgrep 11.0+</li>
+<li>GNU find</li>
+<li>fd （可选）</li>
+</ul>
+
+<p>
+最后那个 fd 工具，注意不要跟 fdclone 搞混了，如果你安装了 fdclone 包，会出来一个界面是日文的 fd 程序 :-D 正确的安装步骤是这样：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">sudo apt install fd-find
+ln -s $(<span class="org-sh-quoted-exec">which fdfind</span>) ~/.local/bin/fd
+</pre>
+</div>
+
+<p>
+然后根据Doom Emacs官网的步骤：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
+</pre>
+</div>
+
+<p>
+实际操作的时候，我是把原有的 Emacs 配置目录 <code>.emacs.d</code> 改名，然后创建一个符号连接到 Doom Emacs 的目录：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">git clone --depth 1 https://github.com/doomemacs/doomemacs ~/git/doomemacs
+<span class="org-comment-delimiter"># </span><span class="org-comment">&#23558;&#21407;&#26377;&#30340;.emacs.d&#30446;&#24405;&#37325;&#21629;&#21517;&#65292;&#28982;&#21518;&#20570;&#19968;&#20010;&#31526;&#21495;&#36830;&#25509;&#21040;Doom Emacs&#20195;&#30721;&#24211;</span>
+mv ~/.emacs.d ~/.emacs.d.orig
+ln -s ~/git/doomemacs ~/.emacs.d
+</pre>
+</div>
+
+<p>
+这样可以方便的切换回原有的Emacs配置。
+</p>
+
+<p>
+接下来就可以运行安装了：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">~/.emacs.d/bin/doom install
+</pre>
+</div>
+
+<p>
+安装过程可能会持续一段时间，特别是28.1的话，需要编译elisp到原生代码，所以需要一些耐心。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org24e0cce" class="outline-2">
+<h2 id="org24e0cce">Doom Emacs配置初探</h2>
+<div class="outline-text-2" id="text-org24e0cce">
+<p>
+Doom Emacs 安装完成后，会生成一个 <code>.doom.d</code> 目录，里面存放 Doom Emacs 的本地配置。
+</p>
+
+<p>
+原先的 <code>.emacs.d</code> 目录，现在指向的是刚才从git上拉下来的 Doom Emacs 代码库，这个目录一般是不动的，所有的自定义配置，都应该在 <code>.doom.d</code> 目录下进行。
+</p>
+
+<p>
+<code>.doom.d</code> 目录下有三个主要的文件：
+</p>
+<ul class="org-ul">
+<li><code>init.el</code> 主配置文件，选择要激活哪些预装的包。</li>
+<li><code>config.el</code> 自定义配置，可以在这里加上自定义的配置，加载需要的包等等。</li>
+<li><code>packages.el</code> 包管理，把想要安装的包加在这里。</li>
+</ul>
+
+<p>
+例如我在 <code>init.el</code> 里激活了中文输入，go，C/C++, Common Lisp等包：
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(doom! <span class="org-builtin">:input</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">bidi              ; (tfel ot) thgir etirw uoy gnipleh</span>
+       chinese
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">japanese</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">layout            ; auie,ctsrnm is the superior home row</span>
+       <span class="org-comment-delimiter">;; </span><span class="org-comment">......</span>
+       <span class="org-builtin">:lang</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">agda              ; types of types of types of types...</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">beancount         ; mind the GAAP</span>
+       (cc +lsp)         <span class="org-comment-delimiter">; </span><span class="org-comment">C &gt; C++ == 1</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">clojure           ; java with a lisp</span>
+       common-lisp       <span class="org-comment-delimiter">; </span><span class="org-comment">if you've seen one lisp, you've seen them all</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">coq               ; proofs-as-programs</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">crystal           ; ruby at the speed of c</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">csharp            ; unity, .NET, and mono shenanigans</span>
+       data              <span class="org-comment-delimiter">; </span><span class="org-comment">config/data formats</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">(dart +flutter)   ; paint ui and not much else</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">dhall</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">elixir            ; erlang done right</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">elm               ; care for a cup of TEA?</span>
+       emacs-lisp        <span class="org-comment-delimiter">; </span><span class="org-comment">drown in parentheses</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">erlang            ; an elegant language for a more civilized age</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">ess               ; emacs speaks statistics</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">factor</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">faust             ; dsp, but you get to keep your soul</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">fortran           ; in FORTRAN, GOD is REAL (unless declared INTEGER)</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">fsharp            ; ML stands for Microsoft's Language</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">fstar             ; (dependent) types and (monadic) effects and Z3</span>
+       <span class="org-comment-delimiter">;;</span><span class="org-comment">gdscript          ; the language you waited for</span>
+       (go +lsp)         <span class="org-comment-delimiter">; </span><span class="org-comment">the hipster dialect</span>
+       <span class="org-comment-delimiter">;; </span><span class="org-comment">......</span>
+       )
+</pre>
+</div>
+
+<p>
+修改完配置后，运行一下 sync ：
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">~/.emacs.d/bin/doom sync
+</pre>
+</div>
+
+<p>
+Doom Emacs 会自动同步配置并安装所需的包，然后重新启动 Doom Emacs 即可。
+</p>
+
+<p>
+如果出现问题，可以用 doom doctor 查看：
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">~/.emacs.d/bin/doom doctor
+</pre>
+</div>
+
+<p>
+一般缺少什么包或者工具，用 doom doctor 都能告诉你。
+</p>
+
+<p>
+下一步计划：将我原有的Emacs配置（以org文件管理）移植到Doom Emacs。
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    </div>
+</footer>
+</body>
+</html>

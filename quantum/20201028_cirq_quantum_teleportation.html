@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-04 -->
+<!-- 2022-05-21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>用Cirq模拟量子隐形传态过程</title>
@@ -83,15 +83,15 @@
 关于量子隐形传态的原理，请参见<a href="https://mp.weixin.qq.com/s?__biz=MzI4ODYxNDY5NA==&amp;mid=2247484394&amp;idx=1&amp;sn=e167ed2e9427fe35ed5a0bc320b19a45&amp;chksm=ec3af3a3db4d7ab5281f3d17ce86cd56e9043316667c9f51d23643cbd444b02535f2faf26cc1&amp;scene=178&amp;cur_album_id=1504407355969617921#rd">我的相关文章</a>。
 </p>
 
-<section id="outline-container-orga5af63d" class="outline-2">
-<h2 id="orga5af63d">制备纠缠态的量子比特</h2>
-<div class="outline-text-2" id="text-orga5af63d">
+<section id="outline-container-orgc45f50f" class="outline-2">
+<h2 id="orgc45f50f">制备纠缠态的量子比特</h2>
+<div class="outline-text-2" id="text-orgc45f50f">
 <p>
 要在Alice和Bob之间实现量子隐形传态，首先需要用到一对纠缠态的量子比特。这可以通过一个H门和一个CNOT门来实现：
 </p>
 
 
-<div id="org1cd0f5f" class="figure">
+<div id="org276c2a4" class="figure">
 <p><img src="../images/Entanglement.svg" alt="Entanglement.svg" class="org-svg" width="320px" />
 </p>
 </div>
@@ -132,7 +132,7 @@
 </pre>
 </div>
 
-<pre class="example" id="orgde55a74">
+<pre class="example" id="org6119d98">
 𝜙0: ───E───
        │
 𝜙1: ───E───
@@ -144,24 +144,24 @@
 </div>
 </section>
 
-<section id="outline-container-org562aad3" class="outline-2">
-<h2 id="org562aad3">量子隐形传态</h2>
-<div class="outline-text-2" id="text-org562aad3">
+<section id="outline-container-org8598ed4" class="outline-2">
+<h2 id="org8598ed4">量子隐形传态</h2>
+<div class="outline-text-2" id="text-org8598ed4">
 <p>
 完整的量子隐形传态的电路如下图所示：
 </p>
 
 
-<div id="orgfaa89c1" class="figure">
+<div id="org9cfb943" class="figure">
 <p><img src="../images/Quantum Teleportation.svg" alt="Quantum Teleportation.svg" class="org-svg" width="600px" />
 </p>
 </div>
 </div>
 </section>
 
-<section id="outline-container-orgdf88fb5" class="outline-2">
-<h2 id="orgdf88fb5">Alice这边的电路</h2>
-<div class="outline-text-2" id="text-orgdf88fb5">
+<section id="outline-container-orgdca16a8" class="outline-2">
+<h2 id="orgdca16a8">Alice这边的电路</h2>
+<div class="outline-text-2" id="text-orgdca16a8">
 <p>
 Alice这边，除了一对纠缠态量子比特 \(|\phi_0\rangle\), \(|\phi_1\rangle\) 外，还有一个要传送的量子比特 \(|\psi\rangle\) 。量子隐形传态的目的，就是在Bob那里得到一个与 \(|\psi\rangle\) 状态相同的量子比特。
 </p>
@@ -211,7 +211,7 @@ psi_state = result.final_state
 </pre>
 </div>
 
-<pre class="example" id="org3ca7bd7">
+<pre class="example" id="orga6cb3fa">
 [0.707+0.j    0.   -0.707j]
 </pre>
 
@@ -240,7 +240,7 @@ SVGCircuit(circuit)
 </div>
 
 
-<div id="orgbf52c60" class="figure">
+<div id="org5d872f8" class="figure">
 <p><img src="../images/quantum_teleportation_output_11_0.svg" alt="quantum_teleportation_output_11_0.svg" class="org-svg" />
 </p>
 </div>
@@ -257,15 +257,15 @@ m_phi0 = <span class="org-builtin">int</span>(result_alice.measurements[<span cl
 </pre>
 </div>
 
-<pre class="example" id="org1eb4a2e">
+<pre class="example" id="orge79ad8e">
 Alice: Measure(𝜓) = 0, Measure(𝜙0) = 0
 </pre>
 </div>
 </section>
 
-<section id="outline-container-org8b14933" class="outline-2">
-<h2 id="org8b14933">Bob这边的电路</h2>
-<div class="outline-text-2" id="text-org8b14933">
+<section id="outline-container-org58c74e1" class="outline-2">
+<h2 id="org58c74e1">Bob这边的电路</h2>
+<div class="outline-text-2" id="text-org58c74e1">
 <p>
 假设要传送的量子比特状态是 \(|\psi\rangle=(\alpha|0\rangle+\beta|1\rangle)\) 。
 Alice把前面测量得到的结果告诉Bob，然后Bob根据得到的信息，对手里的 \(|\phi_1\rangle\) 进行相应的变换，从而把它的状态变成和 \(|\psi\rangle\) 一样：
@@ -306,7 +306,7 @@ circuit_bob = generate_bob_circuit(m_psi, m_phi0)
 </pre>
 </div>
 
-<pre class="example" id="org1bc8d32">
+<pre class="example" id="orgc248d2f">
 Alice: Measure(𝜓) = 0, Measure(𝜙0) = 0
 </pre>
 
@@ -331,9 +331,9 @@ Alice: Measure(𝜓) = 0, Measure(𝜙0) = 0
 </ul>
 </div>
 
-<div id="outline-container-org9cb0c4c" class="outline-3">
-<h3 id="org9cb0c4c">关于Cirq里的状态向量</h3>
-<div class="outline-text-3" id="text-org9cb0c4c">
+<div id="outline-container-org29f4c23" class="outline-3">
+<h3 id="org29f4c23">关于Cirq里的状态向量</h3>
+<div class="outline-text-3" id="text-org29f4c23">
 <p>
 关于状态向量，这里多解释几句。例如我们有个系统，其中有3个量子比特，分别表示成
 </p>
@@ -485,7 +485,7 @@ bob_initial_state = bob_phi_1_state(m_psi, m_phi0, result_alice)
 </pre>
 </div>
 
-<pre class="example" id="org2ab01d8">
+<pre class="example" id="org46e1d0a">
 Bob     |𝜙1⟩: [0.707+0.j    0.   -0.707j]
 Alice   |𝜓⟩:  [0.707+0.j    0.   -0.707j]
 </pre>
@@ -501,9 +501,9 @@ Alice   |𝜓⟩:  [0.707+0.j    0.   -0.707j]
 </div>
 </section>
 
-<section id="outline-container-orge3dc18d" class="outline-2">
-<h2 id="orge3dc18d">备注：Tensor Product</h2>
-<div class="outline-text-2" id="text-orge3dc18d">
+<section id="outline-container-orgd67d081" class="outline-2">
+<h2 id="orgd67d081">备注：Tensor Product</h2>
+<div class="outline-text-2" id="text-orgd67d081">
 \begin{matrix}
 A \otimes B =
 \begin{bmatrix}

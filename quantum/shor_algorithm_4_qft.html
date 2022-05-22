@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-04 -->
+<!-- 2022-05-21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(4) 量子傅立叶变换</title>
@@ -77,18 +77,18 @@
 </h1>
 
 
-<section id="outline-container-orge5dd7a3" class="outline-2">
-<h2 id="orge5dd7a3">上文回顾：Shor算法初探</h2>
-<div class="outline-text-2" id="text-orge5dd7a3">
+<section id="outline-container-orga494d9f" class="outline-2">
+<h2 id="orga494d9f">上文回顾：Shor算法初探</h2>
+<div class="outline-text-2" id="text-orga494d9f">
 <p>
 用量子计算机求解Order Finding问题，其实就是要找到函数 \(f(x)=a^x \mod N\) 的周期。在上文中我们已经看到，如果我们把f(x)包装成量子变换 \(U_f\) ，然后把它的输入x制备成叠加态，在输出端就能得到 \(|l\rangle, |l+r\rangle, |l+2r\rangle, \dots\) 的叠加态。但是这个叠加态并不能直接告诉我们周期（r）是什么，我们还需要对它做更多的处理才能提取出有用的信息。这个处理过程，就是 <b>量子傅里叶变换</b> 。
 </p>
 </div>
 </section>
 
-<section id="outline-container-org105bac8" class="outline-2">
-<h2 id="org105bac8">离散傅里叶变换（DFT）</h2>
-<div class="outline-text-2" id="text-org105bac8">
+<section id="outline-container-org072ee8c" class="outline-2">
+<h2 id="org072ee8c">离散傅里叶变换（DFT）</h2>
+<div class="outline-text-2" id="text-org072ee8c">
 <p>
 先复习一下傅里叶变换…
 </p>
@@ -163,9 +163,9 @@
 </div>
 </section>
 
-<section id="outline-container-org51fd355" class="outline-2">
-<h2 id="org51fd355">量子傅里叶变换（QFT）</h2>
-<div class="outline-text-2" id="text-org51fd355">
+<section id="outline-container-orgb58b3d9" class="outline-2">
+<h2 id="orgb58b3d9">量子傅里叶变换（QFT）</h2>
+<div class="outline-text-2" id="text-orgb58b3d9">
 <p>
 傅里叶变换加上量子，听上去很炫的名字！其实干的事情是和离散傅里叶变换是一样的。:-)
 </p>
@@ -175,9 +175,9 @@
 </p>
 </div>
 
-<div id="outline-container-orgdb07594" class="outline-3">
-<h3 id="orgdb07594">从基矢变换的角度理解</h3>
-<div class="outline-text-3" id="text-orgdb07594">
+<div id="outline-container-org0f5ffa0" class="outline-3">
+<h3 id="org0f5ffa0">从基矢变换的角度理解</h3>
+<div class="outline-text-3" id="text-org0f5ffa0">
 <p>
 假如我们的系统有n个量子位，那么计算基态computational basis有 \(2^n\) 个： \(|0\rangle, |1\rangle, \dots, |2^n-1\rangle\) 。
 </p>
@@ -241,9 +241,9 @@ QFT变换后的基态 \(|\tilde y\rangle\) ，用矩阵表示的话就是这样�
 </div>
 </div>
 
-<div id="outline-container-org48caed1" class="outline-3">
-<h3 id="org48caed1">从状态变换的角度理解</h3>
-<div class="outline-text-3" id="text-org48caed1">
+<div id="outline-container-org41e0ba6" class="outline-3">
+<h3 id="org41e0ba6">从状态变换的角度理解</h3>
+<div class="outline-text-3" id="text-org41e0ba6">
 <p>
 假如我们的系统处于某个任意状态：
 </p>

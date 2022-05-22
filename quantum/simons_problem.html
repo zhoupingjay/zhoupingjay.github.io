@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-04 -->
+<!-- 2022-05-21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子算法之Simon问题</title>
@@ -79,9 +79,9 @@
 随手翻到一个Simon问题，今天就来聊聊它。Simon问题和之前讨论的Deutsch问题有点类似，也是一个用量子计算机能够达到指数级加速的问题。
 </p>
 
-<section id="outline-container-orgf88aa8f" class="outline-2">
-<h2 id="orgf88aa8f">什么是Simon问题？</h2>
-<div class="outline-text-2" id="text-orgf88aa8f">
+<section id="outline-container-orgd72d7ae" class="outline-2">
+<h2 id="orgd72d7ae">什么是Simon问题？</h2>
+<div class="outline-text-2" id="text-orgd72d7ae">
 <p>
 和Deutsch问题类似，假设有人给我们一个函数f(x)，内部实现未知，只知道它输入n位二进制数，输出也是n位二进制数。用数学语言描述就是这样：
 </p>
@@ -108,15 +108,15 @@ Simon问题要解决的，就是求解这个周期a的值。
 </div>
 </section>
 
-<section id="outline-container-org60512c6" class="outline-2">
-<h2 id="org60512c6">Simon问题的量子算法</h2>
-<div class="outline-text-2" id="text-org60512c6">
+<section id="outline-container-org6dd519c" class="outline-2">
+<h2 id="org6dd519c">Simon问题的量子算法</h2>
+<div class="outline-text-2" id="text-org6dd519c">
 <p>
 和之前的其他量子算法一样，首先我们得把函数f(x)包装成可逆变换 \(U_f\) ：
 </p>
 
 
-<div id="orge75f19d" class="figure">
+<div id="org1ea3e3b" class="figure">
 <p><img src="../images/simon_uf.jpg" alt="simon_uf.jpg" width="240px" />
 </p>
 </div>
@@ -125,7 +125,7 @@ Simon问题要解决的，就是求解这个周期a的值。
 然后放到Simon问题的量子电路里：
 </p>
 
-<div id="orge458dd4" class="figure">
+<div id="org58a1307" class="figure">
 <p><img src="../images/simon_circuit.jpg" alt="simon_circuit.jpg" width="480px" />
 </p>
 </div>
@@ -135,9 +135,9 @@ Simon问题要解决的，就是求解这个周期a的值。
 </p>
 </div>
 
-<div id="outline-container-org782852e" class="outline-3">
-<h3 id="org782852e">t0时刻</h3>
-<div class="outline-text-3" id="text-org782852e">
+<div id="outline-container-org82ff06e" class="outline-3">
+<h3 id="org82ff06e">t0时刻</h3>
+<div class="outline-text-3" id="text-org82ff06e">
 <p>
 第一个寄存器经过n位的H变换，变成 \(|0\rangle\) 到 \(|2^n-1\rangle\) 的叠加态，即 \(\frac{1}{2^{n/2}}\sum_{x=0}^{2^n-1}|x\rangle\) 。
 </p>
@@ -152,9 +152,9 @@ Simon问题要解决的，就是求解这个周期a的值。
 </div>
 </div>
 
-<div id="outline-container-org70ca071" class="outline-3">
-<h3 id="org70ca071">t1时刻</h3>
-<div class="outline-text-3" id="text-org70ca071">
+<div id="outline-container-orgcab7331" class="outline-3">
+<h3 id="orgcab7331">t1时刻</h3>
+<div class="outline-text-3" id="text-orgcab7331">
 <p>
 经过 \(U_f\) 变换，两个寄存器进入纠缠态，第一个寄存器还是 \(\frac{1}{2^{n/2}}\sum_{x=0}^{2^n-1}|x\rangle\) ，第二个寄存器变成了 \(|f(x)\rangle\) 。所以系统状态是：
 </p>
@@ -165,9 +165,9 @@ Simon问题要解决的，就是求解这个周期a的值。
 </div>
 </div>
 
-<div id="outline-container-org3e0a713" class="outline-3">
-<h3 id="org3e0a713">t2时刻</h3>
-<div class="outline-text-3" id="text-org3e0a713">
+<div id="outline-container-orgdc0b28c" class="outline-3">
+<h3 id="orgdc0b28c">t2时刻</h3>
+<div class="outline-text-3" id="text-orgdc0b28c">
 <p>
 对第二个寄存器进行测量，使它坍缩到某个值 \(z=f(x_0)\) 。
 </p>
@@ -182,9 +182,9 @@ Simon问题要解决的，就是求解这个周期a的值。
 </div>
 </div>
 
-<div id="outline-container-org1b3892b" class="outline-3">
-<h3 id="org1b3892b">t3时刻</h3>
-<div class="outline-text-3" id="text-org1b3892b">
+<div id="outline-container-orgeae3322" class="outline-3">
+<h3 id="orgeae3322">t3时刻</h3>
+<div class="outline-text-3" id="text-orgeae3322">
 <p>
 对第一个寄存器再作H变换。这里要讨论一下n位H变换的意义。
 </p>
@@ -326,9 +326,9 @@ a \cdot y_n = 0
 </div>
 </section>
 
-<section id="outline-container-orgb376321" class="outline-2">
-<h2 id="orgb376321">性能分析</h2>
-<div class="outline-text-2" id="text-orgb376321">
+<section id="outline-container-orgff88836" class="outline-2">
+<h2 id="orgff88836">性能分析</h2>
+<div class="outline-text-2" id="text-orgff88836">
 <p>
 我们需要重复运行这个量子电路的次数，取决于我们什么时候能得到需要的线性独立的y值。
 </p>

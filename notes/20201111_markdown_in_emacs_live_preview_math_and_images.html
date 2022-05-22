@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-04 -->
+<!-- 2022-05-21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Markdown in Emacs: Live Preview, Math and Images</title>
@@ -76,9 +76,9 @@
 <span class="subtitle">Ping Zhou, 2020-11-11</span>
 </h1>
 
-<section id="outline-container-orgc94f7d5" class="outline-2">
-<h2 id="orgc94f7d5">Introduction</h2>
-<div class="outline-text-2" id="text-orgc94f7d5">
+<section id="outline-container-orgc7da359" class="outline-2">
+<h2 id="orgc7da359">Introduction</h2>
+<div class="outline-text-2" id="text-orgc7da359">
 <p>
 Emacs has a Markdown mode, but I need a more comprehensive setup with features like:
 </p>
@@ -94,9 +94,9 @@ Basically I need a setup that provides similar functionality as VS Code + Markdo
 </div>
 </section>
 
-<section id="outline-container-orgc2e7ca2" class="outline-2">
-<h2 id="orgc2e7ca2">Install dependencies</h2>
-<div class="outline-text-2" id="text-orgc2e7ca2">
+<section id="outline-container-orgb7a5fe6" class="outline-2">
+<h2 id="orgb7a5fe6">Install dependencies</h2>
+<div class="outline-text-2" id="text-orgb7a5fe6">
 <p>
 Emacs packages needed:
 </p>
@@ -125,13 +125,13 @@ Get MathJax:
 </div>
 </section>
 
-<section id="outline-container-org82bdfad" class="outline-2">
-<h2 id="org82bdfad">Configure Emacs</h2>
-<div class="outline-text-2" id="text-org82bdfad">
+<section id="outline-container-orgc5ff198" class="outline-2">
+<h2 id="orgc5ff198">Configure Emacs</h2>
+<div class="outline-text-2" id="text-orgc5ff198">
 </div>
-<div id="outline-container-orgc8a62f5" class="outline-3">
-<h3 id="orgc8a62f5">Markdown settings</h3>
-<div class="outline-text-3" id="text-orgc8a62f5">
+<div id="outline-container-org1dd9795" class="outline-3">
+<h3 id="org1dd9795">Markdown settings</h3>
+<div class="outline-text-3" id="text-org1dd9795">
 <p>
 Add these customization to Emacs config:
 </p>
@@ -160,9 +160,9 @@ This can be done with Emacs Customization UI (M-x customize), or by manually edi
 </div>
 </div>
 
-<div id="outline-container-orgc6602a6" class="outline-3">
-<h3 id="orgc6602a6">Simple HTTPD</h3>
-<div class="outline-text-3" id="text-orgc6602a6">
+<div id="outline-container-orge221525" class="outline-3">
+<h3 id="orge221525">Simple HTTPD</h3>
+<div class="outline-text-3" id="text-orge221525">
 <p>
 Add this to Emacs config file to enable simple-httpd (a simple Web server inside Emacs):
 </p>
@@ -193,9 +193,9 @@ Default root folder of simple-httpd is <code>~/public_html</code>. This can also
 </div>
 </div>
 
-<div id="outline-container-org7b4bf30" class="outline-3">
-<h3 id="org7b4bf30">Impatient Mode</h3>
-<div class="outline-text-3" id="text-org7b4bf30">
+<div id="outline-container-orgcdb333d" class="outline-3">
+<h3 id="orgcdb333d">Impatient Mode</h3>
+<div class="outline-text-3" id="text-orgcdb333d">
 <p>
 Add these to Emacs config file to configure markdown filter for impatient-mode:
 </p>
@@ -230,7 +230,7 @@ The filter will insert MathJax script in the generated HTML so that math symbols
 You can point it to any URL that hosts MathJax (if you trust the source), but I decide to host MathJax locally in simple-httpd:
 </p>
 
-<pre class="example" id="org3caf7e3">
+<pre class="example" id="orgd5aacfd">
 &lt;script src=\"/mathjax/es5/tex-chtml-full.js\"&gt;&lt;/script&gt;
 </pre>
 
@@ -250,9 +250,9 @@ Now MathJax script should be available to impatient-mode.
 </div>
 </section>
 
-<section id="outline-container-org6e07402" class="outline-2">
-<h2 id="org6e07402">(Optional) Add GitHub Style</h2>
-<div class="outline-text-2" id="text-org6e07402">
+<section id="outline-container-org97d74c6" class="outline-2">
+<h2 id="org97d74c6">(Optional) Add GitHub Style</h2>
+<div class="outline-text-2" id="text-org97d74c6">
 <p>
 The rendered HTML seems to be plain. So I added a GitHub-style CSS to the impatient-mode filter:
 </p>
@@ -270,7 +270,7 @@ The CSS file is also hosted locally in simple-httpd.
 <p>
 Add this line to my filter:
 </p>
-<pre class="example" id="orgec9b337">
+<pre class="example" id="org3f74383">
 &lt;link rel=\"stylesheet\" href = \"/github-markdown.css\"/&gt;
 </pre>
 
@@ -293,18 +293,18 @@ Now the filter is like this:
 </div>
 </section>
 
-<section id="outline-container-org8373234" class="outline-2">
-<h2 id="org8373234">Test Run</h2>
-<div class="outline-text-2" id="text-org8373234">
+<section id="outline-container-org0226ce2" class="outline-2">
+<h2 id="org0226ce2">Test Run</h2>
+<div class="outline-text-2" id="text-org0226ce2">
 </div>
-<div id="outline-container-org9029d29" class="outline-3">
-<h3 id="org9029d29">Live Preview</h3>
-<div class="outline-text-3" id="text-org9029d29">
+<div id="outline-container-org16736c0" class="outline-3">
+<h3 id="org16736c0">Live Preview</h3>
+<div class="outline-text-3" id="text-org16736c0">
 <p>
 Open a Markdown file, and then start live preview:
 </p>
 
-<pre class="example" id="orgeba7f83">
+<pre class="example" id="orgc37533d">
 M-x markdown-live-preview
 </pre>
 
@@ -318,9 +318,9 @@ As you type in the Markdown file, live preview also changes accordingly.
 </div>
 </div>
 
-<div id="outline-container-org64fc9de" class="outline-3">
-<h3 id="org64fc9de">Images</h3>
-<div class="outline-text-3" id="text-org64fc9de">
+<div id="outline-container-orgd696a0c" class="outline-3">
+<h3 id="orgd696a0c">Images</h3>
+<div class="outline-text-3" id="text-orgd696a0c">
 <p>
 To add images, just insert the &lt;img&gt; tag in Markdown:
 </p>
@@ -336,14 +336,14 @@ This relative path works for impatient-mode too (i.e. it will look for test.png 
 </div>
 </div>
 
-<div id="outline-container-org243dfa7" class="outline-3">
-<h3 id="org243dfa7">Math Equations</h3>
-<div class="outline-text-3" id="text-org243dfa7">
+<div id="outline-container-orgbd86ab1" class="outline-3">
+<h3 id="orgbd86ab1">Math Equations</h3>
+<div class="outline-text-3" id="text-orgbd86ab1">
 <p>
 Try math equations in Markdown:
 </p>
 
-<pre class="example" id="org600fea6">
+<pre class="example" id="org530bf78">
 $$
 \begin{pmatrix}
 aa &amp; bb \\

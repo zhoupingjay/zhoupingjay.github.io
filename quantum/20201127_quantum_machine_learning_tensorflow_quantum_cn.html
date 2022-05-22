@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-04 -->
+<!-- 2022-05-21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子机器学习：TensorFlow Quantum入门</title>
@@ -83,26 +83,26 @@
 相关代码请见<a href="https://github.com/zhoupingjay/quantum/blob/main/Getting-Started-With-TensorFlow-Quantum-CN.ipynb">作者的Github</a>。
 </p>
 
-<section id="outline-container-org06e6f69" class="outline-2">
-<h2 id="org06e6f69">TensorFlow Quantum</h2>
-<div class="outline-text-2" id="text-org06e6f69">
+<section id="outline-container-org3e63e68" class="outline-2">
+<h2 id="org3e63e68">TensorFlow Quantum</h2>
+<div class="outline-text-2" id="text-org3e63e68">
 <p>
 <a href="https://www.tensorflow.org/quantum">TensorFlow Quantum</a> (TFQ) 是谷歌在2020年发布的 <b>量子机器学习框架</b> ，它能够帮助开发者方便的创建经典+量子结合的混合机器学习模型。量子+机器学习，两个热门的名词结合在一起，听上去很酷！但是你可能会问，这个框架是如何把经典和量子世界结合起来的呢？所谓的”经典-量子混合模型“又是如何工作的？在这个笔记里，我会结合谷歌的&ldquo;<a href="https://www.tensorflow.org/quantum/tutorials/hello_many_worlds">Hello, many world</a>&rdquo;示例，实际讲解一下在TFQ下量子机器学习模型的搭建和工作原理。
 </p>
 </div>
 </section>
 
-<section id="outline-container-org0e480c5" class="outline-2">
-<h2 id="org0e480c5">基本概念</h2>
-<div class="outline-text-2" id="text-org0e480c5">
+<section id="outline-container-org68a5892" class="outline-2">
+<h2 id="org68a5892">基本概念</h2>
+<div class="outline-text-2" id="text-org68a5892">
 <p>
 要理解TFQ的代码，首先需要了解一些量子计算的基本概念。
 </p>
 </div>
 
-<div id="outline-container-org71e172f" class="outline-3">
-<h3 id="org71e172f">量子比特和状态向量</h3>
-<div class="outline-text-3" id="text-org71e172f">
+<div id="outline-container-orgd01dfdd" class="outline-3">
+<h3 id="orgd01dfdd">量子比特和状态向量</h3>
+<div class="outline-text-3" id="text-orgd01dfdd">
 <p>
 你可能在很多地方已经听到过量子比特（Qubit）的概念。一个经典比特在任意时刻只能处于两个状态中的一个，而量子比特则可以处于两个状态的叠加态：
 </p>
@@ -151,16 +151,16 @@
 </p>
 
 
-<div id="org24cee42" class="figure">
+<div id="org78c6f2e" class="figure">
 <p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="320px" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgd7e88b8" class="outline-3">
-<h3 id="orgd7e88b8">算符(Operators)和可观测量(Observables)</h3>
-<div class="outline-text-3" id="text-orgd7e88b8">
+<div id="outline-container-org80ec910" class="outline-3">
+<h3 id="org80ec910">算符(Operators)和可观测量(Observables)</h3>
+<div class="outline-text-3" id="text-org80ec910">
 <p>
 <b><b>算符(Operators)</b></b>
 </p>
@@ -191,9 +191,9 @@
 </div>
 </div>
 
-<div id="outline-container-org20906b6" class="outline-3">
-<h3 id="org20906b6">期望值</h3>
-<div class="outline-text-3" id="text-org20906b6">
+<div id="outline-container-orga692ad2" class="outline-3">
+<h3 id="orga692ad2">期望值</h3>
+<div class="outline-text-3" id="text-orga692ad2">
 <p>
 前面说到，状态向量描述了一个系统的当前状态。如果我们知道了这个向量，我们就掌握的系统的所有状态信息。
 但是，状态向量实际上只有在使用模拟器的时候才能看到。在真实的环境中，我们能得到的是系统的**期望值**。
@@ -232,7 +232,7 @@
 </p>
 
 
-<div id="orgb80d9e0" class="figure">
+<div id="orgbf39f4d" class="figure">
 <p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="320px" />
 </p>
 </div>
@@ -246,9 +246,9 @@
 </div>
 </section>
 
-<section id="outline-container-org3054348" class="outline-2">
-<h2 id="org3054348">问题描述</h2>
-<div class="outline-text-2" id="text-org3054348">
+<section id="outline-container-org5364bfa" class="outline-2">
+<h2 id="org5364bfa">问题描述</h2>
+<div class="outline-text-2" id="text-org5364bfa">
 <p>
 要理解我们的量子机器学习模型，首先我们得搞明白它要解决的是什么问题。
 </p>
@@ -262,7 +262,7 @@
 </p>
 
 
-<div id="org96e4bf9" class="figure">
+<div id="orgb936c4f" class="figure">
 <p><img src="../images/tfq-noisy-circuit.svg" alt="tfq-noisy-circuit.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -276,7 +276,7 @@
 </p>
 
 
-<div id="orgf7b9b34" class="figure">
+<div id="org428a477" class="figure">
 <p><img src="../images/tfq-calibration-circuit.svg" alt="tfq-calibration-circuit.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -287,15 +287,15 @@
 </div>
 </section>
 
-<section id="outline-container-orgbd00c4b" class="outline-2">
-<h2 id="orgbd00c4b">量子机器学习模型</h2>
-<div class="outline-text-2" id="text-orgbd00c4b">
+<section id="outline-container-org8068f47" class="outline-2">
+<h2 id="org8068f47">量子机器学习模型</h2>
+<div class="outline-text-2" id="text-org8068f47">
 <p>
 原版的例子直接跳入大量细节，可能不太容易理解，在这里我从全局角度出发，应该会更容易明白。我们要搭建的，是一个用来校准量子比特噪声的机器学习模型：
 </p>
 
 
-<div id="org6411850" class="figure">
+<div id="org73bfc32" class="figure">
 <p><img src="../images/hello-tfq-circuit.svg" alt="hello-tfq-circuit.svg" class="org-svg" width="560px" />
 </p>
 </div>
@@ -315,15 +315,15 @@
 </p>
 
 
-<div id="org90d01aa" class="figure">
+<div id="orgca306ec" class="figure">
 <p><img src="../images/hello-tfq-1.svg" alt="hello-tfq-1.svg" class="org-svg" width="560px" />
 </p>
 </div>
 </div>
 
-<div id="outline-container-orga346675" class="outline-3">
-<h3 id="orga346675">输入数据集（Datasets）</h3>
-<div class="outline-text-3" id="text-orga346675">
+<div id="outline-container-orgb5575e2" class="outline-3">
+<h3 id="orgb5575e2">输入数据集（Datasets）</h3>
+<div class="outline-text-3" id="text-orgb5575e2">
 <p>
 输入的数据集（Dataset）包含两个部分：命令（commands）和噪声电路（noisy circuit）。
 </p>
@@ -351,9 +351,9 @@ Commands是我们希望量子比特达到的目标状态的代号。例如，“
 </div>
 </div>
 
-<div id="outline-container-orgecc6215" class="outline-3">
-<h3 id="orgecc6215">训练标签（Labels）</h3>
-<div class="outline-text-3" id="text-orgecc6215">
+<div id="outline-container-org36228ff" class="outline-3">
+<h3 id="org36228ff">训练标签（Labels）</h3>
+<div class="outline-text-3" id="text-org36228ff">
 <p>
 这里的训练标签，就是 <b>我们想要量子比特达到的目标状态的期望值</b> ：
 </p>
@@ -368,18 +368,18 @@ Commands是我们希望量子比特达到的目标状态的代号。例如，“
 </div>
 </div>
 
-<div id="outline-container-org466c0dd" class="outline-3">
-<h3 id="org466c0dd">模型输出</h3>
-<div class="outline-text-3" id="text-org466c0dd">
+<div id="outline-container-org2c9f5d0" class="outline-3">
+<h3 id="org2c9f5d0">模型输出</h3>
+<div class="outline-text-3" id="text-org2c9f5d0">
 <p>
 模型的输出，就是量子比特校准后的期望值。
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgdd95840" class="outline-3">
-<h3 id="orgdd95840">经典-量子混合模型</h3>
-<div class="outline-text-3" id="text-orgdd95840">
+<div id="outline-container-orgacf159b" class="outline-3">
+<h3 id="orgacf159b">经典-量子混合模型</h3>
+<div class="outline-text-3" id="text-orgacf159b">
 <p>
 我们这个模型里有经典和量子两部分。
 </p>
@@ -404,13 +404,13 @@ Commands是我们希望量子比特达到的目标状态的代号。例如，“
 </div>
 </section>
 
-<section id="outline-container-org23fa608" class="outline-2">
-<h2 id="org23fa608">代码解析</h2>
-<div class="outline-text-2" id="text-org23fa608">
+<section id="outline-container-org1174eda" class="outline-2">
+<h2 id="org1174eda">代码解析</h2>
+<div class="outline-text-2" id="text-org1174eda">
 </div>
-<div id="outline-container-org821009a" class="outline-3">
-<h3 id="org821009a">安装TFQ</h3>
-<div class="outline-text-3" id="text-org821009a">
+<div id="outline-container-orgb99f0f3" class="outline-3">
+<h3 id="orgb99f0f3">安装TFQ</h3>
+<div class="outline-text-3" id="text-orgb99f0f3">
 <p>
 TensorFlow Quantum依赖TensorFlow 2.3.1+，最简单的方法是通过pip：
 </p>
@@ -423,9 +423,9 @@ pip install -q tensorflow-quantum
 </div>
 </div>
 
-<div id="outline-container-org4e3bdfb" class="outline-3">
-<h3 id="org4e3bdfb">导入依赖包</h3>
-<div class="outline-text-3" id="text-org4e3bdfb">
+<div id="outline-container-orgcec4889" class="outline-3">
+<h3 id="orgcec4889">导入依赖包</h3>
+<div class="outline-text-3" id="text-orgcec4889">
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">import</span> tensorflow <span class="org-keyword">as</span> tf
 <span class="org-keyword">import</span> tensorflow_quantum <span class="org-keyword">as</span> tfq
@@ -443,9 +443,9 @@ pip install -q tensorflow-quantum
 </div>
 </div>
 
-<div id="outline-container-org4965b47" class="outline-3">
-<h3 id="org4965b47">准备输入数据</h3>
-<div class="outline-text-3" id="text-org4965b47">
+<div id="outline-container-org5076c67" class="outline-3">
+<h3 id="org5076c67">准备输入数据</h3>
+<div class="outline-text-3" id="text-org5076c67">
 <p>
 首先创建一个量子比特对象：
 </p>
@@ -504,7 +504,7 @@ commands = np.array([[0], [1]], dtype=np.float32)
 </pre>
 </div>
 
-<pre class="example" id="org395e66b">
+<pre class="example" id="orgdd6acb9">
 [3.84902356 3.3647054  3.03737137]
 (0, 0): ───Rx(1.23π)───Ry(1.07π)───Rz(0.967π)───
 </pre>
@@ -527,9 +527,9 @@ commands_input = tf.keras.Input(shape=(1,),
 </div>
 </div>
 
-<div id="outline-container-org9425465" class="outline-3">
-<h3 id="org9425465">准备训练标签</h3>
-<div class="outline-text-3" id="text-org9425465">
+<div id="outline-container-org46b120c" class="outline-3">
+<h3 id="org46b120c">准备训练标签</h3>
+<div class="outline-text-3" id="text-org46b120c">
 <p>
 训练标签就是目标状态的期望值，也就是1和-1（分别对应输入Command 0和1）。
 </p>
@@ -542,9 +542,9 @@ commands_input = tf.keras.Input(shape=(1,),
 </div>
 </div>
 
-<div id="outline-container-orgfc9f488" class="outline-3">
-<h3 id="orgfc9f488">搭建量子机器学习模型</h3>
-<div class="outline-text-3" id="text-orgfc9f488">
+<div id="outline-container-org66d5864" class="outline-3">
+<h3 id="org66d5864">搭建量子机器学习模型</h3>
+<div class="outline-text-3" id="text-org66d5864">
 <p>
 经典部分就是一个普通的深度神经网络（DNN）。因为这里只有一个量子比特，一个简单的2层DNN就够了。
 </p>
@@ -580,7 +580,7 @@ SVGCircuit(model_circuit)
 </div>
 
 
-<div id="org2a1e4d0" class="figure">
+<div id="orgaa32d7c" class="figure">
 <p><img src="../images/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="480px" />
 </p>
 </div>
@@ -632,16 +632,16 @@ expectation = expectation_layer([circuits_input, dense_2])
 </div>
 
 
-<div id="org521c323" class="figure">
+<div id="org72e3bea" class="figure">
 <p><img src="../images/output_35_0.png" alt="output_35_0.png" width="560px" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org060b3a1" class="outline-3">
-<h3 id="org060b3a1">模型训练</h3>
-<div class="outline-text-3" id="text-org060b3a1">
+<div id="outline-container-org2685e1d" class="outline-3">
+<h3 id="org2685e1d">模型训练</h3>
+<div class="outline-text-3" id="text-org2685e1d">
 <p>
 训练过程就和普通的DNN差不多，这里用Adam优化器和MSE损失函数。
 </p>
@@ -673,16 +673,16 @@ plt.show()
 </div>
 
 
-<div id="org3f3b05c" class="figure">
+<div id="org8bf8ee5" class="figure">
 <p><img src="../images/output_39_0.png" alt="output_39_0.png" width="480px" />
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org387af8e" class="outline-3">
-<h3 id="org387af8e">验证</h3>
-<div class="outline-text-3" id="text-org387af8e">
+<div id="outline-container-org1d7f34b" class="outline-3">
+<h3 id="org1d7f34b">验证</h3>
+<div class="outline-text-3" id="text-org1d7f34b">
 <p>
 模型训练好了，我们给它输入Command 0和1，看看它输出的期望值：
 </p>
@@ -692,7 +692,7 @@ plt.show()
 </pre>
 </div>
 
-<pre class="example" id="org478b9ed">
+<pre class="example" id="orgc0b3f8a">
 &lt;tf.Tensor: shape=(2, 1), dtype=float32, numpy=
 array([[ 0.9891974],
        [-0.9958328]], dtype=float32)&gt;
@@ -705,9 +705,9 @@ array([[ 0.9891974],
 </div>
 </section>
 
-<section id="outline-container-org0ed88cd" class="outline-2">
-<h2 id="org0ed88cd">拓展</h2>
-<div class="outline-text-2" id="text-org0ed88cd">
+<section id="outline-container-org243aa62" class="outline-2">
+<h2 id="org243aa62">拓展</h2>
+<div class="outline-text-2" id="text-org243aa62">
 <p>
 这个例子还可以进一步扩展跟通用的情况，使用其他的算符。下次有空再说。
 </p>

@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-04 -->
+<!-- 2022-05-21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(6) 实战篇</title>
@@ -79,9 +79,9 @@
 量子计算机解决因式分解问题的Shor算法，前面讨论了许多背后的数学原理，未免有点抽象，今天用一个简单的例子来实际演示一下，相信可以对Shor算法有更直观的认识。
 </p>
 
-<section id="outline-container-orge7797c0" class="outline-2">
-<h2 id="orge7797c0">因式分解问题：N=21</h2>
-<div class="outline-text-2" id="text-orge7797c0">
+<section id="outline-container-orgc36afdf" class="outline-2">
+<h2 id="orgc36afdf">因式分解问题：N=21</h2>
+<div class="outline-text-2" id="text-orgc36afdf">
 <p>
 人肉计算，数字不能用的太大 :-) 这里就假设我们要分解N=21这个数，以它为例子。
 </p>
@@ -173,15 +173,15 @@ f(x)=11^x \mod 21
 </div>
 </section>
 
-<section id="outline-container-org75c541c" class="outline-2">
-<h2 id="org75c541c">找函数周期</h2>
-<div class="outline-text-2" id="text-org75c541c">
+<section id="outline-container-org212a506" class="outline-2">
+<h2 id="org212a506">找函数周期</h2>
+<div class="outline-text-2" id="text-org212a506">
 <p>
 前文已经讨论过，量子计算寻找函数周期的电路长这样：
 </p>
 
 
-<div id="org86b6cce" class="figure">
+<div id="org7891de8" class="figure">
 <p><img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="400px" />
 </p>
 </div>
@@ -253,7 +253,7 @@ f(x)=11^x \mod 21
 </p>
 
 
-<div id="org4b1b0a7" class="figure">
+<div id="orgaf7d503" class="figure">
 <p><img src="../images/shor_example_prob_dist.png" alt="shor_example_prob_dist.png" width="480px" />
 </p>
 </div>
@@ -284,9 +284,9 @@ f(x)=11^x \mod 21
 </div>
 </section>
 
-<section id="outline-container-orgfc29f28" class="outline-2">
-<h2 id="orgfc29f28">找N=21的因子</h2>
-<div class="outline-text-2" id="text-orgfc29f28">
+<section id="outline-container-orge461c94" class="outline-2">
+<h2 id="orge461c94">找N=21的因子</h2>
+<div class="outline-text-2" id="text-orge461c94">
 <p>
 知道了r=6，接下来就很简单了，因为r是偶数，且 \(11^{r/2} \mod 21 \ne -1\) ，因此计算：
 </p>
