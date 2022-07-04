@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-07-04 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Doom Emacs中文字体显示问题的解决</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Doom Emacs中文字体显示问题的解决
+<br />
+<span class="subtitle">Ping Zhou, 2022-07-03</span>
+</h1>
+
+<section id="outline-container-org079146b" class="outline-2">
+<h2 id="org079146b">问题</h2>
+<div class="outline-text-2" id="text-org079146b">
+<p>
+Doom Emacs 别的都挺好，就是有个奇怪的小问题，在显示中文的时候，会出现下面这样字体不一致的情况：
+</p>
+
+
+<div id="org6d4c4dc" class="figure">
+<p><img src="../images/2022/_20220703_151615screenshot.png" alt="_20220703_151615screenshot.png" width="640px" />
+</p>
+</div>
+
+<p>
+可以看到，同一行文字里的中文字符，它似乎用了不同的字体来显示，导致显示出来的文字大小样式不一，显得很奇怪。这种情况，我在以前的 Emacs 配置里没有遇到过，感觉似乎是 Doom 里某些编码没有指定字体？
+</p>
+</div>
+</section>
+
+<section id="outline-container-org175a492" class="outline-2">
+<h2 id="org175a492">解决</h2>
+<div class="outline-text-2" id="text-org175a492">
+<p>
+开始我以为只是 org-mode 的问题，后来发现，这个问题在其他模式（例如代码注释）里也存在，因此是 Doom Emacs 本身的问题。
+</p>
+
+<p>
+经过一番研究，找到这个帖子：
+<a href="https://emacs.stackexchange.com/questions/63850/doom-emacs-how-to-align-chinese-characters-in-org-tables">https://emacs.stackexchange.com/questions/63850/doom-emacs-how-to-align-chinese-characters-in-org-tables</a>
+</p>
+
+<p>
+这个帖子是关于 org-mode 表格显示的，但其中对中文字体的设置也有借鉴意义：我们可以用 <code>set-font-set</code> 这个函数，对指定的字符集设置字体。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(defun pz/setup-cjk-fonts ()
+  (interactive)
+  (if (display-graphic-p)
+      (dolist (charset '(kana han cjk-misc bopomofo))
+	(set-fontset-font (frame-parameter nil 'font)
+			  charset (font-spec :family "Noto Sans Mono CJK SC")))))
+</pre>
+</div>
+
+<p>
+<code>set-font-set</code> 函数的定义如下：
+</p>
+
+<pre class="example" id="org13fb153">
+(set-fontset-font NAME TARGET FONT-SPEC &amp;optional FRAME ADD)
+</pre>
+
+<p>
+第一个是要设置的窗口参数，我们用 <code>frame-parameter</code> 加 nil 可以获取当前窗口的字体参数。然后对这个参数，设置各个字符集的字体。这里字符集参数 <code>charset</code> ：
+</p>
+<ul class="org-ul">
+<li>可以是字符集名称（例如 chinese-gbk，可以通过命令 <code>list-character-sets</code> 查看）；</li>
+<li>也可以是 script symbol，可以查看变量 <code>script-representative-chars</code> 获取所有的 script symbol 名字。</li>
+<li>也可以是单个字符，即为单个字符指定字体；</li>
+<li>如果是 nil，则表示给所有未设置字体的字符集设置字体。</li>
+</ul>
+
+<p>
+对我来说，就是给 CJK 字符集设置中文字体，这里用的是 script symbol，包括 kana, han, cjk-misc, bopomofo 这几个。
+</p>
+
+<p>
+我用的是 Noto Sans Mono CJK SC 字体，也可以用 <code>describe-font</code> 命令来查看系统里已安装的其他字体（用 CJK 关键字搜索），选一个顺眼的来用。
+</p>
+
+<p>
+然后在启动的时候，调用这个函数设置 CJK 字体即可。保险起见，我还把它加到了 org-mode-hook 里。
+</p>
+
+<p>
+问题解决！现在中文显示顺眼多了：
+</p>
+
+
+<div id="org02480f7" class="figure">
+<p><img src="../images/2022/_20220704_111359screenshot.png" alt="_20220704_111359screenshot.png" width="640px" />
+</p>
+</div>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.5.2).
+    </div>
+</footer>
+</body>
+</html>
