@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-07-09 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>用Emacs做PPT演示</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">用Emacs做PPT演示
+<br />
+<span class="subtitle">Ping Zhou, 2022-07-09</span>
+</h1>
+
+<div id="org8b1a954" class="figure">
+<p><img src="../images/2022/2022-07-09_10-56-47_screenshot.png" alt="2022-07-09_10-56-47_screenshot.png" width="640px" />
+</p>
+</div>
+
+<section id="outline-container-org071ea99" class="outline-2">
+<h2 id="org071ea99">为什么要用 Emacs 做 PPT 演示</h2>
+<div class="outline-text-2" id="text-org071ea99">
+<ul class="org-ul">
+<li>我也不知道为啥，看起来酷呗 :-)</li>
+</ul>
+
+<p>
+按照大佬的说法：
+</p>
+<ul class="org-ul">
+<li>不需要复杂的 presentation 软件</li>
+<li>可以让你专注在演讲的内容上</li>
+<li>给你的同事留下牛 X 的印象
+<ul class="org-ul">
+<li>当然，也可能把他们搞糊涂 :-)</li>
+</ul></li>
+</ul>
+</div>
+</section>
+
+<section id="outline-container-org7d59e2f" class="outline-2">
+<h2 id="org7d59e2f">安装 org-present 包</h2>
+<div class="outline-text-2" id="text-org7d59e2f">
+<p>
+如果是 Doom Emacs，它已经自带了 org-present 支持，只需要打开即可。打开 <code>.doom.d/init.el</code> ，在 org 那栏加上 present 即可：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(doom! :input
+       ;; ......
+       :lang
+       ;; ......
+       (org                ; organize your plain life in plain text
+	;; ......
+	+present
+	+pretty
+	+roam2)
+       ;; ......
+</pre>
+</div>
+
+<p>
+如果是用自己的配置，用 use-package 或者手动安装即可。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org76c23f7" class="outline-2">
+<h2 id="org76c23f7">开始演示</h2>
+<div class="outline-text-2" id="text-org76c23f7">
+<ul class="org-ul">
+<li>进入演示模式 <code>org-present</code></li>
+<li>第一页就是 org 文件的 title 和第一个一级标题之间的内容</li>
+</ul>
+</div>
+</section>
+
+<section id="outline-container-org8e5fcf3" class="outline-2">
+<h2 id="org8e5fcf3">页面导航</h2>
+<div class="outline-text-2" id="text-org8e5fcf3">
+<p>
+演示模式下，每一页就显示一个一级标题。如果这个一级标题下还有更多内容，可以向下滚动。
+</p>
+
+<p>
+演示页面导航：
+</p>
+<ul class="org-ul">
+<li>下一页 <code>org-present-next</code></li>
+<li>前一页 <code>org-present-prev</code></li>
+<li>回到第一页 <code>org-present-beginning</code></li>
+<li>跳到最后一页 <code>org-present-end</code></li>
+<li>退出演示模式 <code>org-present-quit</code></li>
+</ul>
+</div>
+</section>
+
+<section id="outline-container-org795f32d" class="outline-2">
+<h2 id="org795f32d">字体设置</h2>
+<div class="outline-text-2" id="text-org795f32d">
+<ul class="org-ul">
+<li>演示模式的字体，如果还用原有的大小，就会显得太小。</li>
+<li>进入 org-present-mode 时放大字体 (<code>org-present-mode-hook</code>)：</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(setq-local face-remapping-alist '((default (:height 1.5) variable-pitch)
+				   (header-line (:height 4.5) variable-pitch)
+				   (org-code (:height 1.55) org-code)
+				   (org-verbatim (:height 1.55) org-verbatim)
+				   (org-block (:height 1.25) org-block)
+				   (org-block-begin-line (:height 0.7) org-block)))
+</pre>
+</div>
+<ul class="org-ul">
+<li>退出 org-present-mode 时恢复字体 (<code>org-present-mode-quit-hook</code>)：</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(setq-local face-remapping-alist '((default variable-pitch default)))
+</pre>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org95421a8" class="outline-2">
+<h2 id="org95421a8">其他设置</h2>
+<div class="outline-text-2" id="text-org95421a8">
+<ul class="org-ul">
+<li>演示模式时关闭菜单条、工具条和滚动条</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(menu-bar-mode 0)
+(tool-bar-mode 0)
+(scroll-bar-mode 0)
+</pre>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org61067b0" class="outline-2">
+<h2 id="org61067b0">半透明背景</h2>
+<div class="outline-text-2" id="text-org61067b0">
+<ul class="org-ul">
+<li>Emacs 还可以把背景设为半透明</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(set-frame-parameter (selected-frame) 'alpha '(97 . 100))
+(add-to-list 'default-frame-alist '(alpha . (90 . 90)))
+</pre>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org6f65769" class="outline-2">
+<h2 id="org6f65769">效果演示</h2>
+<div class="outline-text-2" id="text-org6f65769">
+
+<div id="org5f33432" class="figure">
+<p><img src="../images/2022/2022-07-09_11-00-09_screenshot.png" alt="2022-07-09_11-00-09_screenshot.png" width="640px" />
+</p>
+</div>
+
+
+<div id="org0bb0db3" class="figure">
+<p><img src="../images/2022/2022-07-09_11-01-23_screenshot.png" alt="2022-07-09_11-01-23_screenshot.png" width="640px" />
+</p>
+</div>
+
+
+<div id="org5ca5fd0" class="figure">
+<p><img src="../images/2022/2022-07-09_10-46-41_screenshot.png" alt="2022-07-09_10-46-41_screenshot.png" width="640px" />
+</p>
+</div>
+
+
+<div id="orga9ff947" class="figure">
+<p><img src="../images/2022/2022-07-09_10-47-55_screenshot.png" alt="2022-07-09_10-47-55_screenshot.png" width="640px" />
+</p>
+</div>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.5.2).
+    </div>
+</footer>
+</body>
+</html>
