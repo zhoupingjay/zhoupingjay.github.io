@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-08-16 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Emacs集成开发环境和远程开发配置</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Emacs集成开发环境和远程开发配置
+<br />
+<span class="subtitle">Ping Zhou, 2022-08-14</span>
+</h1>
+<p>
+一个经典问题，如何把 Emacs 配置出 IDE 的效果？
+</p>
+
+<p>
+对于本地开发来说，可以用 projectile+lsp 配合相应语言的 language server（例如 C++的 clangd），基本上就能满足需要。
+</p>
+
+<p>
+如果 clangd 不够智能，例如有些头文件或者符号找不到，可以用  <code>compile_commands.json</code>  文件来指导 clangd。 <code>compile_commands.json</code>  文件，你可以把它理解为编译时产生的 trace，记录了整个 project 的编译步骤，通过它 clangd 就能知道每个文件是如何编译的，包括头文件在哪里，链接库在哪里，乃至各个符号的定义等。有了这个，你的 Emacs 基本上就具备了集成开发环境的主要能力。
+</p>
+
+<p>
+如何生成  <code>compile_commands.json</code>  文件呢？取决于项目的构建工具。如果是 cmake，ninja 等比较现代的工具，都内置了导出  <code>compile_commands.json</code>  文件的功能，比如 cmake 里只要加上这个环境变量就行了：
+</p>
+
+<pre class="example" id="org0f3503b">
+CMAKE_EXPORT_COMPILE_COMMANDS
+</pre>
+
+<p>
+如果工具不支持自动导出  <code>compile_commands.json</code> ，可以在编译时用 bear 来记录。bear 相当于一个命令的 wrapper，后面的参数就是你的编译命令。例如：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./configure
+bear make
+</pre>
+</div>
+
+<p>
+<code>bear</code> 会把 <code>make</code> 过程中执行的步骤全都记录在  <code>compile_commands.json</code>  里。
+</p>
+
+<p>
+但是还有个问题：如果项目代码在远程机器上呢？Emacs 能否有类似 VSCode 的远程开发能力？
+</p>
+
+<p>
+答案是可以的，但是需要你自己配置。:-)
+</p>
+
+<p>
+Emacs 内置有远程连接的客户端 tramp，支持 SSH 等多种连接方式。我们可以通过 tramp 来访问远程机器上的文件。例如我们在打开文件时输入这样的地址：
+</p>
+
+<pre class="example" id="org2f6293c">
+/ssh:user@192.168.0.100#1234:/home/user/test.c
+</pre>
+
+<p>
+这个地址告诉 tramp，我们用 ssh 方式打开主机 192.168.0.100 上的文件 <code>/home/user/test.c</code> ，登录用户名 user，连接端口是 1234 (如果 ssh 用的是默认配置，端口可以省略)。如果需要，tramp 会提示你输入密码登录。
+</p>
+
+<p>
+这里有个坑，就是有时候 tramp 会挂在那里无法连接。原因是 tramp 会解析服务器那边的登录提示来判断如何登录，但是如果远程的服务器提示过于 fancy，tramp 解析不了，就会停在那里。解决方式如下：
+</p>
+
+<p>
+给 tramp 设置一个专用的终端类型：
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(setq tramp-terminal-type "tramp")
+</pre>
+</div>
+
+<p>
+然后在远程主机那里，如果看到登录的终端类型是 tramp，就简化 shell 提示。例如在 <code>.zshrc</code> 或者 <code>.zprofile</code> 最后加上这个：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">[[ $TERM == "tramp" ]] &amp;&amp; unsetopt zle &amp;&amp; PS1='$ '
+</pre>
+</div>
+
+<p>
+这样 tramp 就能正确连接到远程主机了。
+</p>
+
+<p>
+连接到远程主机只是第一步，如何配置类似本地的集成开发环境呢？
+</p>
+
+<p>
+答案是我们可以给 lsp 注册一个远程的 language server：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(lsp-register-client
+ (make-lsp-client :new-connection (lsp-tramp-connection "/usr/bin/clangd")
+		  :major-modes '(c-mode cc-mode)
+		  :remote? t
+		  :server-id 'clangd-remote))
+(add-to-list 'lsp-enabled-clients 'clangd-remote)
+</pre>
+</div>
+
+<p>
+这里注册了一个名字叫 clangd-remote 的 LSP 客户端，然后把它加到了已激活的客户端列表里。当我们打开远程主机上的 C/C++文件时，就会启动这个 LSP 客户端，而这个客户端会在远程执行配置里的命令行 <code>/usr/bin/clangd</code> ，这样我们就可以像在本地一样使用远程主机上的语言服务器了。
+</p>
+
+<p>
+tramp 还有个方便的功能：如果当前文件是远程的，那么当我们打开终端时（例如 <code>vterm</code> ）会自动连接到远程主机，并且落到当前文件所在的目录里。
+</p>
+
+<p>
+不过实话实说，基于 Emacs+tramp 的远程开发，和 VSCode 相比还是有一定差距的，还需要进一步 tune。
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.5.2).
+    </div>
+</footer>
+</body>
+</html>
