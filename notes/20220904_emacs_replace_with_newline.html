@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-09-04 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Emacs里如何把某个字符替换为“换行”？</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Emacs里如何把某个字符替换为“换行”？
+<br />
+<span class="subtitle">Ping Zhou, 2022-09-04</span>
+</h1>
+<p>
+Emacs 的 <code>query-replace</code> 是一个很常用的查找替换命令（快捷键 <code>M-%</code> ）。这个命令会提示你输入要查找的字符串，再输入要替换的字符串，然后就会从当前位置逐个查找和确认是否替换。
+</p>
+
+<p>
+但是，如果我想要把某个字符替换为特殊字符，例如想把字符“;”替换为“换行”，就不能直接输入了，因为如果你在第二步输入了回车，它会认为你想要把查找的字符串替换为空字符串（相当于查找＋删除）。怎么办呢？
+</p>
+
+<p>
+查了一下，有这样几个办法。
+</p>
+
+<p>
+一是在输入要替换的字符串时，输入 <code>C-q C-j</code> ，然后回车。
+</p>
+
+
+<div id="orgefd7222" class="figure">
+<p><img src="../images/2022/20220904_emacs_replace_newline1.png" alt="20220904_emacs_replace_newline1.png" width="640px" />
+</p>
+</div>
+
+<p>
+这里的 <code>C-q</code> 表示 <code>quoted-insert</code> ，意思是告诉 Emacs 输入后面的控制字符。而 <code>C-j</code> 代表的是 ASCII 码 0x0a，也就是 newline。然后按下回车，就会用 ASCII 码 0x0a 来替换字符串“;”。
+</p>
+
+
+<div id="orgeb0b881" class="figure">
+<p><img src="../images/2022/20220904_emacs_replace_newline2.png" alt="20220904_emacs_replace_newline2.png" width="640px" />
+</p>
+</div>
+
+<p>
+还有种方法，就是在 <code>C-q</code> 之后输入 ASCII 码的八进制数，例如 0x0a 的八进制数就是 12 。
+</p>
+
+<p>
+另一种办法可能更直观，就是用 <code>C-k</code> 去删除一个空行，把空行加入到 kill-ring 里，然后在输入要替换的字符串时，用 <code>C-y</code> 把它粘贴进来。这个就有点类似图形界面编辑器（例如VSCode）里的操作了。
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.5.2).
+    </div>
+</footer>
+</body>
+</html>
