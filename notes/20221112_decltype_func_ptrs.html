@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-11-11 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>关于decltype，remove pointer ，别名和函数指针类型</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">关于decltype，remove pointer ，别名和函数指针类型
+<br />
+<span class="subtitle">Ping Zhou, 2022-11-12</span>
+</h1>
+<p>
+C++里的 <code>decltype</code> 是个神奇的存在，你给它一个名字或表达式，它会返回这个名字或表达式的类型。并且这个检查是在编译时进行的，所以你给它的表达式不会真的运行，而只是用作类型推导，例如：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++">bool f();
+decltype(f()) a;  // a is bool
+</pre>
+</div>
+
+<p>
+这里 <code>decltype</code> 在编译时用 <code>f()</code> 推导出类型 bool（因为函数 f 返回 bool），但实际运行时并不会真的执行这个 <code>f()</code> 。
+</p>
+
+<p>
+大部分时间， <code>decltype</code> 都能返回你想要的结果。
+</p>
+
+<p>
+但是遇到别名和函数指针类型，情况就会绕一些，咱们分别讨论一下。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++">using II = int* ();
+// This is equivalent to declaring an external function (not a pointer):
+// extern int* a1();
+II a1;
+// This will cause compile error unless a function int* a1() is implemented.
+// a1();
+</pre>
+</div>
+
+<p>
+类型别名 <code>II</code> 是一个返回 <code>int*</code> 的函数类型（注意，不是函数指针哈）。于是用 <code>II</code> 声明的 <code>a1</code> 就是一个返回 <code>int*</code> 的函数。但是这里只是申明了函数 <code>a1</code> 而已，并没有它的实现，所以调用 <code>a1</code> 是会编译出错的。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++">using III = int* (*)();
+III a2;
+// decltype(a2) is int* (*)()
+</pre>
+</div>
+
+<p>
+这里，别名 <code>III</code> 是一个返回 <code>int*</code> 的函数指针类型，然后用它声明了一个变量（函数指针） <code>a2</code> 。如果我们对 <code>a2</code>
+用 <code>decltype</code> ，得到的就是类型 <code>III</code> 。
+</p>
+
+<p>
+既然如此，我们何不直接对 <code>III</code> 用 <code>decltype</code> 呢？答案是不行的， <code>decltype</code> 需要表达式或者变量/函数名，不能直接拿类型。但是我们可以这么用：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++">decltype(III()) a3;
+</pre>
+</div>
+
+<p>
+把 <code>III</code> 变成 <code>III()</code> 表达式，意思是“产生一个 <code>III</code> 类型的实例”，然后这个表达式的类型送入 <code>decltype</code> ，就得到了 <code>III</code> 类型本身。
+</p>
+
+<p>
+再进一步，要是我们给类型加上 <code>remove_pointer</code> 呢？
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++">using IIII = std::remove_pointer&lt;decltype(III())&gt;::type;
+</pre>
+</div>
+
+<p>
+里面的 <code>decltype(III())</code> 就是类型 <code>III</code> ，即“返回 <code>int*</code> 的函数指针类型”，因此上面这个表达式意思就是：
+对一个函数指针类型做 <code>remove_pointer</code> 。
+</p>
+
+<p>
+我们知道 <code>remove_pointer</code> 会剥离输入类型里的指针，例如把 <code>int*</code> 变成 <code>int</code> ，但是如果输入的是函数指针的话呢？答案是它会返回函数类型（也就是去掉指针），想想也挺合理的不是？
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++">// III is int* (*)()
+// IIII is int* ()
+using IIII = std::remove_pointer&lt;decltype(III())&gt;::type;
+// So this is equivalent to a function declaration:
+// int* b();
+IIII b;
+</pre>
+</div>
+
+<p>
+所以 <code>IIII</code> 其实就是和 <code>II</code> 一样的类型，一个返回 <code>int*</code> 的函数类型。它作用在 <code>b</code> 上，得到一个该类型的函数声明 <code>b</code> 。
+</p>
+
+<p>
+这个话题今天就聊到这里，感谢阅读！
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    </div>
+</footer>
+</body>
+</html>
