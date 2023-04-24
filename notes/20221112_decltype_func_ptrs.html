@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-11-11 -->
+<!-- 2023-04-24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>关于decltype，remove pointer ，别名和函数指针类型</title>
@@ -59,8 +59,8 @@ C++里的 <code>decltype</code> 是个神奇的存在，你给它一个名字或
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++">bool f();
-decltype(f()) a;  // a is bool
+<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXtypeXbuiltin">bool</span> <span class="org-tree-sitter-hl-faceXvariable"><span class="org-tree-sitter-hl-faceXfunction">f</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-keyword">decltype</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-tree-sitter-hl-faceXfunctionXcall">f</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-tree-sitter-hl-faceXvariable">a</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>  <span class="org-tree-sitter-hl-faceXcomment">// a is bool</span>
 </pre>
 </div>
 
@@ -77,12 +77,12 @@ decltype(f()) a;  // a is bool
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++">using II = int* ();
-// This is equivalent to declaring an external function (not a pointer):
-// extern int* a1();
-II a1;
-// This will cause compile error unless a function int* a1() is implemented.
-// a1();
+<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXkeyword">using</span> <span class="org-tree-sitter-hl-faceXtype">II</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span><span class="org-tree-sitter-hl-faceXoperator">*</span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-tree-sitter-hl-faceXcomment">// This is equivalent to declaring an external function (not a pointer):</span>
+<span class="org-tree-sitter-hl-faceXcomment">// extern int* a1();</span>
+<span class="org-tree-sitter-hl-faceXtype">II</span> <span class="org-tree-sitter-hl-faceXvariable">a1</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-tree-sitter-hl-faceXcomment">// This will cause compile error unless a function int* a1() is implemented.</span>
+<span class="org-tree-sitter-hl-faceXcomment">// a1();</span>
 </pre>
 </div>
 
@@ -91,9 +91,9 @@ II a1;
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++">using III = int* (*)();
-III a2;
-// decltype(a2) is int* (*)()
+<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXkeyword">using</span> <span class="org-tree-sitter-hl-faceXtype">III</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span><span class="org-tree-sitter-hl-faceXoperator">*</span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-tree-sitter-hl-faceXoperator">*</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">)()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-tree-sitter-hl-faceXtype">III</span> <span class="org-tree-sitter-hl-faceXvariable">a2</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-tree-sitter-hl-faceXcomment">// decltype(a2) is int* (*)()</span>
 </pre>
 </div>
 
@@ -107,7 +107,7 @@ III a2;
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++">decltype(III()) a3;
+<pre class="src src-c++"><span class="org-keyword">decltype</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-tree-sitter-hl-faceXconstant"><span class="org-tree-sitter-hl-faceXfunctionXcall">III</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-tree-sitter-hl-faceXvariable">a3</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
 </pre>
 </div>
 
@@ -120,13 +120,12 @@ III a2;
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++">using IIII = std::remove_pointer&lt;decltype(III())&gt;::type;
+<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXkeyword">using</span> <span class="org-tree-sitter-hl-faceXtype">IIII</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXtype">std</span>::<span class="org-tree-sitter-hl-faceXtype">remove_pointer</span><span class="org-tree-sitter-hl-faceXoperator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-keyword">decltype</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">(</span></span><span class="org-tree-sitter-hl-faceXconstant"><span class="org-tree-sitter-hl-faceXfunctionXcall">III</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-3">()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">)</span></span><span class="org-tree-sitter-hl-faceXoperator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span>::<span class="org-tree-sitter-hl-faceXtype">type</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
 </pre>
 </div>
 
 <p>
-里面的 <code>decltype(III())</code> 就是类型 <code>III</code> ，即“返回 <code>int*</code> 的函数指针类型”，因此上面这个表达式意思就是：
-对一个函数指针类型做 <code>remove_pointer</code> 。
+里面的 <code>decltype(III())</code> 就是类型 <code>III</code> ，即“返回 <code>int*</code> 的函数指针类型”，因此上面这个表达式意思就是：对一个函数指针类型做 <code>remove_pointer</code> 。
 </p>
 
 <p>
@@ -134,12 +133,12 @@ III a2;
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++">// III is int* (*)()
-// IIII is int* ()
-using IIII = std::remove_pointer&lt;decltype(III())&gt;::type;
-// So this is equivalent to a function declaration:
-// int* b();
-IIII b;
+<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXcomment">// III is int* (*)()</span>
+<span class="org-tree-sitter-hl-faceXcomment">// IIII is int* ()</span>
+<span class="org-tree-sitter-hl-faceXkeyword">using</span> <span class="org-tree-sitter-hl-faceXtype">IIII</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXtype">std</span>::<span class="org-tree-sitter-hl-faceXtype">remove_pointer</span><span class="org-tree-sitter-hl-faceXoperator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-keyword">decltype</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">(</span></span><span class="org-tree-sitter-hl-faceXconstant"><span class="org-tree-sitter-hl-faceXfunctionXcall">III</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-3">()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">)</span></span><span class="org-tree-sitter-hl-faceXoperator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span>::<span class="org-tree-sitter-hl-faceXtype">type</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-tree-sitter-hl-faceXcomment">// So this is equivalent to a function declaration:</span>
+<span class="org-tree-sitter-hl-faceXcomment">// int* b();</span>
+<span class="org-tree-sitter-hl-faceXtype">IIII</span> <span class="org-tree-sitter-hl-faceXvariable">b</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
 </pre>
 </div>
 
@@ -154,7 +153,7 @@ IIII b;
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
     </div>
 </footer>
 </body>

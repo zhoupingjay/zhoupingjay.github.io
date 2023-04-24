@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-05-21 -->
+<!-- 2023-04-24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>How to Run GUI Application in Windows Subsystem for Linux (WSL)</title>
@@ -55,9 +55,9 @@
 <span class="subtitle">Ping Zhou, 2019-08-10</span>
 </h1>
 
-<section id="outline-container-orgba6d901" class="outline-2">
-<h2 id="orgba6d901">Install WSL</h2>
-<div class="outline-text-2" id="text-orgba6d901">
+<section id="outline-container-orgea75d8c" class="outline-2">
+<h2 id="orgea75d8c">Install WSL</h2>
+<div class="outline-text-2" id="text-orgea75d8c">
 <p>
 Basically you need to turn on WSL in Program Features. Refer to this document for the steps:
 <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">https://docs.microsoft.com/en-us/windows/wsl/install-win10</a>
@@ -65,9 +65,9 @@ Basically you need to turn on WSL in Program Features. Refer to this document fo
 </div>
 </section>
 
-<section id="outline-container-orgfa1a3a8" class="outline-2">
-<h2 id="orgfa1a3a8">Install Linux distribution in WSL</h2>
-<div class="outline-text-2" id="text-orgfa1a3a8">
+<section id="outline-container-orgb9480fb" class="outline-2">
+<h2 id="orgb9480fb">Install Linux distribution in WSL</h2>
+<div class="outline-text-2" id="text-orgb9480fb">
 <p>
 Refer to same document for steps. I installed Ubuntu but there are other distributions available.
 <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">https://docs.microsoft.com/en-us/windows/wsl/install-win10</a>
@@ -75,23 +75,23 @@ Refer to same document for steps. I installed Ubuntu but there are other distrib
 </div>
 </section>
 
-<section id="outline-container-org6dc491f" class="outline-2">
-<h2 id="org6dc491f">Install Dependencies</h2>
-<div class="outline-text-2" id="text-org6dc491f">
+<section id="outline-container-orgb7ffbfb" class="outline-2">
+<h2 id="orgb7ffbfb">Install Dependencies</h2>
+<div class="outline-text-2" id="text-orgb7ffbfb">
 <p>
 GUI applications may have additional dependencies (libraries, etc). An easy way to install proper libraries is by installing some GUI programs, which will automatically resolve and install needed libraries. For example:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">sudo apt install x11-apps
+<pre class="src src-shell"><span class="org-type">sudo</span> apt install x11-apps
 </pre>
 </div>
 </div>
 </section>
 
-<section id="outline-container-org19d806c" class="outline-2">
-<h2 id="org19d806c">Configure X-Window Server</h2>
-<div class="outline-text-2" id="text-org19d806c">
+<section id="outline-container-orgb2f5dda" class="outline-2">
+<h2 id="orgb2f5dda">Configure X-Window Server</h2>
+<div class="outline-text-2" id="text-orgb2f5dda">
 <p>
 There are several choices available. I used the X-Win server from Cygwin because I already have one installed.
 </p>
@@ -101,7 +101,7 @@ However, the default X-Win configuration doesn’t work for WSL. After some rese
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">C:\cygwin64\bin\run.exe --quote /usr/bin/bash.exe -l -c <span class="org-string">"cd; exec /usr/bin/startxwin  -- -listen tcp"</span>
+<pre class="src src-shell">C:\cygwin64\bin\run.exe --quote /usr/bin/bash.exe -l -c <span class="org-string">"</span><span class="org-type"><span class="org-string">cd</span></span><span class="org-string">; exec /usr/bin/startxwin  -- -listen tcp"</span>
 </pre>
 </div>
 
@@ -122,16 +122,16 @@ Try running some GUI application from WSL. For example, “xeye”, or launching
 If you see authorization error like this, it means need to configure xauth for WSL. See following section for steps.
 </p>
 
-<pre class="example" id="org42c134d">
+<pre class="example" id="orgeaa239f">
 Authorization required, but no authorization protocol specified
 Error: Can't open display: :0
 </pre>
 </div>
 </section>
 
-<section id="outline-container-org3c8cf96" class="outline-2">
-<h2 id="org3c8cf96">Configure xauth</h2>
-<div class="outline-text-2" id="text-org3c8cf96">
+<section id="outline-container-org456464d" class="outline-2">
+<h2 id="org456464d">Configure xauth</h2>
+<div class="outline-text-2" id="text-org456464d">
 <p>
 There are two options to solve this problem. First one is to copy the “.Xauthority” file from Cygwin to your WSL home folder.
 </p>
@@ -139,14 +139,14 @@ There are two options to solve this problem. First one is to copy the “.Xautho
 <p>
 Source file:
 </p>
-<pre class="example" id="org2e983d0">
+<pre class="example" id="org810c732">
 C:\cygwin64\home\&lt;CYGWIN_USER&gt;
 </pre>
 
 <p>
 Destination file:
 </p>
-<pre class="example" id="orgc67dfd7">
+<pre class="example" id="orgcdd82ea">
 C:\Users\&lt;WINDOWS_USER&gt;\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\&lt;WSL_USER&gt;
 </pre>
 
@@ -159,8 +159,8 @@ You need to set correct owner/permssion on the “.Xauthority” file that was c
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">sudo chown &lt;WSL_USER&gt; .Xauthority
-chmod +rwx .Xauthority
+<pre class="src src-shell"><span class="org-type">sudo</span> <span class="org-type">chown</span> &lt;WSL_USER&gt; .Xauthority
+<span class="org-type">chmod</span> +rwx .Xauthority
 </pre>
 </div>
 
@@ -173,7 +173,7 @@ Done! Now you should be able to run GUI applications in WSL. For example, Emacs 
 </p>
 
 
-<div id="org2620c27" class="figure">
+<div id="org2751942" class="figure">
 <p><img src="../images/2019/08/image.png" alt="image.png" width="480px" />
 </p>
 </div>
@@ -183,7 +183,7 @@ Done! Now you should be able to run GUI applications in WSL. For example, Emacs 
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
     </div>
 </footer>
 </body>

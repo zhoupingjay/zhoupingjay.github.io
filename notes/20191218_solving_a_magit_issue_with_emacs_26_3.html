@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-05-21 -->
+<!-- 2023-04-24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Solving a magit issue with Emacs 26.3</title>
@@ -63,20 +63,20 @@ So I dig a little into the error and found out that it was from magit (the packa
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">magit-turn-on-auto-revert-mode-if-desired</span> (<span class="org-type">&amp;optional</span> file)
-  (<span class="org-keyword">if</span> file
-      (--when-let (find-buffer-visiting file)
-        (<span class="org-keyword">with-current-buffer</span> it
-          (magit-turn-on-auto-revert-mode-if-desired)))
-    (<span class="org-keyword">when</span> (<span class="org-keyword">and</span> buffer-file-name
-               (file-readable-p buffer-file-name)
-               (executable-find magit-git-executable t) <span class="org-comment-delimiter">; </span><span class="org-comment">see #3684</span>
-               (magit-toplevel)
-               (<span class="org-keyword">or</span> (not magit-auto-revert-tracked-only)
-                   (magit-file-tracked-p buffer-file-name))
-               (not auto-revert-mode)         <span class="org-comment-delimiter">; </span><span class="org-comment">see #3014</span>
-               (not global-auto-revert-mode)) <span class="org-comment-delimiter">; </span><span class="org-comment">see #3460</span>
-      (auto-revert-mode 1))))
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">magit-turn-on-auto-revert-mode-if-desired</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-type">&amp;optional</span> file<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">if</span> file
+      <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">--when-let</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-function-name">find-buffer-visiting</span> file<span class="org-rainbow-delimiters-depth-4">)</span>
+        <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">with-current-buffer</span> it
+          <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-constant">magit-turn-on-auto-revert-mode-if-desired</span><span class="org-rainbow-delimiters-depth-1">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">when</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-keyword">and</span> <span class="org-variable-name">buffer-file-name</span>
+               <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-constant">file-readable-p</span> <span class="org-variable-name">buffer-file-name</span><span class="org-rainbow-delimiters-depth-1">)</span>
+               <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-function-name">executable-find</span> <span class="org-variable-name">magit-git-executable</span> t<span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">see #3684</span>
+               <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-constant">magit-toplevel</span><span class="org-rainbow-delimiters-depth-1">)</span>
+               <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">or</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-constant">not</span> <span class="org-variable-name">magit-auto-revert-tracked-only</span><span class="org-rainbow-delimiters-depth-2">)</span>
+                   <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-constant">magit-file-tracked-p</span> <span class="org-variable-name">buffer-file-name</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+               <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-constant">not</span> <span class="org-variable-name">auto-revert-mode</span><span class="org-rainbow-delimiters-depth-1">)</span>         <span class="org-comment-delimiter">; </span><span class="org-comment">see #3014</span>
+               <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-constant">not</span> <span class="org-variable-name">global-auto-revert-mode</span><span class="org-rainbow-delimiters-depth-1">)</span><span class="org-rainbow-delimiters-depth-4">)</span> <span class="org-comment-delimiter">; </span><span class="org-comment">see #3460</span>
+      <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-variable-name">auto-revert-mode</span> <span class="org-highlight-numbers-number">1</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
 </pre>
 </div>
 
@@ -89,7 +89,7 @@ Now the problem is that function <code>executable-find</code> (provided by Emacs
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">(executable-find magit-git-executable t)
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-function-name">executable-find</span> <span class="org-variable-name">magit-git-executable</span> t<span class="org-rainbow-delimiters-depth-1">)</span>
 </pre>
 </div>
 
@@ -102,7 +102,7 @@ How to fix? For short-term I just removed the 2nd argument (“t”) from the ca
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">(executable-find magit-git-executable)
+<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-function-name">executable-find</span> <span class="org-variable-name">magit-git-executable</span><span class="org-rainbow-delimiters-depth-1">)</span>
 </pre>
 </div>
 
@@ -117,7 +117,7 @@ Longer term, this needs to be fixed either in magit or Emacs in future updates.
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
     </div>
 </footer>
 </body>

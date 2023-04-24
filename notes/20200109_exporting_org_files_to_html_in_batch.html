@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-05-21 -->
+<!-- 2023-04-24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Exporting .org files to HTML in batch</title>
@@ -72,24 +72,24 @@ Here is my elisp code:
 
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span class="org-comment-delimiter">;; </span><span class="org-comment">Export .org file to HTML</span>
-(<span class="org-keyword">defun</span> <span class="org-function-name">pz/export-org</span> (f)
-  (<span class="org-keyword">interactive</span>)
-  (message <span class="org-string">"exporting from %s"</span> f)
-  (<span class="org-keyword">let</span> ((current-buffers (buffer-list))
-        (tmp-buffer)
-        (open (find-buffer-visiting f))
-        (org-file-buffer (find-file-noselect f)))
-    (<span class="org-keyword">with-current-buffer</span> org-file-buffer
-      (org-html-export-to-html))
-    (<span class="org-keyword">unless</span> open (kill-buffer org-file-buffer)))
-  )
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">pz/export-org</span> <span class="org-rainbow-delimiters-depth-2">(</span>f<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-constant">message</span> <span class="org-string">"exporting from %s"</span> f<span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>current-buffers <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-constant">buffer-list</span><span class="org-rainbow-delimiters-depth-1">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+        <span class="org-rainbow-delimiters-depth-4">(</span>tmp-buffer<span class="org-rainbow-delimiters-depth-4">)</span>
+        <span class="org-rainbow-delimiters-depth-4">(</span>open <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-function-name">find-buffer-visiting</span> f<span class="org-rainbow-delimiters-depth-1">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
+        <span class="org-rainbow-delimiters-depth-4">(</span>org-file-buffer <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-function-name">find-file-noselect</span> f<span class="org-rainbow-delimiters-depth-1">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">with-current-buffer</span> org-file-buffer
+      <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-constant">org-html-export-to-html</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">unless</span> open <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-constant">kill-buffer</span> org-file-buffer<span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-1">)</span>
 
 <span class="org-comment-delimiter">;; </span><span class="org-comment">Recursively export all .org files to HTML</span>
-(<span class="org-keyword">defun</span> <span class="org-function-name">pz/export-all-org</span> ()
-  (<span class="org-keyword">interactive</span>)
-  (<span class="org-keyword">let</span> ((dir (read-directory-name <span class="org-string">"Directory: "</span>)))
-    (mapc 'pz/export-org
-          (directory-files-recursively dir <span class="org-string">"org$"</span>))))
+<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">pz/export-all-org</span> <span class="org-rainbow-delimiters-depth-2">()</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
+  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">let</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-rainbow-delimiters-depth-4">(</span>dir <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-function-name">read-directory-name</span> <span class="org-string">"Directory: "</span><span class="org-rainbow-delimiters-depth-1">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span>
+    <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-constant">mapc</span> <span class="org-highlight-quoted-quote">'</span><span class="org-highlight-quoted-symbol">pz/export-org</span>
+          <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-function-name">directory-files-recursively</span> dir <span class="org-string">"org$"</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
 </pre>
 </div>
 
@@ -110,7 +110,7 @@ The next function (<code>pz/export-all-org</code>) is pretty straightforward. It
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
     </div>
 </footer>
 </body>

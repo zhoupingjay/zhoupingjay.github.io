@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-04-24 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Variable Length Array in C++</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">Variable Length Array in C++
+<br />
+<span class="subtitle">Ping Zhou, 2023-04-23</span>
+</h1>
+<p>
+经常用 C/C++的朋友都知道，C/C++里面声明变量或者数组，是由编译器在编译时分配在堆栈上的，例如这个例子：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXfunction">main</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">{</span></span>
+    <span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">a</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>          <span class="org-tree-sitter-hl-faceXcomment">// &#22768;&#26126;&#19968;&#20010;&#21464;&#37327;</span>
+    <span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">arr</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">[</span></span><span class="org-tree-sitter-hl-faceXnumber">10</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">]</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>    <span class="org-tree-sitter-hl-faceXcomment">// &#22768;&#26126;&#19968;&#20010;&#25968;&#32452;</span>
+
+    <span class="org-tree-sitter-hl-faceXkeyword">return</span> <span class="org-tree-sitter-hl-faceXnumber">0</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">}</span></span>
+</pre>
+</div>
+
+<p>
+这个例子里的变量 a 和数组 arr 都是在编译时在栈上已经分配好了空间，这个和我们用 malloc(), new 在运行时分配空间不同，后者是分配在堆(heap)上。
+</p>
+
+<p>
+因为这些声明的变量/数组是在编译时分配的，它们的大小必须在编译时就已知，也就是说不能在运行时才决定数组的大小：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">r</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXnumber">1</span> <span class="org-tree-sitter-hl-faceXoperator">+</span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-tree-sitter-hl-faceXfunctionXcall">rand</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">()</span></span> <span class="org-tree-sitter-hl-faceXoperator">%</span> <span class="org-tree-sitter-hl-faceXnumber">10</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+
+<span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">arr</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">[</span></span><span class="org-tree-sitter-hl-faceXvariable">r</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">]</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span> <span class="org-tree-sitter-hl-faceXcomment">// C++&#35821;&#35328;&#19981;&#20801;&#35768;&#36825;&#20040;&#22768;&#26126;&#65292;&#22240;&#20026;r&#32534;&#35793;&#26102;&#26410;&#30693;</span>
+</pre>
+</div>
+
+
+<p>
+但是最近用 C++的时候注意到一个神奇的事情，像上面这样不符合 C++语言规范的用法，也能编译通过并正常运行！例如：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXfunctionXmacro">#include</span> <span class="org-tree-sitter-hl-faceXstring">&lt;iostream&gt;</span>
+
+<span class="org-tree-sitter-hl-faceXkeyword">using</span> <span class="org-tree-sitter-hl-faceXkeyword">namespace</span> std<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+
+<span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXfunction">main</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariableXparameter">argc</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXtypeXbuiltin">char</span> <span class="org-tree-sitter-hl-faceXoperator">**</span>argv<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">{</span></span>
+    <span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">r</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+
+    <span class="org-tree-sitter-hl-faceXvariable">r</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXfunctionXcall">stoi</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">(</span></span>argv<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-3">[</span></span><span class="org-tree-sitter-hl-faceXnumber">1</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-3">]</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">)</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+    cout <span class="org-tree-sitter-hl-faceXoperator">&lt;&lt;</span> <span class="org-tree-sitter-hl-faceXstring">"declaring array of size "</span> <span class="org-tree-sitter-hl-faceXoperator">&lt;&lt;</span> r <span class="org-tree-sitter-hl-faceXoperator">&lt;&lt;</span> endl<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+
+    <span class="org-tree-sitter-hl-faceXcomment">// array&#30340;&#22823;&#23567;&#22312;&#36816;&#34892;&#26102;&#20915;&#23450;</span>
+    <span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">array</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">[</span></span><span class="org-tree-sitter-hl-faceXvariable">r</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">]</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+    <span class="org-tree-sitter-hl-faceXkeyword">for</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">(</span></span><span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">i</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXnumber">0</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span> i <span class="org-tree-sitter-hl-faceXoperator">&lt;</span> r<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span> <span class="org-tree-sitter-hl-faceXvariable">i</span><span class="org-tree-sitter-hl-faceXoperator">++</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">)</span></span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">{</span></span>
+        <span class="org-tree-sitter-hl-faceXvariable">array</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-3">[</span></span>i<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-3">]</span></span> <span class="org-tree-sitter-hl-faceXoperator">=</span> i<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+    <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">}</span></span>
+
+    <span class="org-tree-sitter-hl-faceXkeyword">return</span> <span class="org-tree-sitter-hl-faceXnumber">0</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">}</span></span>
+</pre>
+</div>
+
+<p>
+在这个例子里，数组`array`的大小在运行时才确定（通过命令行参数），因此这显然不符合 C++语言规范。但是我用 gcc 和 clang 都能编译通过。
+</p>
+
+<p>
+查了一下发现，这个叫做 Variable-Length Array (VLA) ，即“可变长数组”，是 C++的一个扩展（extension），不是语言的一部分，但目前主流的编译器包括 GCC，Clang，Visual C++都支持这个扩展。
+</p>
+
+<p>
+要确定你的编译器是否支持这个扩展，可以查看这个宏：`_<sub>STDC</sub><sub>NO</sub><sub>VLA</sub>__`，如果它是 1，表示编译器不支持VLA扩展。
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
+    </div>
+</footer>
+</body>
+</html>
