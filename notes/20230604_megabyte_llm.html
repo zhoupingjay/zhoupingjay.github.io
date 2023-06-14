@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-06-14 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>超长上下文+无分词器，新一代大模型架构？Meta最新论文MegaByte解读</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/site.css' type='text/css'/>
+<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
+<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/notes"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<h1 class="title">超长上下文+无分词器，新一代大模型架构？Meta最新论文MegaByte解读
+<br />
+<span class="subtitle">Ping Zhou, 2023-06-10</span>
+</h1>
+<p>
+今天来解读一下 Meta 的这篇论文：MEGABYTE: Predicting Million-byte Sequences with Multiscale Transformers
+</p>
+
+<section id="outline-container-org3f71afa" class="outline-2">
+<h2 id="org3f71afa">大模型的上下文窗口瓶颈</h2>
+<div class="outline-text-2" id="text-org3f71afa">
+<p>
+基于 Transformer  的大语言模型，有个很重要的指标就是上下文长度。这是因为模型本身是无状态的，它在推理时只能“记住”上下文窗口里的内容。因此我们在和模型对话时，需要把对话的历史（上下文）和我们的提示一起发给模型，否则模型就只能看到提示本身。随着对话的进行，这个上下文会越来越长，当超过模型的上下文窗口长度时，模型就只能“忘记”最早的对话内容了。
+</p>
+
+<p>
+例如在下面这个会话里，如果我们把上下文窗口的长度设为 10 个 token，可以看到模型就不能记住之前对话的内容了：
+</p>
+
+<pre class="example" id="org5b94230">
+User&gt; Hi, my name is Ping
+AI&gt; Hello Ping, it's nice to meet you! My name is OpenAI.
+    How can I assist you today?
+
+User&gt; What is 1+1?
+AI&gt; The answer to 1+1 is 2.
+
+User&gt; What is my name?
+AI&gt; I'm sorry, I don't have access to that information.
+    Could you please tell me your name?
+</pre>
+
+<p>
+上面这个例子只是文本对话，对于多模态大模型而言（例如视觉大模型），输入的序列长度可以达到几百万个 token，因此上下文长度对于多模态大模型有极其重要的意义。但是，目前基于 Transformer 的大模型，普遍都只支持几千个 token 的上下文长度。
+</p>
+
+<p>
+这是因为，Transformer 的计算成本，是和上下文长度高度相关的。每个 Transformer 模块，都包含 Self-Attention 和 Feed Forward Network (FFN) 两个主要的计算部分：
+</p>
+
+<p width="400px">
+<img src="../images/2023/20230609-154344_screenshot.png" alt="20230609-154344_screenshot.png" width="400px" />
+(图源：<a href="https://jalammar.github.io/illustrated-transformer/">https://jalammar.github.io/illustrated-transformer/</a>)
+</p>
+
+<p>
+其中：
+</p>
+<ul class="org-ul">
+<li>Self-attention 部分，计算量和上下文长度的平方成正比</li>
+<li>FFN 部分，计算量为 2mT，m 为参数数量，T为序列长度（上下文长度）</li>
+</ul>
+
+<p>
+大模型的参数量巨大，要支持的序列越长，其训练和推理成本也就越高，因此很难 scale 到更长的上下文，比如几百万 token 的长度。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org42c742a" class="outline-2">
+<h2 id="org42c742a">分词器 Tokenizer</h2>
+<div class="outline-text-2" id="text-org42c742a">
+<p>
+除此之外，Transformer 大模型还有一个关键依赖，就是分词器（tokenizer）。
+</p>
+
+<p>
+大语言模型在工作时，先要把输入文字分成一个个 token，这里的 token 大致相当于单词（有些分词器也会分成 subword），所有见过的 token 集合就是词汇表 (vocabulary)，每个 token 到这个词汇表里查到自己的 id，然后通过 embedding 模型转成一个向量，因此输入序列就是一串向量，每个向量对应一个 token。这里就带来几个问题：
+</p>
+<ul class="org-ul">
+<li>这个分词器和大模型是分离的，例如你如果到 HuggingFace 上看，很多模型在用的时候需要指定一个外部的 tokenizer。</li>
+<li>每个分词器的实现不同，不同的分词器对模型的性能会有影响。</li>
+<li>由于自然语言本身的模糊性，一段话可能有不同分词方法，有时候分词器需要有领域知识（domain knowledge）才能正确分词。</li>
+<li>分词器的存在，使得大模型的训练和推理并不是真正端到端（End-to-End）的，这使得大模型的开发和部署都变得更加复杂。</li>
+</ul>
+</div>
+</section>
+
+<section id="outline-container-org77726f8" class="outline-2">
+<h2 id="org77726f8">MegaByte 架构解析</h2>
+<div class="outline-text-2" id="text-org77726f8">
+<p>
+解决这些问题，需要在模型的算法和架构上进行创新，Meta 提出的 MegaByte 就是一个最新的尝试。
+</p>
+</div>
+
+<div id="outline-container-orga7f8eef" class="outline-3">
+<h3 id="orga7f8eef">Overview</h3>
+<div class="outline-text-3" id="text-orga7f8eef">
+<p>
+简单的说，MegaByte 通过在字节粒度进行分词，摆脱了分词器，又通过多级 Transformer 架构大大降低了模型的计算复杂度，使大模型 scale 到长得多的上下文（百万级）成为可能。不得不说这是一个显著的改进，因此 MegaByte 在发表后很快就得到了 OpenAI 大佬 Andrej Karpathy 的肯定，认为这是一个很有希望 (promising) 的方向：
+</p>
+
+
+<div id="orgcd45def" class="figure">
+<p><img src="../images/2023/20230609-204323_screenshot.png" alt="20230609-204323_screenshot.png" width="480px" />
+</p>
+</div>
+
+<p>
+下面就来分析一下 MegaByte 是怎么工作的。
+</p>
+
+<p>
+MegaByte 的总体思路很简单，用几句话或者一张图就能概括：
+</p>
+<ul class="org-ul">
+<li>输入的序列，按照字节分成固定大小的 patch，可近似看成是经典 Transformer 里的 token，这样就不用分词器了；</li>
+<li>两级 Trasnformer，一个 Global Model 负责对输入的 patch 序列进行解码（decode），输出同样形状的一串 patch 表示；</li>
+<li>然后对每个 Global Model 的输出，各自有一个小的 Local Model（也是 Transformer），这个 Local Model 在 patch 里对字节序列进行解码（也就是在 patch 里预测下一个字节）；</li>
+<li>Local Model 输出，再经过 SoftMax 预测字节的分布，完成预测。</li>
+</ul>
+
+
+<div id="orge2ce7b6" class="figure">
+<p><img src="../images/2023/20230609-204532_screenshot.png" alt="20230609-204532_screenshot.png" width="400px" />
+</p>
+</div>
+
+<p>
+相对于传统的 Transformer，MegaByte 的关键改进有这样几项：
+</p>
+<ol class="org-ol">
+<li>Sub-quadratic self-attention (次二次自注意力)：经典的 Transformer 自注意力的计算复杂度是 \(O(N^2)\) ，而 MegaByte 可以做到  \(O(N^{4/3})\) 。</li>
+<li>更高效的 patch 前馈网络（Feed Forward Network）：经典 Transformer 需要对每个 token 计算前馈网络，在 GPT-3 这样的大模型里，98%的算力（FLOPS）都被用于前馈网络。MegaByte 则不同，它首先在 Global Model 这里，各个 patch 共用一个大的 FFN，然后再在 Local Model 这一级，每个 patch 用一个小得多的 FFN。整体上，在 FFN 的总参数量相当的情况下，MegaByte 的计算量大约是经典 Transformer 的 1/P（P 为 patch 大小）。</li>
+<li>并行解码（生成）：经典 Transformer 在生成时必须顺序执行，一次生成一个 token，因为它是自回归的，本次的输出被用于下一次的生成。而 MegaByte 是并行生成 patch 的表示，生成时的并行度高得多，因此运行（推理）速度也是 MegaByte 的一大优势。例如在作者的实验里，1.5B 参数的 MegaByte 模型，相比只有 350M 参数的 Transformer 模型，其生成速度还要快 40%。这对于降低大模型的推理成本，特别是在端侧的部署具有重要意义。</li>
+</ol>
+
+<p>
+MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析一下。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga6f0bc8" class="outline-3">
+<h3 id="orga6f0bc8">Patch Embedder</h3>
+<div class="outline-text-3" id="text-orga6f0bc8">
+<p>
+输入的序列，切成一系列的 patch，每个 patch 大小为 P 字节。这个 patch 序列需要变成 embedding，作为 Global Model 的输入。
+</p>
+
+
+<div id="org187b05e" class="figure">
+<p><img src="../images/2023/20230613-094634_screenshot.png" alt="20230613-094634_screenshot.png" width="400px" />
+</p>
+</div>
+
+<p>
+首先，每个字节通过查找 lookup table 变成一个 embedding 向量，这个 embedding 向量的大小（维度）是 \(D_G\) ，然后加上位置编码。
+</p>
+
+
+<div id="orgff34efb" class="figure">
+<p><img src="../images/2023/20230612-230850_screenshot.png" alt="20230612-230850_screenshot.png" width="400px" />
+</p>
+</div>
+
+<p>
+然后，同一个 patch 里的字节 embedding 接起来，就是 patch 的 embedding，因此每个 patch embedding 的大小是 \(P \cdot D_G\) 。
+</p>
+
+<p>
+这些 patch embedding 就是 Global Model 的输入。假设 Global Model 的输入序列长度为 K，那就是能接受 K 个 patch embedding， 。
+</p>
+
+<p>
+因为是自回归模型，训练时我们会将序列的最后一个 patch 去掉，在序列的第一个位置插入一个“空白”patch，称为 padding embedding (\(E^{global-pad}\))，这个 padding embedding 也是参加训练的。
+</p>
+
+
+<div id="org3826c16" class="figure">
+<p><img src="../images/2023/20230612-231040_screenshot.png" alt="20230612-231040_screenshot.png" width="400px" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org072b355" class="outline-3">
+<h3 id="org072b355">Global Model</h3>
+<div class="outline-text-3" id="text-org072b355">
+
+<div id="org79e0676" class="figure">
+<p><img src="../images/2023/20230613-100248_screenshot.png" alt="20230613-100248_screenshot.png" width="400px" />
+</p>
+</div>
+
+<p>
+Global Model 就是一个普通的 Transformer decoder，它的输入序列长度为 K（K 个 patch），每个 token 就是一个 patch embedding，token 大小（维度）为 \(P \cdot D_G\) 。和普通的 Transformer decoder 一样，计算 patch 之间关系时带上 causal masking，避免出现用将来的 patch 来计算当前 patch 的注意力。
+</p>
+
+
+<div id="org67b6ead" class="figure">
+<p><img src="../images/2023/20230613-093845_screenshot.png" alt="20230613-093845_screenshot.png" width="400px" />
+</p>
+</div>
+
+<p>
+Gobal Model 的输出，是 K 个 patch 的表征（representation）向量，和输入一样，每个输出的 patch 向量维度也是 \(P \cdot D_G\) 。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1a76849" class="outline-3">
+<h3 id="org1a76849">Local Model</h3>
+<div class="outline-text-3" id="text-org1a76849">
+
+<div id="orge9c2b1d" class="figure">
+<p><img src="../images/2023/20230613-102342_screenshot.png" alt="20230613-102342_screenshot.png" width="400px" />
+</p>
+</div>
+
+<p>
+Gobal Model 的输出是 K 个 patch 向量，每个 patch 向量的大小（维度）是 \(P \cdot D_G\) ，需要把 patch 向量按字节切开，也就是切成 P 个大小为 \(D_G\) 的向量，第 p 个字节向量，对应 patch 向量里的维度 \(p \cdot D_G\) 到 \((p+1)\cdot D_G\) 。
+</p>
+
+<p>
+然后，上面得到的每个字节向量，还要转换为 Local Model 能用的输入。假设 Local Model 的输入 token 维度是 \(D_L\) ，那么就需要有个 \(D_G \times D_L\) 的矩阵把维度为 \(D_G\) 的字节向量投影成维度为 \(D_L\) 的字节向量。这个投影（转换）矩阵，文中记为 \(w^{GL}\) 。这个投影矩阵应该也是通过训练学习来的（论文中没具体说）。
+</p>
+
+<p>
+这样一番操作后，从 Global Model 那儿来的每个 patch 向量就变成了一串维度为 \(D_L\) 的字节向量。
+</p>
+
+<p>
+然后，这个 patch 里的每个字节向量，还要加上序列里上一个字节的向量，做法和 Global Model 类似，去掉最后一个字节向量，在第一个位置插入一个 padding embedding (\(E^{local-pad}\))。
+</p>
+
+
+<div id="orgec654e8" class="figure">
+<p><img src="../images/2023/20230613-102942_screenshot.png" alt="20230613-102942_screenshot.png" width="640px" />
+</p>
+</div>
+
+<p>
+K 个 Local Model 副本，在 K 个 patch 上独立运行，因此在推理和训练时都可以并行，输出是 K 个字节向量序列，每个序列里有 P 个维度为 \(D_L\) 的字节向量，即输出形状为 \(K \times P \times D_L\) 。
+</p>
+
+
+<div id="org6d4c50e" class="figure">
+<p><img src="../images/2023/20230613-101813_screenshot.png" alt="20230613-101813_screenshot.png" width="400px" />
+</p>
+</div>
+
+<p>
+最后，用 Softmax 计算每个位置在词汇表里的概率分布。第 k 个 patch 里的第 p 个字节，对应于整个序列里第 t 个字节，其中 \(t=k \cdot P + p\) 。
+</p>
+
+
+<div id="org0b70d14" class="figure">
+<p><img src="../images/2023/20230613-102226_screenshot.png" alt="20230613-102226_screenshot.png" width="400px" />
+</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="outline-container-orgb2afd9e" class="outline-2">
+<h2 id="orgb2afd9e">计算效率分析</h2>
+<div class="outline-text-2" id="text-orgb2afd9e">
+<p>
+讨论一下 MegaByte 的计算复杂性。
+</p>
+
+<p>
+注意力部分，MegaByte 有 Global 和 Local 两级。
+</p>
+<ul class="org-ul">
+<li>Global Model 的序列长度是 K（K 个 patch），因此其计算复杂度为 \(O(K^2)\) ，假设输入序列长度（上下文窗口）为 T，每个 patch 大小为 P，那么 K=T/P，因此 Global Model 的计算复杂度为 \(O(\frac{T^2}{P^2})\) 。</li>
+<li>Local Model 一共有 K 个副本，每个的序列长度为 P（patch 大小），因此计算复杂性为 \(O(KP^2) = O(\frac{T}{P}P^2)=O(TP)\) 。</li>
+</ul>
+
+<p>
+两者加起来，注意力的计算量为 \(O(\frac{T^2}{P^2}+TP)\) 。这里的 P 是一个用户选择的超参数，当 \(P=T^{1/3}\) 的时候，注意力的计算量为 \(O(T^{3/4})\) ，相比经典 Transformer 的 \(O(T^2)\) 复杂度是一个显著的提升。
+</p>
+
+<p>
+前馈网络（FFN）部分：实际上大模型计算量主要是在 FFN，例如 GPT-3 规模的大模型，自注意力只占了 FLOPS 的 1.4%。根据 OpenAI 的论文『Scaling laws for neural language models』，前馈网络的 FLOPS 大致可以估算为 \(2mT\) ，其中 m 是模型的非 embedding 参数量，T是序列长度。
+</p>
+
+<p>
+MegaByte 有 Global Model 和 Local Model，假设它们的参数量分别为 \(m_g\) 和 \(m_l\) ，那么 FFN 的计算量分别是：
+</p>
+<ul class="org-ul">
+<li>Global Model: \(2\frac{T}{P} m_g\) ，P为 patch 大小</li>
+<li>Local Model: 每个序列长度为 P，一共有 K 个（K=T/P），所以计算量为 \(2P m_l \times \frac{T}{P} = 2Tm_l\)</li>
+</ul>
+
+<p>
+加起来总计算量为 \(2T(\frac{m_g}{P} + m_l)\) 。假设 Local Model 远小于 Global Model，即 \(m_l \ll m_g\) ，那么总计算量可以近似为 \(2T\frac{m_g}{P}\) ，也就是经典 Transformer 的 1/P。
+</p>
+
+<p>
+这意味着用同样的算力（FLOPS）预算，MegaByte 可以支持大的多的模型，或者反过来，同样的参数量，MegaByte 的算力需求要低得多。
+</p>
+
+<p>
+在生成（推理）方面，作者比较了生成每个 patch（近似于 token）的计算量。
+</p>
+<ul class="org-ul">
+<li>MegaByte: 生成每个 patch 需要经过 \(O(L_{global} + P \cdot O_{local})\) 个操作， \(L_{global}, L_{local}\) 分别是 Global Model 和 Local Model 的层数。</li>
+<li>经典 Transformer，假设总层数相同，也有 \(L_{global} + L_{local}\) 层，那么生成 1 个 patch 需要经过的操作数为 \(O(P \cdot L_{global} + P \cdot L_{local})\) 。</li>
+</ul>
+
+<p>
+同样假设 Global Model 层数比 Local Model 大的多，MegaByte 生成一个 patch 经过的操作可近似为 \(O(L_{global}\) ，是经典 Transformer 的 1/P。
+</p>
+
+<p>
+注：这里的计算我感觉不太对，经典 Transformer 的序列长度是 token 为单位的，但是论文里的比较都用 T（字节数）作为序列长度来估算 Transformer 的计算复杂度。当然 Transformer 的 token 一般都比较短（word 或者 subword），如果 token 长度远小于 patch 长度的话，那么 MegaByte 在 FFN 和生成上确实能节省不少 FLOPS，但应该没有 P 倍这么多。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgfb34b15" class="outline-2">
+<h2 id="orgfb34b15">变体和优化</h2>
+<div class="outline-text-2" id="text-orgfb34b15">
+<p>
+除了 MegaByte 的基本架构，因此作者也讨论了一些变体和优化措施。
+</p>
+</div>
+
+<div id="outline-container-orgfc6a907" class="outline-3">
+<h3 id="orgfc6a907">卷积 patch 编码</h3>
+<div class="outline-text-3" id="text-orgfc6a907">
+<p>
+作者提到，将序列切分成固定大小的 patch，会带来 translation invariant 的问题。同一段字节序列，在 patch 内不同位置的表征会不同，模型需要重新学习它在不同 offset 的含义。因此作者提出在前面加一个 causal convolution layer，获得 translation-invariant 的上下文表征后，再进行 patch 切分。实验中作者用了过滤器大小 3,5,7 的三层卷积。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org36a93e9" class="outline-3">
+<h3 id="org36a93e9">跨 patch 注意力</h3>
+<div class="outline-text-3" id="text-org36a93e9">
+<p>
+MegaByte 依赖 Global Model 来提取长距离依赖，但是我们也可以在 Local Model 里加入跨 patch 的信息增加上下文。例如，在计算注意力的时候，把上一个 patch 的 r 个 key 和 query 加进来。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org96924e8" class="outline-3">
+<h3 id="org96924e8">Strided Inference</h3>
+<div class="outline-text-3" id="text-org96924e8">
+<p>
+这也是个比较重要的优化。作者发现，每个 patch 中靠近尾部的字节，其 loss 会升高，原因是尾部的预测会更多依赖较弱的 Local Model。作者的解决方法是做 2 次 inference，两次的输入序列相差（offset）半个 patch，然后把 2 次 inference 的前半部分合起来作为最终 inference 的结果，如下图所示。
+</p>
+
+
+<div id="orge07357b" class="figure">
+<p><img src="../images/2023/20230613-135610_screenshot.png" alt="20230613-135610_screenshot.png" width="480px" />
+</p>
+</div>
+</div>
+</div>
+</section>
+
+
+<section id="outline-container-org393a88c" class="outline-2">
+<h2 id="org393a88c">多模态</h2>
+<div class="outline-text-2" id="text-org393a88c">
+<p>
+MegaByte 的设计目标之一就是多模态，所以作者除了语言模型，还对 MegaByte 在图像和音频上的模型进行了测试，有兴趣的话可以看一下。
+</p>
+</div>
+</section>
+
+<section id="outline-container-orga5ec3d5" class="outline-2">
+<h2 id="orga5ec3d5">伪代码解析</h2>
+<div class="outline-text-2" id="text-orga5ec3d5">
+<p>
+最后看一下论文里附带的伪代码。作者只给出了 forward 部分，而且没有注释，所以我只能根据我的理解猜一下，加上了注释。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span class="org-keyword">class</span> <span class="org-type">MegaByteDecoder</span>:
+    <span class="org-keyword">def</span> <span class="org-function-name">__init__</span>(
+            <span class="org-keyword">self</span>,
+            global_args,
+            local_args,
+            patch_size,
+    ):
+        <span class="org-keyword">self</span>.pad = 0
+        <span class="org-keyword">self</span>.<span class="org-variable-name">patch_size</span> = patch_size
+        <span class="org-keyword">self</span>.<span class="org-variable-name">globalmodel</span> = TransformerDecoder(global_args)
+        <span class="org-keyword">self</span>.<span class="org-variable-name">localmodel</span> = TransformerDecoder(local_args)
+
+    <span class="org-keyword">def</span> <span class="org-function-name">forward</span>(
+            <span class="org-keyword">self</span>,
+            <span class="org-builtin">bytes</span>, ):
+        <span class="org-variable-name">bytes_global</span>, <span class="org-variable-name">bytes_local</span> = <span class="org-keyword">self</span>.prepare_input(<span class="org-builtin">bytes</span>)
+        <span class="org-variable-name">global_bytes_embedded</span> = <span class="org-keyword">self</span>.globalmodel.embed(bytes_global)
+        <span class="org-comment-delimiter"># </span><span class="org-comment">b: batch size</span>
+        <span class="org-comment-delimiter"># </span><span class="org-comment">t: &#24207;&#21015;&#38271;&#24230;&#65288;patch&#25968;, &#24212;&#35813;&#20063;&#26159;local model&#21103;&#26412;&#25968;&#65289;</span>
+        <span class="org-comment-delimiter"># </span><span class="org-comment">p: patch&#38271;&#24230;</span>
+        <span class="org-comment-delimiter"># </span><span class="org-comment">e: &#27599;&#20010;&#23383;&#33410;embedding&#38271;&#24230;</span>
+        global_in = rearrange(
+            global_bytes_embedded,
+            <span class="org-comment-delimiter"># </span><span class="org-comment">&#36755;&#20837;&#24418;&#29366;&#65306;</span>
+            <span class="org-comment-delimiter">#   </span><span class="org-comment">b: batch&#37324;&#26377;b&#20010;&#24207;&#21015;&#65292;</span>
+            <span class="org-comment-delimiter">#   </span><span class="org-comment">(t p): &#27599;&#20010;&#24207;&#21015;&#26377;t*p&#20010;&#23383;&#33410;</span>
+            <span class="org-comment-delimiter">#   </span><span class="org-comment">e: &#27599;&#20010;&#23383;&#33410;embeding&#38271;&#24230;&#20026;e</span>
+            <span class="org-comment-delimiter"># </span><span class="org-comment">&#21464;&#25442;&#20026;:</span>
+            <span class="org-comment-delimiter">#   </span><span class="org-comment">b: batch&#37324;&#26377;b&#20010;&#24207;&#21015;&#65292;</span>
+            <span class="org-comment-delimiter">#   </span><span class="org-comment">t: &#27599;&#20010;&#24207;&#21015;&#26377;t&#20010;patch</span>
+            <span class="org-comment-delimiter">#   </span><span class="org-comment">(p e): &#27599;&#20010;patch&#38271;&#24230;&#20026;p*e</span>
+            <span class="org-string">"b (t p) e -&gt; b t (p e)"</span>,
+            p=<span class="org-keyword">self</span>.patch_size,
+        )
+        global_output = <span class="org-keyword">self</span>.globalmodel(global_in)
+
+        global_output_reshaped = rearrange(
+            global_output,
+            <span class="org-comment-delimiter"># </span><span class="org-comment">&#23558;&#36755;&#20986;&#21464;&#25104;(b*t)&#20010;patch&#65292;&#27599;&#20010;patch&#26377;p&#23383;&#33410;&#65292;</span>
+            <span class="org-comment-delimiter"># </span><span class="org-comment">&#27599;&#20010;&#23383;&#33410;embedding&#22823;&#23567;e</span>
+            <span class="org-string">"b t (p e) -&gt; (b t) p e"</span>,
+            p=<span class="org-keyword">self</span>.patch_size,
+        )
+        local_bytes_embedded = <span class="org-keyword">self</span>.localmodel.embed(bytes_local)
+        local_in = local_bytes_embedded + global_output_reshaped
+        local_output = <span class="org-keyword">self</span>.localmodel(local_in)
+
+        batch_size = bytes_global.shape[0]
+        <span class="org-comment-delimiter"># </span><span class="org-comment">local&#30340;&#36755;&#20986;&#26159;(b*t)&#20010;patch&#65292;l&#24212;&#35813;&#23601;&#26159;&#21069;&#38754;&#30340;p, v&#24212;&#35813;&#23601;&#26159;&#21069;&#38754;&#30340;e&#65311;</span>
+        <span class="org-comment-delimiter"># </span><span class="org-comment">reshape&#25104;b&#20010;&#24207;&#21015;&#65292;&#27599;&#20010;&#24207;&#21015;&#26377;(t*l)&#20010;&#23383;&#33410;embedding</span>
+        x = rearrange(local_output, <span class="org-string">"(b t) l v  -&gt; b (t l) v"</span>, b=batch_size)
+        <span class="org-keyword">return</span> x
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">&#36825;&#20010;&#20989;&#25968;&#23558;&#23383;&#33410;&#24207;&#21015;&#36716;&#25104;global&#21644;local&#33021;&#29992;&#30340;&#24418;&#29366;&#65292;&#27880;&#24847;&#36825;&#37324;&#26159;&#23383;&#33410;&#24207;&#21015;&#65292;</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">&#32780;&#19981;&#26159;embedding&#12290;&#25152;&#20197;bytes&#30340;&#24418;&#29366;&#26159;(b,T)&#30340;2&#32500;&#25968;&#32452;&#65292;b&#26159;batch size&#65292;</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">T&#26159;&#24207;&#21015;&#38271;&#24230;&#65288;&#23383;&#33410;&#25968;&#65289;</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">&#36820;&#22238;&#20004;&#20010;&#19996;&#35199;&#65306;</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">- bytes_global&#26159;bytes&#21516;&#26679;&#24418;&#29366;&#65292;&#20294;&#26159;&#25172;&#25481;&#20102;&#26368;&#21518;&#19968;&#20010;patch&#65292;&#21069;&#38754;&#25554;&#20102;padding</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">- bytes_local&#26159;(b*t,p)&#24418;&#29366;&#65292;&#22240;&#20026;&#36825;&#20010;&#26159;&#32473;local model&#29992;&#30340;&#65292;&#27599;&#20010;p&#23383;&#33410;</span>
+    <span class="org-keyword">def</span> <span class="org-function-name">prepare_input</span>(<span class="org-keyword">self</span>, <span class="org-builtin">bytes</span>):
+        <span class="org-comment-delimiter"># </span><span class="org-comment">&#30475;&#21518;&#38754;&#30340;&#25805;&#20316;&#65292;bytes&#24212;&#35813;&#26159;(b,T)&#30340;2&#32500;&#25968;&#32452;&#65292;b&#20026;batch&#22823;&#23567;&#65292;T&#20026;&#24207;&#21015;&#30340;&#38271;&#24230;&#65288;&#23383;&#33410;&#25968;&#65289;</span>
+        <span class="org-comment-delimiter"># </span><span class="org-comment">padding_global&#24418;&#29366;&#65292;&#24212;&#35813;&#26159;(b,p)</span>
+        padding_global = <span class="org-builtin">bytes</span>.new(<span class="org-builtin">bytes</span>.shape[0], <span class="org-keyword">self</span>.patch_size).fill_(<span class="org-keyword">self</span>.pad)
+
+        <span class="org-comment-delimiter"># </span><span class="org-comment">&#36825;&#37324;&#23601;&#26159;&#21435;&#25481;&#26368;&#21518;&#19968;&#20010;patch&#65292;&#21069;&#38754;&#25554;&#19978;padding</span>
+        bytes_global = torch.cat((padding_global, <span class="org-builtin">bytes</span>[:, : -<span class="org-keyword">self</span>.patch_size]), -1)
+
+        <span class="org-comment-delimiter"># </span><span class="org-comment">bytes_input&#24418;&#29366;&#65292;&#24212;&#35813;&#26159;(b*t)&#20010;patch&#65292;&#27599;&#20010;patch&#26377;p&#20010;&#23383;&#33410;</span>
+        bytes_input = rearrange(<span class="org-builtin">bytes</span>, <span class="org-string">"b (t p) -&gt; (b t) p"</span>, p=<span class="org-keyword">self</span>.patch_size)
+
+        <span class="org-comment-delimiter"># </span><span class="org-comment">padding_local&#21644;padding_global&#31867;&#20284;&#65292;&#24418;&#29366;&#26159; (b*t, p)</span>
+        padding_local = bytes_input.new(bytes_input.shape[0], 1).fill_(<span class="org-keyword">self</span>.pad)
+
+        <span class="org-comment-delimiter"># </span><span class="org-comment">&#32473;local&#30340;&#24418;&#29366;&#65292;&#24212;&#35813;&#36824;&#26159;(b*t,p)&#65292;&#25172;&#25481;&#26368;&#21518;&#19968;&#20010;&#65292;&#21069;&#38754;&#25554;&#20837;&#19968;&#20010;padding</span>
+        bytes_local = torch.cat((padding_local, bytes_input[:, :-1]), -1)
+
+        <span class="org-keyword">return</span> bytes_global, bytes_local
+</pre>
+</div>
+</div>
+</section>
+
+<section id="outline-container-orgf423ea4" class="outline-2">
+<h2 id="orgf423ea4">总结和讨论</h2>
+<div class="outline-text-2" id="text-orgf423ea4">
+<p>
+MegaByte 是一个可扩展的架构，它使 Transformer 大模型能够支持百万级的上下文，并且生成速度也更快。但是目前对 MegaByte 的测试规模还太小，说它能取代经典 Transformer 大模型还为时过早。
+</p>
+
+<p>
+另外，序列里如果有连续的空格或者回车，这些也是按原样切成 patch，还是多个空格只算一个呢？我的猜想应该是按原样，毕竟在 Python 里空格个数是很重要的…
+</p>
+
+<p>
+论文地址：<a href="https://arxiv.org/abs/2305.07185">https://arxiv.org/abs/2305.07185</a>
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    </div>
+</footer>
+</body>
+</html>

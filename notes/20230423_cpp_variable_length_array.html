@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-04-24 -->
+<!-- 2023-06-14 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Variable Length Array in C++</title>
@@ -59,12 +59,12 @@
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXfunction">main</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">{</span></span>
-    <span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">a</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>          <span class="org-tree-sitter-hl-faceXcomment">// &#22768;&#26126;&#19968;&#20010;&#21464;&#37327;</span>
-    <span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">arr</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">[</span></span><span class="org-tree-sitter-hl-faceXnumber">10</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">]</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>    <span class="org-tree-sitter-hl-faceXcomment">// &#22768;&#26126;&#19968;&#20010;&#25968;&#32452;</span>
+<pre class="src src-c++"><span class="org-type">int</span> <span class="org-function-name">main</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">a</span>;          <span class="org-comment-delimiter">// </span><span class="org-comment">&#22768;&#26126;&#19968;&#20010;&#21464;&#37327;</span>
+    <span class="org-type">int</span> <span class="org-variable-name">arr</span>[10];    <span class="org-comment-delimiter">// </span><span class="org-comment">&#22768;&#26126;&#19968;&#20010;&#25968;&#32452;</span>
 
-    <span class="org-tree-sitter-hl-faceXkeyword">return</span> <span class="org-tree-sitter-hl-faceXnumber">0</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
-<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">}</span></span>
+    <span class="org-keyword">return</span> 0;
+}
 </pre>
 </div>
 
@@ -77,9 +77,9 @@
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">r</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXnumber">1</span> <span class="org-tree-sitter-hl-faceXoperator">+</span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-tree-sitter-hl-faceXfunctionXcall">rand</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">()</span></span> <span class="org-tree-sitter-hl-faceXoperator">%</span> <span class="org-tree-sitter-hl-faceXnumber">10</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<pre class="src src-c++"><span class="org-type">int</span> <span class="org-variable-name">r</span> = 1 + (rand() % 10);
 
-<span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">arr</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">[</span></span><span class="org-tree-sitter-hl-faceXvariable">r</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">]</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span> <span class="org-tree-sitter-hl-faceXcomment">// C++&#35821;&#35328;&#19981;&#20801;&#35768;&#36825;&#20040;&#22768;&#26126;&#65292;&#22240;&#20026;r&#32534;&#35793;&#26102;&#26410;&#30693;</span>
+<span class="org-type">int</span> <span class="org-variable-name">arr</span>[r]; <span class="org-comment-delimiter">// </span><span class="org-comment">C++&#35821;&#35328;&#19981;&#20801;&#35768;&#36825;&#20040;&#22768;&#26126;&#65292;&#22240;&#20026;r&#32534;&#35793;&#26102;&#26410;&#30693;</span>
 </pre>
 </div>
 
@@ -89,24 +89,24 @@
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXfunctionXmacro">#include</span> <span class="org-tree-sitter-hl-faceXstring">&lt;iostream&gt;</span>
+<pre class="src src-c++"><span class="org-preprocessor">#include</span> <span class="org-string">&lt;iostream&gt;</span>
 
-<span class="org-tree-sitter-hl-faceXkeyword">using</span> <span class="org-tree-sitter-hl-faceXkeyword">namespace</span> std<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-keyword">using</span> <span class="org-keyword">namespace</span> <span class="org-constant">std</span>;
 
-<span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXfunction">main</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariableXparameter">argc</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXtypeXbuiltin">char</span> <span class="org-tree-sitter-hl-faceXoperator">**</span>argv<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">{</span></span>
-    <span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">r</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-type">int</span> <span class="org-function-name">main</span>(<span class="org-type">int</span> <span class="org-variable-name">argc</span>, <span class="org-type">char</span> **<span class="org-variable-name">argv</span>) {
+    <span class="org-type">int</span> <span class="org-variable-name">r</span>;
 
-    <span class="org-tree-sitter-hl-faceXvariable">r</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXfunctionXcall">stoi</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">(</span></span>argv<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-3">[</span></span><span class="org-tree-sitter-hl-faceXnumber">1</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-3">]</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">)</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
-    cout <span class="org-tree-sitter-hl-faceXoperator">&lt;&lt;</span> <span class="org-tree-sitter-hl-faceXstring">"declaring array of size "</span> <span class="org-tree-sitter-hl-faceXoperator">&lt;&lt;</span> r <span class="org-tree-sitter-hl-faceXoperator">&lt;&lt;</span> endl<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+    r = stoi(argv[1]);
+    cout &lt;&lt; <span class="org-string">"declaring array of size "</span> &lt;&lt; r &lt;&lt; endl;
 
-    <span class="org-tree-sitter-hl-faceXcomment">// array&#30340;&#22823;&#23567;&#22312;&#36816;&#34892;&#26102;&#20915;&#23450;</span>
-    <span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">array</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">[</span></span><span class="org-tree-sitter-hl-faceXvariable">r</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">]</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
-    <span class="org-tree-sitter-hl-faceXkeyword">for</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">(</span></span><span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span> <span class="org-tree-sitter-hl-faceXvariable">i</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXnumber">0</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span> i <span class="org-tree-sitter-hl-faceXoperator">&lt;</span> r<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span> <span class="org-tree-sitter-hl-faceXvariable">i</span><span class="org-tree-sitter-hl-faceXoperator">++</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">)</span></span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">{</span></span>
-        <span class="org-tree-sitter-hl-faceXvariable">array</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-3">[</span></span>i<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-3">]</span></span> <span class="org-tree-sitter-hl-faceXoperator">=</span> i<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
-    <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-2">}</span></span>
+    <span class="org-comment-delimiter">// </span><span class="org-comment">array&#30340;&#22823;&#23567;&#22312;&#36816;&#34892;&#26102;&#20915;&#23450;</span>
+    <span class="org-type">int</span> <span class="org-variable-name">array</span>[r];
+    <span class="org-keyword">for</span>(<span class="org-type">int</span> <span class="org-variable-name">i</span> = 0; i &lt; r; i++) {
+        array[i] = i;
+    }
 
-    <span class="org-tree-sitter-hl-faceXkeyword">return</span> <span class="org-tree-sitter-hl-faceXnumber">0</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
-<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">}</span></span>
+    <span class="org-keyword">return</span> 0;
+}
 </pre>
 </div>
 
@@ -125,7 +125,7 @@
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>
