@@ -90,7 +90,7 @@
 例如在下面这个会话里，如果我们把上下文窗口的长度设为 10 个 token，可以看到模型就不能记住之前对话的内容了：
 </p>
 
-<pre class="example" id="org5b94230">
+<pre class="example" id="org25280bb">
 User&gt; Hi, my name is Ping
 AI&gt; Hello Ping, it's nice to meet you! My name is OpenAI.
     How can I assist you today?
@@ -165,7 +165,7 @@ AI&gt; I'm sorry, I don't have access to that information.
 </p>
 
 
-<div id="orgcd45def" class="figure">
+<div id="org1a8e1a0" class="figure">
 <p><img src="../images/2023/20230609-204323_screenshot.png" alt="20230609-204323_screenshot.png" width="480px" />
 </p>
 </div>
@@ -185,7 +185,7 @@ MegaByte 的总体思路很简单，用几句话或者一张图就能概括：
 </ul>
 
 
-<div id="orge2ce7b6" class="figure">
+<div id="orgc947249" class="figure">
 <p><img src="../images/2023/20230609-204532_screenshot.png" alt="20230609-204532_screenshot.png" width="400px" />
 </p>
 </div>
@@ -213,7 +213,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<div id="org187b05e" class="figure">
+<div id="orge52139e" class="figure">
 <p><img src="../images/2023/20230613-094634_screenshot.png" alt="20230613-094634_screenshot.png" width="400px" />
 </p>
 </div>
@@ -223,7 +223,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<div id="orgff34efb" class="figure">
+<div id="org62704a4" class="figure">
 <p><img src="../images/2023/20230612-230850_screenshot.png" alt="20230612-230850_screenshot.png" width="400px" />
 </p>
 </div>
@@ -241,7 +241,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<div id="org3826c16" class="figure">
+<div id="orgef20d6c" class="figure">
 <p><img src="../images/2023/20230612-231040_screenshot.png" alt="20230612-231040_screenshot.png" width="400px" />
 </p>
 </div>
@@ -252,7 +252,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 <h3 id="org072b355">Global Model</h3>
 <div class="outline-text-3" id="text-org072b355">
 
-<div id="org79e0676" class="figure">
+<div id="orgd7e2a46" class="figure">
 <p><img src="../images/2023/20230613-100248_screenshot.png" alt="20230613-100248_screenshot.png" width="400px" />
 </p>
 </div>
@@ -262,7 +262,7 @@ Global Model 就是一个普通的 Transformer decoder，它的输入序列长�
 </p>
 
 
-<div id="org67b6ead" class="figure">
+<div id="org9015732" class="figure">
 <p><img src="../images/2023/20230613-093845_screenshot.png" alt="20230613-093845_screenshot.png" width="400px" />
 </p>
 </div>
@@ -277,7 +277,7 @@ Gobal Model 的输出，是 K 个 patch 的表征（representation）向量，�
 <h3 id="org1a76849">Local Model</h3>
 <div class="outline-text-3" id="text-org1a76849">
 
-<div id="orge9c2b1d" class="figure">
+<div id="orgb373426" class="figure">
 <p><img src="../images/2023/20230613-102342_screenshot.png" alt="20230613-102342_screenshot.png" width="400px" />
 </p>
 </div>
@@ -299,7 +299,7 @@ Gobal Model 的输出是 K 个 patch 向量，每个 patch 向量的大小（维
 </p>
 
 
-<div id="orgec654e8" class="figure">
+<div id="org2d9f08e" class="figure">
 <p><img src="../images/2023/20230613-102942_screenshot.png" alt="20230613-102942_screenshot.png" width="640px" />
 </p>
 </div>
@@ -309,7 +309,7 @@ K 个 Local Model 副本，在 K 个 patch 上独立运行，因此在推理和�
 </p>
 
 
-<div id="org6d4c50e" class="figure">
+<div id="org3b14603" class="figure">
 <p><img src="../images/2023/20230613-101813_screenshot.png" alt="20230613-101813_screenshot.png" width="400px" />
 </p>
 </div>
@@ -319,7 +319,7 @@ K 个 Local Model 副本，在 K 个 patch 上独立运行，因此在推理和�
 </p>
 
 
-<div id="org0b70d14" class="figure">
+<div id="org8b45759" class="figure">
 <p><img src="../images/2023/20230613-102226_screenshot.png" alt="20230613-102226_screenshot.png" width="400px" />
 </p>
 </div>
@@ -370,12 +370,12 @@ MegaByte 有 Global Model 和 Local Model，假设它们的参数量分别为 \(
 在生成（推理）方面，作者比较了生成每个 patch（近似于 token）的计算量。
 </p>
 <ul class="org-ul">
-<li>MegaByte: 生成每个 patch 需要经过 \(O(L_{global} + P \cdot O_{local})\) 个操作， \(L_{global}, L_{local}\) 分别是 Global Model 和 Local Model 的层数。</li>
+<li>MegaByte: 生成每个 patch 需要经过 \(O(L_{global} + P \cdot L_{local})\) 个操作， \(L_{global}, L_{local}\) 分别是 Global Model 和 Local Model 的层数。</li>
 <li>经典 Transformer，假设总层数相同，也有 \(L_{global} + L_{local}\) 层，那么生成 1 个 patch 需要经过的操作数为 \(O(P \cdot L_{global} + P \cdot L_{local})\) 。</li>
 </ul>
 
 <p>
-同样假设 Global Model 层数比 Local Model 大的多，MegaByte 生成一个 patch 经过的操作可近似为 \(O(L_{global}\) ，是经典 Transformer 的 1/P。
+同样假设 Global Model 层数比 Local Model 大的多，MegaByte 生成一个 patch 经过的操作可近似为 \(O(L_{global})\) ，是经典 Transformer 的 1/P。
 </p>
 
 <p>
@@ -418,7 +418,7 @@ MegaByte 依赖 Global Model 来提取长距离依赖，但是我们也可以在
 </p>
 
 
-<div id="orge07357b" class="figure">
+<div id="org919ca13" class="figure">
 <p><img src="../images/2023/20230613-135610_screenshot.png" alt="20230613-135610_screenshot.png" width="480px" />
 </p>
 </div>
