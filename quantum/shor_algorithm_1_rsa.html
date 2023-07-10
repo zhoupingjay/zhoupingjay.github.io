@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(1) RSA公钥算法</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,15 +71,14 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子计算会终结现在的密码体系吗？(1) RSA公钥算法
-<br />
-<span class="subtitle">Ping Zhou, 2021-04-20</span>
-</h1>
+<header>
+<h1 class="title">量子计算会终结现在的密码体系吗？(1) RSA公钥算法</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-04-20</p>
+</header>
 
-
-<section id="outline-container-orgd210263" class="outline-2">
-<h2 id="orgd210263">公钥加密系统</h2>
-<div class="outline-text-2" id="text-orgd210263">
+<section id="outline-container-orgd53a22c" class="outline-2">
+<h2 id="orgd53a22c">公钥加密系统</h2>
+<div class="outline-text-2" id="text-orgd53a22c">
 <p>
 关于量子计算，很多人可能都听说过这个耸人听闻的说法：有了量子计算机之后，现在的密码就都不安全了，因为量子计算机可以轻易破解它们。真的有这么夸张吗？实际上，量子计算机威胁的主要是基于『大数分解』的一类加密算法，其中最广泛使用的就是RSA。
 </p>
@@ -112,25 +111,25 @@ RSA (Rivest–Shamir–Adleman) 是目前广泛使用的一种公钥加密系统
 </div>
 </section>
 
-<section id="outline-container-org9e3a21f" class="outline-2">
-<h2 id="org9e3a21f">RSA的工作原理</h2>
-<div class="outline-text-2" id="text-org9e3a21f">
+<section id="outline-container-orga5fa782" class="outline-2">
+<h2 id="orga5fa782">RSA的工作原理</h2>
+<div class="outline-text-2" id="text-orga5fa782">
 <p>
 为什么量子计算机被认为会威胁到RSA公钥加密体系呢？要回答这个问题，需要先了解一下RSA的工作原理。
 </p>
 </div>
 
-<div id="outline-container-orgf8e7f73" class="outline-3">
-<h3 id="orgf8e7f73">生成公钥私钥</h3>
-<div class="outline-text-3" id="text-orgf8e7f73">
+<div id="outline-container-orgf1c7866" class="outline-3">
+<h3 id="orgf1c7866">生成公钥私钥</h3>
+<div class="outline-text-3" id="text-orgf1c7866">
 <p>
 RSA生成公钥和私钥的流程大致是这样：
 </p>
 
-<div id="orgafb3029" class="figure">
-<p><img src="../images/RSA.png" alt="RSA.png" width="480px" />
-</p>
-</div>
+<figure id="org28bd29a">
+<img src="../images/RSA.png" alt="RSA.png" width="480px">
+
+</figure>
 
 <p>
 首先随机选两个很大的质数（p, q），然后用它们计算两个乘积：
@@ -154,18 +153,18 @@ RSA生成公钥和私钥的流程大致是这样：
 </div>
 </div>
 
-<div id="outline-container-orga302014" class="outline-3">
-<h3 id="orga302014">加密和解密过程</h3>
-<div class="outline-text-3" id="text-orga302014">
+<div id="outline-container-orgf024eeb" class="outline-3">
+<h3 id="orgf024eeb">加密和解密过程</h3>
+<div class="outline-text-3" id="text-orgf024eeb">
 <p>
 有了公钥和私钥后，可以用公钥加密，然后用对应的私钥解密（下图左边是加密过程，右边是解密过程）：
 </p>
 
 
-<div id="org1050149" class="figure">
-<p><img src="../images/RSA2.png" alt="RSA2.png" width="640px" />
-</p>
-</div>
+<figure id="orgb169aec">
+<img src="../images/RSA2.png" alt="RSA2.png" width="640px">
+
+</figure>
 
 <p>
 我们把要加密的消息看作是一个固定长度的二进制数M，加密的时候，我们用公钥里的e和N，对M求e次幂，然后对N取模，得到加密后的消息E(M)：
@@ -194,9 +193,9 @@ E(M)^d \mod N \to M
 </div>
 </section>
 
-<section id="outline-container-orgd8ab197" class="outline-2">
-<h2 id="orgd8ab197">RSA安全性的关键：因式分解</h2>
-<div class="outline-text-2" id="text-orgd8ab197">
+<section id="outline-container-org53c5c56" class="outline-2">
+<h2 id="org53c5c56">RSA安全性的关键：因式分解</h2>
+<div class="outline-text-2" id="text-org53c5c56">
 <p>
 RSA如何保证加密后信息的安全性？或者说，它安全性的关键点在哪里？从上面的过程不难看出，RSA安全性的关键点在于N是否被分解。想象一下：假如我们能够把N分解回p和q，那么就可以知道 \(\phi(N)=(p-1)(q-1)\) ，再加上公钥里的e，用欧几里德算法把d也算出来，这样私钥也有了，整个加密过程就被攻破了！
 </p>
@@ -211,9 +210,9 @@ RSA如何保证加密后信息的安全性？或者说，它安全性的关键�
 </div>
 </section>
 
-<section id="outline-container-orga7f7f18" class="outline-2">
-<h2 id="orga7f7f18">总结</h2>
-<div class="outline-text-2" id="text-orga7f7f18">
+<section id="outline-container-org83c2bbe" class="outline-2">
+<h2 id="org83c2bbe">总结</h2>
+<div class="outline-text-2" id="text-org83c2bbe">
 <p>
 现在我们理解了RSA的工作原理，以及为什么它的安全性取决于因式分解的难度。那么接下来的问题是，为什么量子计算能高效计算因式分解呢？实际上，量子计算机解决的是Order Finding问题（或者说函数周期求解问题），在下一篇里，我们来看看因式分解是如何转化为Order Finding/函数周期求解问题的。
 </p>
@@ -224,13 +223,13 @@ RSA如何保证加密后信息的安全性？或者说，它安全性的关键�
 </div>
 </section>
 
-<section id="outline-container-orga9f8061" class="outline-2">
-<h2 id="orga9f8061">附：RSA算法的数学原理</h2>
-<div class="outline-text-2" id="text-orga9f8061">
+<section id="outline-container-org22966d6" class="outline-2">
+<h2 id="org22966d6">附：RSA算法的数学原理</h2>
+<div class="outline-text-2" id="text-org22966d6">
 </div>
-<div id="outline-container-org75ac00e" class="outline-3">
-<h3 id="org75ac00e">加密和解密</h3>
-<div class="outline-text-3" id="text-org75ac00e">
+<div id="outline-container-org56b964e" class="outline-3">
+<h3 id="org56b964e">加密和解密</h3>
+<div class="outline-text-3" id="text-org56b964e">
 <p>
 考虑M和N是否互质，分两种情况讨论。
 </p>
@@ -308,9 +307,9 @@ p和q都整除M的特殊情况：这样的话N也能整除M， \(M=0 \mod N\) �
 </div>
 </div>
 
-<div id="outline-container-orgaac0723" class="outline-3">
-<h3 id="orgaac0723">费马小定理</h3>
-<div class="outline-text-3" id="text-orgaac0723">
+<div id="outline-container-org75ff364" class="outline-3">
+<h3 id="org75ff364">费马小定理</h3>
+<div class="outline-text-3" id="text-org75ff364">
 <p>
 假设p是质数，a是任意整数，则 1) \(a^{p} = a \mod p\)  ；2) 并且如果a不能被p整除，则 \(a^{p-1} = 1 \mod p\) 。
 </p>
@@ -380,9 +379,9 @@ p(p-1)\dots(p-k+1)={p \choose k}k(k-1)\dots1
 </div>
 </div>
 
-<div id="outline-container-org7e9eaab" class="outline-3">
-<h3 id="org7e9eaab">欧拉函数</h3>
-<div class="outline-text-3" id="text-org7e9eaab">
+<div id="outline-container-org703943a" class="outline-3">
+<h3 id="org703943a">欧拉函数</h3>
+<div class="outline-text-3" id="text-org703943a">
 <p>
 欧拉函数 \(\phi(n)\)  的意思是“小于等于n并且与N互质的正整数的个数”。根据这个定义，任何质数p的欧拉函数显然就是p-1（从1到p-1都与p互质）。进一步，如果某个数n是质数p的a次幂，那么它的欧拉函数 \(\phi(p^a)\) 可以这样计算：
 </p>
@@ -413,9 +412,9 @@ p, 2p, 3p, \dots, (p^{a-1}-1)p
 </div>
 </div>
 
-<div id="outline-container-org117923f" class="outline-3">
-<h3 id="org117923f">中国余数定理</h3>
-<div class="outline-text-3" id="text-org117923f">
+<div id="outline-container-org9ef3335" class="outline-3">
+<h3 id="org9ef3335">中国余数定理</h3>
+<div class="outline-text-3" id="text-org9ef3335">
 <p>
 假设我们有一组两两互质的正整数 \(m_1, m_2, \dots, m_n\) ，另有一组 \(a_1, a_2, \dots, a_n\) ，列出这样一个方程组：
 </p>
@@ -476,7 +475,7 @@ x-y = (a_n - a_n) = 0 \mod m_n \\
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

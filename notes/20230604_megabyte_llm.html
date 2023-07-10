@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2023-06-14 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>超长上下文+无分词器，新一代大模型架构？Meta最新论文MegaByte解读</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,11 +71,10 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">超长上下文+无分词器，新一代大模型架构？Meta最新论文MegaByte解读
-<br />
-<span class="subtitle">Ping Zhou, 2023-06-10</span>
-</h1>
-<p>
+<header>
+<h1 class="title">超长上下文+无分词器，新一代大模型架构？Meta最新论文MegaByte解读</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2023-06-10</p>
+</header><p>
 今天来解读一下 Meta 的这篇论文：MEGABYTE: Predicting Million-byte Sequences with Multiscale Transformers
 </p>
 
@@ -90,7 +89,7 @@
 例如在下面这个会话里，如果我们把上下文窗口的长度设为 10 个 token，可以看到模型就不能记住之前对话的内容了：
 </p>
 
-<pre class="example" id="org25280bb">
+<pre class="example" id="orgecdfdf9">
 User&gt; Hi, my name is Ping
 AI&gt; Hello Ping, it's nice to meet you! My name is OpenAI.
     How can I assist you today?
@@ -112,7 +111,7 @@ AI&gt; I'm sorry, I don't have access to that information.
 </p>
 
 <p width="400px">
-<img src="../images/2023/20230609-154344_screenshot.png" alt="20230609-154344_screenshot.png" width="400px" />
+<img src="../images/2023/20230609-154344_screenshot.png" alt="20230609-154344_screenshot.png" width="400px">
 (图源：<a href="https://jalammar.github.io/illustrated-transformer/">https://jalammar.github.io/illustrated-transformer/</a>)
 </p>
 
@@ -165,10 +164,10 @@ AI&gt; I'm sorry, I don't have access to that information.
 </p>
 
 
-<div id="org1a8e1a0" class="figure">
-<p><img src="../images/2023/20230609-204323_screenshot.png" alt="20230609-204323_screenshot.png" width="480px" />
-</p>
-</div>
+<figure id="org7fb73c7">
+<img src="../images/2023/20230609-204323_screenshot.png" alt="20230609-204323_screenshot.png" width="480px">
+
+</figure>
 
 <p>
 下面就来分析一下 MegaByte 是怎么工作的。
@@ -185,10 +184,10 @@ MegaByte 的总体思路很简单，用几句话或者一张图就能概括：
 </ul>
 
 
-<div id="orgc947249" class="figure">
-<p><img src="../images/2023/20230609-204532_screenshot.png" alt="20230609-204532_screenshot.png" width="400px" />
-</p>
-</div>
+<figure id="orgc1cb82e">
+<img src="../images/2023/20230609-204532_screenshot.png" alt="20230609-204532_screenshot.png" width="400px">
+
+</figure>
 
 <p>
 相对于传统的 Transformer，MegaByte 的关键改进有这样几项：
@@ -213,20 +212,20 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<div id="orge52139e" class="figure">
-<p><img src="../images/2023/20230613-094634_screenshot.png" alt="20230613-094634_screenshot.png" width="400px" />
-</p>
-</div>
+<figure id="org177ef72">
+<img src="../images/2023/20230613-094634_screenshot.png" alt="20230613-094634_screenshot.png" width="400px">
+
+</figure>
 
 <p>
 首先，每个字节通过查找 lookup table 变成一个 embedding 向量，这个 embedding 向量的大小（维度）是 \(D_G\) ，然后加上位置编码。
 </p>
 
 
-<div id="org62704a4" class="figure">
-<p><img src="../images/2023/20230612-230850_screenshot.png" alt="20230612-230850_screenshot.png" width="400px" />
-</p>
-</div>
+<figure id="org9c7b0a4">
+<img src="../images/2023/20230612-230850_screenshot.png" alt="20230612-230850_screenshot.png" width="400px">
+
+</figure>
 
 <p>
 然后，同一个 patch 里的字节 embedding 接起来，就是 patch 的 embedding，因此每个 patch embedding 的大小是 \(P \cdot D_G\) 。
@@ -241,10 +240,10 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<div id="orgef20d6c" class="figure">
-<p><img src="../images/2023/20230612-231040_screenshot.png" alt="20230612-231040_screenshot.png" width="400px" />
-</p>
-</div>
+<figure id="org22ade1f">
+<img src="../images/2023/20230612-231040_screenshot.png" alt="20230612-231040_screenshot.png" width="400px">
+
+</figure>
 </div>
 </div>
 
@@ -252,20 +251,20 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 <h3 id="org072b355">Global Model</h3>
 <div class="outline-text-3" id="text-org072b355">
 
-<div id="orgd7e2a46" class="figure">
-<p><img src="../images/2023/20230613-100248_screenshot.png" alt="20230613-100248_screenshot.png" width="400px" />
-</p>
-</div>
+<figure id="orgd682b23">
+<img src="../images/2023/20230613-100248_screenshot.png" alt="20230613-100248_screenshot.png" width="400px">
+
+</figure>
 
 <p>
 Global Model 就是一个普通的 Transformer decoder，它的输入序列长度为 K（K 个 patch），每个 token 就是一个 patch embedding，token 大小（维度）为 \(P \cdot D_G\) 。和普通的 Transformer decoder 一样，计算 patch 之间关系时带上 causal masking，避免出现用将来的 patch 来计算当前 patch 的注意力。
 </p>
 
 
-<div id="org9015732" class="figure">
-<p><img src="../images/2023/20230613-093845_screenshot.png" alt="20230613-093845_screenshot.png" width="400px" />
-</p>
-</div>
+<figure id="orgf879646">
+<img src="../images/2023/20230613-093845_screenshot.png" alt="20230613-093845_screenshot.png" width="400px">
+
+</figure>
 
 <p>
 Gobal Model 的输出，是 K 个 patch 的表征（representation）向量，和输入一样，每个输出的 patch 向量维度也是 \(P \cdot D_G\) 。
@@ -277,10 +276,10 @@ Gobal Model 的输出，是 K 个 patch 的表征（representation）向量，�
 <h3 id="org1a76849">Local Model</h3>
 <div class="outline-text-3" id="text-org1a76849">
 
-<div id="orgb373426" class="figure">
-<p><img src="../images/2023/20230613-102342_screenshot.png" alt="20230613-102342_screenshot.png" width="400px" />
-</p>
-</div>
+<figure id="org898cc5d">
+<img src="../images/2023/20230613-102342_screenshot.png" alt="20230613-102342_screenshot.png" width="400px">
+
+</figure>
 
 <p>
 Gobal Model 的输出是 K 个 patch 向量，每个 patch 向量的大小（维度）是 \(P \cdot D_G\) ，需要把 patch 向量按字节切开，也就是切成 P 个大小为 \(D_G\) 的向量，第 p 个字节向量，对应 patch 向量里的维度 \(p \cdot D_G\) 到 \((p+1)\cdot D_G\) 。
@@ -299,30 +298,30 @@ Gobal Model 的输出是 K 个 patch 向量，每个 patch 向量的大小（维
 </p>
 
 
-<div id="org2d9f08e" class="figure">
-<p><img src="../images/2023/20230613-102942_screenshot.png" alt="20230613-102942_screenshot.png" width="640px" />
-</p>
-</div>
+<figure id="org3fac828">
+<img src="../images/2023/20230613-102942_screenshot.png" alt="20230613-102942_screenshot.png" width="640px">
+
+</figure>
 
 <p>
 K 个 Local Model 副本，在 K 个 patch 上独立运行，因此在推理和训练时都可以并行，输出是 K 个字节向量序列，每个序列里有 P 个维度为 \(D_L\) 的字节向量，即输出形状为 \(K \times P \times D_L\) 。
 </p>
 
 
-<div id="org3b14603" class="figure">
-<p><img src="../images/2023/20230613-101813_screenshot.png" alt="20230613-101813_screenshot.png" width="400px" />
-</p>
-</div>
+<figure id="org473a6df">
+<img src="../images/2023/20230613-101813_screenshot.png" alt="20230613-101813_screenshot.png" width="400px">
+
+</figure>
 
 <p>
 最后，用 Softmax 计算每个位置在词汇表里的概率分布。第 k 个 patch 里的第 p 个字节，对应于整个序列里第 t 个字节，其中 \(t=k \cdot P + p\) 。
 </p>
 
 
-<div id="org8b45759" class="figure">
-<p><img src="../images/2023/20230613-102226_screenshot.png" alt="20230613-102226_screenshot.png" width="400px" />
-</p>
-</div>
+<figure id="org84a328d">
+<img src="../images/2023/20230613-102226_screenshot.png" alt="20230613-102226_screenshot.png" width="400px">
+
+</figure>
 </div>
 </div>
 </section>
@@ -418,10 +417,10 @@ MegaByte 依赖 Global Model 来提取长距离依赖，但是我们也可以在
 </p>
 
 
-<div id="org919ca13" class="figure">
-<p><img src="../images/2023/20230613-135610_screenshot.png" alt="20230613-135610_screenshot.png" width="480px" />
-</p>
-</div>
+<figure id="org7e01cf6">
+<img src="../images/2023/20230613-135610_screenshot.png" alt="20230613-135610_screenshot.png" width="480px">
+
+</figure>
 </div>
 </div>
 </section>

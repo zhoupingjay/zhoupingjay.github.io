@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2023-04-24 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>C++ vector容器强制释放内存</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -50,11 +50,10 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">C++ vector容器强制释放内存
-<br />
-<span class="subtitle">Ping Zhou, 2021-11-27</span>
-</h1>
-<p>
+<header>
+<h1 class="title">C++ vector容器强制释放内存</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-11-27</p>
+</header><p>
 换个话题，聊聊使用C++ STL vector容器时的一个内存管理问题。
 </p>
 
@@ -62,9 +61,9 @@
 C++用户经常会用STL里的vector容器来管理一组动态对象。STL vector的使用和C语言的数组类似，很方便：
 </p>
 <div class="org-src-container">
-<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXtype">std</span>::<span class="org-tree-sitter-hl-faceXtype">vector</span><span class="org-tree-sitter-hl-faceXoperator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span><span class="org-tree-sitter-hl-faceXoperator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span> <span class="org-tree-sitter-hl-faceXvariable">buf</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">{</span></span> <span class="org-tree-sitter-hl-faceXnumber">0</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXnumber">1</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXnumber">2</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXnumber">3</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXnumber">4</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXnumber">5</span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">}</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
-buf<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">[</span></span><span class="org-tree-sitter-hl-faceXnumber">0</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">]</span></span><span class="org-tree-sitter-hl-faceXoperator">++</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
-<span class="org-tree-sitter-hl-faceXvariable">buf</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">[</span></span><span class="org-tree-sitter-hl-faceXnumber">1</span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">]</span></span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXnumber">10</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<pre class="src src-c++"><span class="org-constant">std</span>::<span class="org-type">vector</span>&lt;<span class="org-type">int</span>&gt; <span class="org-variable-name">buf</span> = { 0, 1, 2, 3, 4, 5 };
+buf[0]++;
+buf[1] = 10;
 </pre>
 </div>
 
@@ -93,10 +92,10 @@ buf<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-ra
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++">buf<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">.</span><span class="org-tree-sitter-hl-faceXproperty"><span class="org-tree-sitter-hl-faceXmethodXcall">clear</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<pre class="src src-c++">buf.clear();
 
-<span class="org-tree-sitter-hl-faceXtype">std</span>::cout <span class="org-tree-sitter-hl-faceXoperator">&lt;&lt;</span> buf<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">.</span><span class="org-tree-sitter-hl-faceXproperty"><span class="org-tree-sitter-hl-faceXmethodXcall">size</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>      <span class="org-tree-sitter-hl-faceXcomment">// size&#21464;&#25104;&#20102;0</span>
-<span class="org-tree-sitter-hl-faceXtype">std</span>::cout <span class="org-tree-sitter-hl-faceXoperator">&lt;&lt;</span> buf<span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">.</span><span class="org-tree-sitter-hl-faceXproperty"><span class="org-tree-sitter-hl-faceXmethodXcall">capacity</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>  <span class="org-tree-sitter-hl-faceXcomment">// capacity&#36824;&#26159;6</span>
+<span class="org-constant">std</span>::cout &lt;&lt; buf.size();      <span class="org-comment-delimiter">// </span><span class="org-comment">size&#21464;&#25104;&#20102;0</span>
+<span class="org-constant">std</span>::cout &lt;&lt; buf.capacity();  <span class="org-comment-delimiter">// </span><span class="org-comment">capacity&#36824;&#26159;6</span>
 </pre>
 </div>
 
@@ -105,11 +104,11 @@ buf<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-ra
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c++"><span class="org-tree-sitter-hl-faceXtype">std</span>::<span class="org-tree-sitter-hl-faceXtype">vector</span><span class="org-tree-sitter-hl-faceXoperator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-tree-sitter-hl-faceXtypeXbuiltin">int</span><span class="org-tree-sitter-hl-faceXoperator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span> <span class="org-tree-sitter-hl-faceXvariable">buf</span> <span class="org-tree-sitter-hl-faceXoperator">=</span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">{</span></span> <span class="org-tree-sitter-hl-faceXnumber">0</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXnumber">1</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXnumber">2</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXnumber">3</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXnumber">4</span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">,</span> <span class="org-tree-sitter-hl-faceXnumber">5</span> <span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">}</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
-<span class="org-tree-sitter-hl-faceXcomment">// ......</span>
+<pre class="src src-c++"><span class="org-constant">std</span>::<span class="org-type">vector</span>&lt;<span class="org-type">int</span>&gt; <span class="org-variable-name">buf</span> = { 0, 1, 2, 3, 4, 5 };
+<span class="org-comment-delimiter">// </span><span class="org-comment">......</span>
 
-<span class="org-tree-sitter-hl-faceXcomment">// &#24378;&#21046;&#37322;&#25918;buf&#21344;&#29992;&#30340;&#20869;&#23384;</span>
-<span class="org-tree-sitter-hl-faceXtype">std</span>::<span class="org-tree-sitter-hl-faceXfunctionXcall">vector</span><span class="org-tree-sitter-hl-faceXoperator"><span class="org-tree-sitter-hl-faceXfunctionXcall"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span></span><span class="org-tree-sitter-hl-faceXtypeXbuiltin"><span class="org-tree-sitter-hl-faceXfunctionXcall">int</span></span><span class="org-tree-sitter-hl-faceXoperator"><span class="org-tree-sitter-hl-faceXfunctionXcall"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">()</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">.</span><span class="org-tree-sitter-hl-faceXproperty"><span class="org-tree-sitter-hl-faceXmethodXcall">swap</span></span><span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">(</span></span>buf<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-tree-sitter-hl-faceXpunctuationXdelimiter">;</span>
+<span class="org-comment-delimiter">// </span><span class="org-comment">&#24378;&#21046;&#37322;&#25918;buf&#21344;&#29992;&#30340;&#20869;&#23384;</span>
+<span class="org-constant">std</span>::vector&lt;<span class="org-type">int</span>&gt;().swap(buf);
 </pre>
 </div>
 
@@ -134,7 +133,7 @@ buf<span class="org-tree-sitter-hl-faceXpunctuationXbracket"><span class="org-ra
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

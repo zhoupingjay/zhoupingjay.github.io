@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子神经网络</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,11 +71,10 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子神经网络
-<br />
-<span class="subtitle">Ping Zhou, 2020-12-13</span>
-</h1>
-<p>
+<header>
+<h1 class="title">量子神经网络</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2020-12-13</p>
+</header><p>
 上次讨论了量子机器学习框架TensorFlow Quantum的Hello World，这次看一下另一个应用：量子神经网络。
 </p>
 
@@ -103,10 +102,10 @@
 </p>
 
 
-<div id="orga92e40a" class="figure">
-<p><img src="../images/2020/12/QNN-MNIST.png" alt="QNN-MNIST.png" width="500px" />
-</p>
-</div>
+<figure id="org4c53844">
+<img src="../images/2020/12/QNN-MNIST.png" alt="QNN-MNIST.png" width="500px">
+
+</figure>
 
 <p>
 论文原文在这里：<a href="https://arxiv.org/pdf/1802.06002.pdf">https://arxiv.org/pdf/1802.06002.pdf</a>
@@ -180,7 +179,7 @@ Number of original test examples: 10000
 </pre>
 </div>
 
-<pre class="example" id="org4ab5cb0">
+<pre class="example" id="org3fe6efc">
 Number of filtered training examples: 12049
 Number of filtered test examples: 1968
 </pre>
@@ -200,10 +199,10 @@ plt.colorbar()
 </div>
 
 
-<div id="org8af1084" class="figure">
-<p><img src="../images/2020/12/output_9_2.png" alt="output_9_2.png" width="320px" />
-</p>
-</div>
+<figure id="orga084ca0">
+<img src="../images/2020/12/output_9_2.png" alt="output_9_2.png" width="320px">
+
+</figure>
 
 <p>
 我们的电路一共只有十几个量子比特，因此要把输入图像降低分辨率到4x4:
@@ -216,7 +215,7 @@ plt.colorbar()
 </pre>
 </div>
 
-<pre class="example" id="org22fdc54">
+<pre class="example" id="org0ac17f0">
 (12049, 4, 4, 1)
 </pre>
 
@@ -233,10 +232,10 @@ plt.colorbar()
 </div>
 
 
-<div id="org8b2474e" class="figure">
-<p><img src="../images/2020/12/output_13_2.png" alt="output_13_2.png" width="320px" />
-</p>
-</div>
+<figure id="org18a9900">
+<img src="../images/2020/12/output_13_2.png" alt="output_13_2.png" width="320px">
+
+</figure>
 
 <p>
 接下来一步在经典的机器学习里可能不太见到：训练集里有些标签是互相矛盾的，即有些图像既被标成3也被标成6，这里要把这些矛盾的去掉。
@@ -278,7 +277,7 @@ plt.colorbar()
 </pre>
 </div>
 
-<pre class="example" id="org67aa2db">
+<pre class="example" id="org27ea5f1">
 Number of unique images: 10387
 Number of 3s:  4961
 Number of 6s:  5475
@@ -360,10 +359,10 @@ SVGCircuit(circuit)
 </div>
 
 
-<div id="org070cb49" class="figure">
-<p><img src="../images/2020/12/output_24_0.svg" alt="output_24_0.svg" class="org-svg" width="480px" />
-</p>
-</div>
+<figure id="org4e9ffb0">
+<img src="../images/2020/12/output_24_0.svg" alt="output_24_0.svg" class="org-svg" width="480px">
+
+</figure>
 
 <p>
 完整的电路有17个输入（4x4图像，加一个read out），作者用了16个XX门和16个ZZ门，因此一共有32个参数：
@@ -410,10 +409,10 @@ SVGCircuit(circuit)
 </div>
 
 
-<div id="orge595882" class="figure">
-<p><img src="../images/2020/12/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="1024px" />
-</p>
-</div>
+<figure id="org2891bd1">
+<img src="../images/2020/12/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="1024px">
+
+</figure>
 
 <p>
 然后，把量子电路接入到TensorFlow的神经网络模型里。量子电路用TensorFlow Quantum的PQC (Parameterized Quantum Circuit)封装，前文说到过，PQC的输出是期望值（-1到1之间）。
@@ -471,7 +470,7 @@ SVGCircuit(circuit)
 </pre>
 </div>
 
-<pre class="example" id="org0f5a584">
+<pre class="example" id="org1282d79">
 Model: "sequential"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -522,7 +521,7 @@ qnn_results = model.evaluate(x_test_tfcirc, y_test)
 </pre>
 </div>
 
-<pre class="example" id="orgb658d83">
+<pre class="example" id="orgc87edb7">
 Epoch 1/3
 360/360 [==============================] - 260s 724ms/step - loss: 0.5884 - hinge_accuracy: 0.7721 - val_loss: 0.3951 - val_hinge_accuracy: 0.8135
 Epoch 2/3
@@ -563,7 +562,7 @@ model.summary()
 </pre>
 </div>
 
-<pre class="example" id="org43cd91f">
+<pre class="example" id="orgdf756df">
 Model: "sequential_2"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -592,7 +591,7 @@ fair_nn_results = model.evaluate(x_test_bin, y_test)
 </pre>
 </div>
 
-<pre class="example" id="org582220b">
+<pre class="example" id="org398b038">
 62/62 [==============================] - 0s 511us/step - loss: 0.2666 - accuracy: 0.9141
 </pre>
 
@@ -607,10 +606,10 @@ sns.barplot([<span class="org-string">"Quantum"</span>, <span class="org-string"
 </div>
 
 
-<div id="orgb37bb6c" class="figure">
-<p><img src="../images/2020/12/output_45_1.png" alt="output_45_1.png" width="480px" />
-</p>
-</div>
+<figure id="orgf97b375">
+<img src="../images/2020/12/output_45_1.png" alt="output_45_1.png" width="480px">
+
+</figure>
 
 <p>
 和类似规模的经典神经网络相比，准确率差不多。
@@ -623,7 +622,7 @@ sns.barplot([<span class="org-string">"Quantum"</span>, <span class="org-string"
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

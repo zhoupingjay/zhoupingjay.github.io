@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子傅里叶变换详解 (2) 逆傅里叶变换</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,17 +71,16 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子傅里叶变换详解 (2) 逆傅里叶变换
-<br />
-<span class="subtitle">Ping Zhou, 2021-05-26</span>
-</h1>
-<p>
+<header>
+<h1 class="title">量子傅里叶变换详解 (2) 逆傅里叶变换</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-05-26</p>
+</header><p>
 既然有『量子傅立叶变换』，那么自然也有它的逆变换，今天就来聊聊这个话题。
 </p>
 
-<section id="outline-container-org2dbf595" class="outline-2">
-<h2 id="org2dbf595">量子傅立叶变换和逆变换</h2>
-<div class="outline-text-2" id="text-org2dbf595">
+<section id="outline-container-orge0ecf73" class="outline-2">
+<h2 id="orge0ecf73">量子傅立叶变换和逆变换</h2>
+<div class="outline-text-2" id="text-orge0ecf73">
 <p>
 前文说过，对于任意状态 \(|\psi\rangle\) ：
 </p>
@@ -127,9 +126,9 @@ g(j) = \frac{1}{\sqrt{N}} \sum_{k=0}^{N} \omega^{-jk} \tilde f(k) \\\
 </div>
 </section>
 
-<section id="outline-container-org59eda4a" class="outline-2">
-<h2 id="org59eda4a">量子傅立叶逆变换的验证</h2>
-<div class="outline-text-2" id="text-org59eda4a">
+<section id="outline-container-org122f559" class="outline-2">
+<h2 id="org122f559">量子傅立叶逆变换的验证</h2>
+<div class="outline-text-2" id="text-org122f559">
 <p>
 假如我们对一个状态 \(|\psi\rangle\) 作了QFT：
 </p>
@@ -155,10 +154,10 @@ QFT^{-1} QFT|\psi\rangle = \sum_{j=0}^{N-1} g(j) |j\rangle \\\
 </p>
 
 
-<div id="orgfe9a25c" class="figure">
-<p><img src="../images/qft_inverse.png" alt="qft_inverse.png" width="320px" />
-</p>
-</div>
+<figure id="orga6593af">
+<img src="../images/qft_inverse.png" alt="qft_inverse.png" width="320px">
+
+</figure>
 
 <p>
 把 \(\tilde f(k)\) 代入到前面的公式里：
@@ -174,19 +173,19 @@ g(j) = \frac{1}{\sqrt{N}} \sum_{k=0}^{N-1} \omega^{-jk} \tilde f(k) \\\
 这里面， \(j\) 是 \(g(j)\) 的参数，对每个 \(g(j)\) 来说是确定的，然后里面有2个嵌套的求和，分别遍历 \(k, m\) ，我们把两层求和项展开成二维的表就能看清楚：
 </p>
 
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table>
 
 
 <colgroup>
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 </colgroup>
 <thead>
 <tr>
@@ -293,7 +292,7 @@ g(j) = \frac{1}{N} N f(j) = f(j)
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

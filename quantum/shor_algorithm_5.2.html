@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(5.2) Shor算法详解</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,26 +71,25 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子计算会终结现在的密码体系吗？(5.2) Shor算法详解
-<br />
-<span class="subtitle">Ping Zhou, 2021-05-31</span>
-</h1>
-<p>
+<header>
+<h1 class="title">量子计算会终结现在的密码体系吗？(5.2) Shor算法详解</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-05-31</p>
+</header><p>
 前文『<a href="shor_algorithm_5.1.html">5.1 Shor算法详解</a>』讨论了在简化条件下，QFT如何提取函数周期信息，但是如果简化条件不满足呢？今天接着这个话题继续讨论。推导过程较长，涉及的知识点也比较多，我会根据我的学习经验，尽可能写的简明易懂。
 </p>
 
-<section id="outline-container-orgf30db07" class="outline-2">
-<h2 id="orgf30db07">回顾：简化条件</h2>
-<div class="outline-text-2" id="text-orgf30db07">
+<section id="outline-container-org85c7a60" class="outline-2">
+<h2 id="org85c7a60">回顾：简化条件</h2>
+<div class="outline-text-2" id="text-org85c7a60">
 <p>
 在前文中，我们构造周期函数 \(f(x)\) 的可逆变换 \(U_f\) ，给它制备适当的输入：
 </p>
 
 
-<div id="orgc2db6dd" class="figure">
-<p><img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px" />
-</p>
-</div>
+<figure id="org6f433ee">
+<img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px">
+
+</figure>
 
 <p>
 在输出端测量 \(|\beta\rangle\) ，使得它坍缩到某个值z，这时 \(\alpha\) 就会坍缩到 \(|l\rangle, |l+r\rangle, |l+2r\rangle, \dots, |l+Ar\rangle\) 的叠加态：
@@ -122,9 +121,9 @@
 </div>
 </section>
 
-<section id="outline-container-org1032f4f" class="outline-2">
-<h2 id="org1032f4f">简化条件不成立？</h2>
-<div class="outline-text-2" id="text-org1032f4f">
+<section id="outline-container-org488b2d3" class="outline-2">
+<h2 id="org488b2d3">简化条件不成立？</h2>
+<div class="outline-text-2" id="text-org488b2d3">
 <p>
 还是从QFT前的状态开始推导，QFT的作用是什么？
 </p>
@@ -231,18 +230,18 @@ e^{2\pi i ry/q} \\\
 </div>
 </section>
 
-<section id="outline-container-org687b912" class="outline-2">
-<h2 id="org687b912">喘口气接着讲</h2>
-<div class="outline-text-2" id="text-org687b912">
+<section id="outline-container-orgde19019" class="outline-2">
+<h2 id="orgde19019">喘口气接着讲</h2>
+<div class="outline-text-2" id="text-orgde19019">
 <p>
 我们画两条从0到rq的数轴，然后在上面分别标上 \(q,2q,\dots,rq\) ，以及 \(r,2r,\dots,qr\) ：
 </p>
 
 
-<div id="orga854aa3" class="figure">
-<p><img src="../images/shor_ry_mod_q.png" alt="shor_ry_mod_q.png" width="400px" />
-</p>
-</div>
+<figure id="orgf972eea">
+<img src="../images/shor_ry_mod_q.png" alt="shor_ry_mod_q.png" width="400px">
+
+</figure>
 
 <p>
 从图上可以看出，在第一条数轴上，必然存在某些小于r的整数n，使得 \(nq\) 落在第二条数轴的前后两个点 \(kr, (k+1)r\) 之间（例如图中 q 落在 r 和 2r 中间）。因此 \(kr, (k+1)r\) 这两个数，至少有一个与 \(nq\) 的距离小于等于 \(r/2\) 。
@@ -307,9 +306,9 @@ e^{2\pi i ry/q} \\\
 </div>
 </section>
 
-<section id="outline-container-orgf6a9cd6" class="outline-2">
-<h2 id="orgf6a9cd6">算一下概率</h2>
-<div class="outline-text-2" id="text-orgf6a9cd6">
+<section id="outline-container-org09ab273" class="outline-2">
+<h2 id="org09ab273">算一下概率</h2>
+<div class="outline-text-2" id="text-org09ab273">
 <p>
 假如某个y值满足我们要的不等式 \(|ry - kq| \le r/2\) ，我们有多大概率测量得到它？这其实是问， \(|y\rangle\) 对应的分量 \(\tilde f(y)\) 的模 \(|\tilde f(y)|^2\) 有多大？我们来算一下。
 </p>
@@ -394,10 +393,10 @@ e^{2\pi i ry/q} \\\
 </ol>
 
 
-<div id="org2e5eca6" class="figure">
-<p><img src="../images/sin_x.png" alt="sin_x.png" width="400px" />
-</p>
-</div>
+<figure id="orgc610055">
+<img src="../images/sin_x.png" alt="sin_x.png" width="400px">
+
+</figure>
 
 <p>
 显然，在0到 \(\pi /2\) 这个范围内，始终有 \(\sin \alpha \ge 2\alpha / \pi\) ，而 \(\alpha=\frac{A+1}{2} | \theta |\) ，所以：
@@ -411,10 +410,10 @@ e^{2\pi i ry/q} \\\
 用类似的作图方法，可以证明在0到 \(2\pi\) 范围内， \(\sin \frac{\theta}{2} \le \frac{\theta}{2}\) ：
 </p>
 
-<div id="orgad61754" class="figure">
-<p><img src="../images/sin_theta_2.png" alt="sin_theta_2.png" width="400px" />
-</p>
-</div>
+<figure id="org50a4b52">
+<img src="../images/sin_theta_2.png" alt="sin_theta_2.png" width="400px">
+
+</figure>
 
 <p>
 把上面这个两个结果用到 \(\tilde f(y)\) 的模里：
@@ -471,10 +470,10 @@ e^{2\pi i ry/q} \\\
 因为A是 \(\frac{q-1}{r}\) 内的最大整数，因此， \(Ar\) 是小于q的最大的r倍数， \((A+1)r \gt q\) ：
 </p>
 
-<div id="orgcfad527" class="figure">
-<p><img src="../images/shor_Ar.png" alt="shor_Ar.png" width="240px" />
-</p>
-</div>
+<figure id="org0ffac1e">
+<img src="../images/shor_Ar.png" alt="shor_Ar.png" width="240px">
+
+</figure>
 
 <p>
 简单的变换就可以推出：
@@ -512,7 +511,7 @@ Shor算法简化条件不成立的情况，总算推导完了！
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

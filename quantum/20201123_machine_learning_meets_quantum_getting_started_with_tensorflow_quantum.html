@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Machine Learning Meets Quantum: Getting Started with TensorFlow Quantum</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,17 +71,16 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">Machine Learning Meets Quantum: Getting Started with TensorFlow Quantum
-<br />
-<span class="subtitle">Ping Zhou, 2020-11-23</span>
-</h1>
-<p>
+<header>
+<h1 class="title">Machine Learning Meets Quantum: Getting Started with TensorFlow Quantum</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2020-11-23</p>
+</header><p>
 Source: <a href="https://github.com/zhoupingjay/quantum/blob/main/Getting-Started-With-TensorFlow-Quantum.ipynb">My notebook</a>
 </p>
 
-<section id="outline-container-orge5037c1" class="outline-2">
-<h2 id="orge5037c1">Introduction</h2>
-<div class="outline-text-2" id="text-orge5037c1">
+<section id="outline-container-org7756b91" class="outline-2">
+<h2 id="org7756b91">Introduction</h2>
+<div class="outline-text-2" id="text-org7756b91">
 <p>
 Earlier this year, Google announced <a href="https://www.tensorflow.org/quantum">TensorFlow Quantum</a>. It&rsquo;s a framework for building <b>Hybrid Quantum-Classical Machine Learning models</b>. So now we are entering the era of <b>Quantum Machine Learning</b> - sounds exciting!
 </p>
@@ -97,9 +96,9 @@ In this notebook, I&rsquo;m going to walk you through the &ldquo;<a href="https:
 </div>
 </section>
 
-<section id="outline-container-org825ba29" class="outline-2">
-<h2 id="org825ba29">Concepts</h2>
-<div class="outline-text-2" id="text-org825ba29">
+<section id="outline-container-orgcc6a343" class="outline-2">
+<h2 id="orgcc6a343">Concepts</h2>
+<div class="outline-text-2" id="text-orgcc6a343">
 <p>
 Before we start with the code, I&rsquo;m going to explain some basic concepts that are needed for understanding this example. Don&rsquo;t be scared by the math notations in this section - they are not as hard as they might appear!
 </p>
@@ -109,9 +108,9 @@ Please be noted that this notebook does not serve as a tutorial of quantum compu
 </p>
 </div>
 
-<div id="outline-container-org3ce520e" class="outline-3">
-<h3 id="org3ce520e">Qubit, State Vector and Bloch Sphere</h3>
-<div class="outline-text-3" id="text-org3ce520e">
+<div id="outline-container-orgab7dedd" class="outline-3">
+<h3 id="orgab7dedd">Qubit, State Vector and Bloch Sphere</h3>
+<div class="outline-text-3" id="text-orgab7dedd">
 <p>
 Qubit: You might have already heard about the term &ldquo;qubit&rdquo;. Comparing to a classical bit that can be at either of the two states (e.g. 0 or 1) at any time, a qubit can be at a &ldquo;superposition&rdquo; of both states. The state of a qubit \(|\psi\rangle\) can be expressed as:
 </p>
@@ -161,10 +160,10 @@ Another useful way of representing qubit is using the <b><b>Bloch Sphere</b></b>
 </p>
 
 
-<div id="orga620b21" class="figure">
-<p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px" />
-</p>
-</div>
+<figure id="org85dcd1a">
+<img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px">
+
+</figure>
 
 <p>
 A qubit \(|\psi\rangle\) on Bloch sphere can also be written as:
@@ -180,22 +179,22 @@ e^{i\phi}\sin\frac{\theta}{2}
 </div>
 </div>
 
-<div id="outline-container-org1e9c02a" class="outline-3">
-<h3 id="org1e9c02a">Operators and Observables</h3>
-<div class="outline-text-3" id="text-org1e9c02a">
+<div id="outline-container-org5097aac" class="outline-3">
+<h3 id="org5097aac">Operators and Observables</h3>
+<div class="outline-text-3" id="text-org5097aac">
 </div>
-<div id="outline-container-orgf92a316" class="outline-4">
-<h4 id="orgf92a316">Operators</h4>
-<div class="outline-text-4" id="text-orgf92a316">
+<div id="outline-container-org63a2d7a" class="outline-4">
+<h4 id="org63a2d7a">Operators</h4>
+<div class="outline-text-4" id="text-org63a2d7a">
 <p>
 What are &ldquo;operators&rdquo;? In short, an operator tranform qubit(s) from one state to another. Since qubits can be written as vectors, the operators are essentially matrices.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orga8b90ee" class="outline-4">
-<h4 id="orga8b90ee">Observables</h4>
-<div class="outline-text-4" id="text-orga8b90ee">
+<div id="outline-container-org5456691" class="outline-4">
+<h4 id="org5456691">Observables</h4>
+<div class="outline-text-4" id="text-org5456691">
 <p>
 Suppose we have a quantum system. How do we know about its state? The only way is through measurements.
 Physical quantities that can be measured are called <a href="https://en.wikipedia.org/wiki/Observable">Observables</a>.
@@ -221,9 +220,9 @@ If you apply Z operator on a qubit \(\begin{pmatrix}\alpha \\ \beta\end{pmatrix}
 </div>
 </div>
 
-<div id="outline-container-orge0ddfbc" class="outline-3">
-<h3 id="orge0ddfbc">Expectation Values</h3>
-<div class="outline-text-3" id="text-orge0ddfbc">
+<div id="outline-container-orgc40c183" class="outline-3">
+<h3 id="orgc40c183">Expectation Values</h3>
+<div class="outline-text-3" id="text-orgc40c183">
 <p>
 Being able to get state vectors of your system is nice - it means you know everything of your system.
 Unfortunately this is only available in simulator.
@@ -287,10 +286,10 @@ We can look at a few examples to validate this conclusion:
 </p>
 
 
-<div id="org04c01d6" class="figure">
-<p><img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px" />
-</p>
-</div>
+<figure id="org8a9ec73">
+<img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px">
+
+</figure>
 
 <ul class="org-ul">
 <li>If current state is at &ldquo;north pole&rdquo; of the Bloch Sphere, we get 100% chance of getting +Z from measurements. Expectation value is \(\cos 0 = 1\).</li>
@@ -305,9 +304,9 @@ Things match up. Fantastic!
 </div>
 </section>
 
-<section id="outline-container-orgc27e31c" class="outline-2">
-<h2 id="orgc27e31c">What Are We Trying to Solve?</h2>
-<div class="outline-text-2" id="text-orgc27e31c">
+<section id="outline-container-org8edc307" class="outline-2">
+<h2 id="org8edc307">What Are We Trying to Solve?</h2>
+<div class="outline-text-2" id="text-org8edc307">
 <p>
 To understand the hybrid model we are going to build, we need to first understand the problem we are trying to solve.
 </p>
@@ -322,10 +321,10 @@ But in the real world, our system is <b><b>noisy</b></b>. Therefore the qubits w
 </p>
 
 
-<div id="org38fc188" class="figure">
-<p><img src="../images/tfq-noisy-circuit.svg" alt="tfq-noisy-circuit.svg" class="org-svg" width="480px" />
-</p>
-</div>
+<figure id="orgad189ed">
+<img src="../images/tfq-noisy-circuit.svg" alt="tfq-noisy-circuit.svg" class="org-svg" width="480px">
+
+</figure>
 
 <p>
 The angles \(\beta_1\), \(\beta_2\), \(\beta_3\) caused by noise are unknown to us.
@@ -336,10 +335,10 @@ In order for any quantum computing circuit to run properly, we need to <b><b>cal
 </p>
 
 
-<div id="org7b92c58" class="figure">
-<p><img src="../images/tfq-calibration-circuit.svg" alt="tfq-calibration-circuit.svg" class="org-svg" width="480px" />
-</p>
-</div>
+<figure id="orgcb6f641">
+<img src="../images/tfq-calibration-circuit.svg" alt="tfq-calibration-circuit.svg" class="org-svg" width="480px">
+
+</figure>
 
 <p>
 <b><b>Our problem</b></b> is to determine the three parameters (\(\theta_1\), \(\theta_2\), \(\theta_3\)) for our calibration circuit. We&rsquo;ll build a quantum-classical hybrid machine learning model to solve this problem.
@@ -347,9 +346,9 @@ In order for any quantum computing circuit to run properly, we need to <b><b>cal
 </div>
 </section>
 
-<section id="outline-container-org21bd12b" class="outline-2">
-<h2 id="org21bd12b">Quantum-Classical Hybrid Machine Learning Model</h2>
-<div class="outline-text-2" id="text-org21bd12b">
+<section id="outline-container-orgf80d180" class="outline-2">
+<h2 id="orgf80d180">Quantum-Classical Hybrid Machine Learning Model</h2>
+<div class="outline-text-2" id="text-orgf80d180">
 <p>
 The original notebook has lot of details and may not be very straightforward. I find it a better way to look from a high level first.
 </p>
@@ -359,10 +358,10 @@ What we want to achieve is a model that calibrates noisy qubit:
 </p>
 
 
-<div id="orgf4d3f73" class="figure">
-<p><img src="../images/hello-tfq-circuit.svg" alt="hello-tfq-circuit.svg" class="org-svg" width="560px" />
-</p>
-</div>
+<figure id="org0c40def">
+<img src="../images/hello-tfq-circuit.svg" alt="hello-tfq-circuit.svg" class="org-svg" width="560px">
+
+</figure>
 
 <p>
 Since we are building a Machine Learning model, we need to answer these important questions:
@@ -378,15 +377,15 @@ To help you understand the whole picture, I made an architectural diagram of our
 </p>
 
 
-<div id="orgc4a838d" class="figure">
-<p><img src="../images/hello-tfq-1.svg" alt="hello-tfq-1.svg" class="org-svg" width="560px" />
-</p>
-</div>
+<figure id="org4890fb8">
+<img src="../images/hello-tfq-1.svg" alt="hello-tfq-1.svg" class="org-svg" width="560px">
+
+</figure>
 </div>
 
-<div id="outline-container-org7fd8e8d" class="outline-3">
-<h3 id="org7fd8e8d">Datasets</h3>
-<div class="outline-text-3" id="text-org7fd8e8d">
+<div id="outline-container-org942cd49" class="outline-3">
+<h3 id="org942cd49">Datasets</h3>
+<div class="outline-text-3" id="text-org942cd49">
 <p>
 Our dataset includes two parts: commands and the noisy circuit.
 </p>
@@ -415,9 +414,9 @@ This is the circuit that emulates the noisy qubit that needs to be calibrated. T
 </div>
 </div>
 
-<div id="outline-container-org3f20de8" class="outline-3">
-<h3 id="org3f20de8">Labels</h3>
-<div class="outline-text-3" id="text-org3f20de8">
+<div id="outline-container-org277edf1" class="outline-3">
+<h3 id="org277edf1">Labels</h3>
+<div class="outline-text-3" id="text-org277edf1">
 <p>
 The labels are the <b><b>expectation values of the target states</b></b> we want our qubits to achieve.
 In this example, we want the qubit to be at \(|0\rangle\) (for input command 0) or \(|1\rangle\) (for input command 1). As we have seen earlier, expectation values at \(|0\rangle\) and \(|1\rangle\) are 1 and -1 respectively. Therefore our labels correspond to input commands are <code>[1, -1]</code>.
@@ -425,18 +424,18 @@ In this example, we want the qubit to be at \(|0\rangle\) (for input command 0) 
 </div>
 </div>
 
-<div id="outline-container-org350c6d6" class="outline-3">
-<h3 id="org350c6d6">Outputs</h3>
-<div class="outline-text-3" id="text-org350c6d6">
+<div id="outline-container-org4cd54e8" class="outline-3">
+<h3 id="org4cd54e8">Outputs</h3>
+<div class="outline-text-3" id="text-org4cd54e8">
 <p>
 The outputs of our hybrid model are the expectation values of the calibrated qubits.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org33f1b50" class="outline-3">
-<h3 id="org33f1b50">Model</h3>
-<div class="outline-text-3" id="text-org33f1b50">
+<div id="outline-container-org7f71c38" class="outline-3">
+<h3 id="org7f71c38">Model</h3>
+<div class="outline-text-3" id="text-org7f71c38">
 <p>
 Our model will include both classical and quantum parts.
 </p>
@@ -462,17 +461,17 @@ Does it make more sense now? :-)
 </div>
 </section>
 
-<section id="outline-container-orgc81dabe" class="outline-2">
-<h2 id="orgc81dabe">Code Walkthrough</h2>
-<div class="outline-text-2" id="text-orgc81dabe">
+<section id="outline-container-org0f3fa8c" class="outline-2">
+<h2 id="org0f3fa8c">Code Walkthrough</h2>
+<div class="outline-text-2" id="text-org0f3fa8c">
 <p>
 Now we have a decent understanding of the problem and our model. Let&rsquo;s get to the code.
 </p>
 </div>
 
-<div id="outline-container-org3d17e7a" class="outline-3">
-<h3 id="org3d17e7a">Setup</h3>
-<div class="outline-text-3" id="text-org3d17e7a">
+<div id="outline-container-orgb7deb6c" class="outline-3">
+<h3 id="orgb7deb6c">Setup</h3>
+<div class="outline-text-3" id="text-orgb7deb6c">
 <p>
 You&rsquo;ll need to install TensorFlow (2.3.1+) and TensorFlow Quantum on your computer. The easiest way is to use pip:
 </p>
@@ -485,9 +484,9 @@ pip install -q tensorflow-quantum
 </div>
 </div>
 
-<div id="outline-container-org7c7d9f2" class="outline-3">
-<h3 id="org7c7d9f2">Import modules</h3>
-<div class="outline-text-3" id="text-org7c7d9f2">
+<div id="outline-container-orga66a60c" class="outline-3">
+<h3 id="orga66a60c">Import modules</h3>
+<div class="outline-text-3" id="text-orga66a60c">
 <p>
 Import TFQ and the dependency modules:
 </p>
@@ -509,9 +508,9 @@ Import TFQ and the dependency modules:
 </div>
 </div>
 
-<div id="outline-container-orgfd6bfe3" class="outline-3">
-<h3 id="orgfd6bfe3">Prepare the Inputs</h3>
-<div class="outline-text-3" id="text-orgfd6bfe3">
+<div id="outline-container-org21a7704" class="outline-3">
+<h3 id="org21a7704">Prepare the Inputs</h3>
+<div class="outline-text-3" id="text-org21a7704">
 <p>
 First we&rsquo;ll create a qubit and prepare the dataset.
 </p>
@@ -566,7 +565,7 @@ Print out the noisy circuit. We can see that the &ldquo;perfect&rdquo; qubit has
 </pre>
 </div>
 
-<pre class="example" id="orgdca0af9">
+<pre class="example" id="org22ae291">
 [3.84902356 3.3647054  3.03737137]
 (0, 0): ───Rx(1.23π)───Ry(1.07π)───Rz(0.967π)───
 </pre>
@@ -590,9 +589,9 @@ commands_input = tf.keras.Input(shape=(1,),
 </div>
 </div>
 
-<div id="outline-container-org1928726" class="outline-3">
-<h3 id="org1928726">Prepare the Labels</h3>
-<div class="outline-text-3" id="text-org1928726">
+<div id="outline-container-org662246b" class="outline-3">
+<h3 id="org662246b">Prepare the Labels</h3>
+<div class="outline-text-3" id="text-org662246b">
 <p>
 The labels are the expectation values we want for each command. In this example, we want 1 for command 0 and -1 for command 1.
 </p>
@@ -605,9 +604,9 @@ The labels are the expectation values we want for each command. In this example,
 </div>
 </div>
 
-<div id="outline-container-orgc870d12" class="outline-3">
-<h3 id="orgc870d12">Build our model</h3>
-<div class="outline-text-3" id="text-orgc870d12">
+<div id="outline-container-org3d64627" class="outline-3">
+<h3 id="org3d64627">Build our model</h3>
+<div class="outline-text-3" id="text-org3d64627">
 <p>
 Classical part of the model is a simple DNN. Since the problem is fairly small, a simple DNN with two layers will be good enough.
 </p>
@@ -643,10 +642,10 @@ SVGCircuit(model_circuit)
 </div>
 
 
-<div id="org26441e8" class="figure">
-<p><img src="../images/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="480px" />
-</p>
-</div>
+<figure id="orgd1959dc">
+<img src="../images/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="480px">
+
+</figure>
 
 <p>
 How do we incorporate this calibration circuit (<code>model_circuit</code>) into our model? We need to wrap it into a Keras layer so it can be connected with other layers.
@@ -695,16 +694,16 @@ A little visualization of our model&#x2026;
 </div>
 
 
-<div id="org9908f19" class="figure">
-<p><img src="../images/output_35_0.png" alt="output_35_0.png" width="560px" />
-</p>
-</div>
+<figure id="org349414c">
+<img src="../images/output_35_0.png" alt="output_35_0.png" width="560px">
+
+</figure>
 </div>
 </div>
 
-<div id="outline-container-orgc3a9a0e" class="outline-3">
-<h3 id="orgc3a9a0e">Train our model</h3>
-<div class="outline-text-3" id="text-orgc3a9a0e">
+<div id="outline-container-org6cd40c2" class="outline-3">
+<h3 id="org6cd40c2">Train our model</h3>
+<div class="outline-text-3" id="text-org6cd40c2">
 <p>
 We then train our model just like a normal DNN, using Adam as optimizer and MSE as the loss function.
 </p>
@@ -736,16 +735,16 @@ plt.show()
 </div>
 
 
-<div id="org6f35b8f" class="figure">
-<p><img src="../images/output_39_0.png" alt="output_39_0.png" width="480px" />
-</p>
-</div>
+<figure id="org3d9762a">
+<img src="../images/output_39_0.png" alt="output_39_0.png" width="480px">
+
+</figure>
 </div>
 </div>
 
-<div id="outline-container-org86d4555" class="outline-3">
-<h3 id="org86d4555">Verify our model</h3>
-<div class="outline-text-3" id="text-org86d4555">
+<div id="outline-container-org5cb648f" class="outline-3">
+<h3 id="org5cb648f">Verify our model</h3>
+<div class="outline-text-3" id="text-org5cb648f">
 <p>
 We can verify our model by calling it with commands 0 and 1:
 </p>
@@ -755,7 +754,7 @@ We can verify our model by calling it with commands 0 and 1:
 </pre>
 </div>
 
-<pre class="example" id="org3501264">
+<pre class="example" id="orgab679fc">
 &lt;tf.Tensor: shape=(2, 1), dtype=float32, numpy=
     array([[ 0.9891974],
            [-0.9958328]], dtype=float32)&gt;
@@ -780,9 +779,9 @@ Congratulations! You have successfully trained your first Hybrid Quantum-Classic
 </div>
 </section>
 
-<section id="outline-container-orgb09a43d" class="outline-2">
-<h2 id="orgb09a43d">Next Steps</h2>
-<div class="outline-text-2" id="text-orgb09a43d">
+<section id="outline-container-org6984af4" class="outline-2">
+<h2 id="org6984af4">Next Steps</h2>
+<div class="outline-text-2" id="text-org6984af4">
 <p>
 In the next step, I&rsquo;ll expand this example into a more generic case where we can calibrate qubit with expectation values on other operators.
 </p>
@@ -792,7 +791,7 @@ In the next step, I&rsquo;ll expand this example into a more generic case where 
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

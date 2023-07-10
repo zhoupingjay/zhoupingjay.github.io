@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>聊聊量子搜索算法(Grover算法) - 1</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,17 +71,16 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">聊聊量子搜索算法(Grover算法) - 1
-<br />
-<span class="subtitle">Ping Zhou, 2021-01-25</span>
-</h1>
-<p>
+<header>
+<h1 class="title">聊聊量子搜索算法(Grover算法) - 1</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-01-25</p>
+</header><p>
 今天来聊一下量子计算里面的一个经典算法：量子搜索算法（Grover算法）。
 </p>
 
-<section id="outline-container-org498fca4" class="outline-2">
-<h2 id="org498fca4">搜索问题</h2>
-<div class="outline-text-2" id="text-org498fca4">
+<section id="outline-container-org9254557" class="outline-2">
+<h2 id="org9254557">搜索问题</h2>
+<div class="outline-text-2" id="text-org9254557">
 <p>
 假设我们有N个无结构的元素，比如很多指纹信息，我们的任务是从中找出符合某些要求的元素。为方便讨论，我们给这些元素编号，从0开始一直到N-1，并且其中只有1个符合我们要找的条件。如果我们用经典计算机来搜索的话，只能一个一个元素的试，看它是否符合要求，因此需要试的次数为\(O(N)\)。但是如果使用量子计算机，只需要试\(O(\sqrt{N})\)次数就可以找到。和经典计算机相比，虽然这不是指数级别的加速，但也相当可观了，尤其是如果“判断元素是否符合要求”这个操作很费力的话，减少判断次数的收益也会很大。
 </p>
@@ -102,17 +101,17 @@ f : \{0, 1\}^{n} \rightarrow \{0, 1\}
 </div>
 </section>
 
-<section id="outline-container-org65b245a" class="outline-2">
-<h2 id="org65b245a">量子搜索算法(Grover算法)</h2>
-<div class="outline-text-2" id="text-org65b245a">
+<section id="outline-container-org100244d" class="outline-2">
+<h2 id="org100244d">量子搜索算法(Grover算法)</h2>
+<div class="outline-text-2" id="text-org100244d">
 <p>
 定义了搜索问题，接下来讨论量子搜索算法。
 </p>
 </div>
 
-<div id="outline-container-org1fb553e" class="outline-3">
-<h3 id="org1fb553e">量子搜索电路</h3>
-<div class="outline-text-3" id="text-org1fb553e">
+<div id="outline-container-org13b299c" class="outline-3">
+<h3 id="org13b299c">量子搜索电路</h3>
+<div class="outline-text-3" id="text-org13b299c">
 <p>
 量子搜索算法（Grover算法）是一个迭代的过程，主要思路是从初始状态出发，重复进行多次变换，让系统越来越接近目标状态，最后进行测量，就能以很高的概率得到正确结果。
 </p>
@@ -122,10 +121,10 @@ f : \{0, 1\}^{n} \rightarrow \{0, 1\}
 </p>
 
 
-<div id="org1deecb9" class="figure">
-<p><img src="../images/Quantum Search - Grover's Algorithm.png" alt="Quantum Search - Grover's Algorithm.png" />
-</p>
-</div>
+<figure id="orge7f25a2">
+<img src="../images/Quantum Search - Grover's Algorithm.png" alt="Quantum Search - Grover's Algorithm.png">
+
+</figure>
 
 <p>
 整个算法大致分成这样几步：
@@ -151,9 +150,9 @@ f : \{0, 1\}^{n} \rightarrow \{0, 1\}
 </div>
 </div>
 
-<div id="outline-container-org68d67f3" class="outline-3">
-<h3 id="org68d67f3">G变换</h3>
-<div class="outline-text-3" id="text-org68d67f3">
+<div id="outline-container-org26e1bc6" class="outline-3">
+<h3 id="org26e1bc6">G变换</h3>
+<div class="outline-text-3" id="text-org26e1bc6">
 <p>
 我们把量子搜索算法里每次迭代的过程称为G变换，这个G变换内部又分成4个步骤。
 </p>
@@ -310,14 +309,14 @@ G=(2|\psi \rangle \langle \psi | - I)O
 </div>
 </section>
 
-<section id="outline-container-org6b79287" class="outline-2">
-<h2 id="org6b79287">下文预告：量子搜索算法是如何找到答案的？</h2>
+<section id="outline-container-orgc81e9ab" class="outline-2">
+<h2 id="orgc81e9ab">下文预告：量子搜索算法是如何找到答案的？</h2>
 </section>
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

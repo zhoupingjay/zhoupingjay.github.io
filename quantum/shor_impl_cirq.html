@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>实战：用Cirq实现量子因式分解算法</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,17 +71,16 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">实战：用Cirq实现量子因式分解算法
-<br />
-<span class="subtitle">Ping Zhou, 2021-07-02</span>
-</h1>
-<p>
+<header>
+<h1 class="title">实战：用Cirq实现量子因式分解算法</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-07-02</p>
+</header><p>
 前面的“量子因式分解系列”讨论了Shor算法和它的量子电路，今天切换到编程模式，用谷歌的Cirq框架来实现Shor算法，并用它来解决简单的因式分解问题。
 </p>
 
-<section id="outline-container-org483f3fc" class="outline-2">
-<h2 id="org483f3fc">导入依赖包</h2>
-<div class="outline-text-2" id="text-org483f3fc">
+<section id="outline-container-org298565f" class="outline-2">
+<h2 id="org298565f">导入依赖包</h2>
+<div class="outline-text-2" id="text-org298565f">
 <p>
 首先还是导入需要的包：
 </p>
@@ -100,17 +99,17 @@
 </div>
 </section>
 
-<section id="outline-container-orge783c1d" class="outline-2">
-<h2 id="orge783c1d">指数取模运算</h2>
-<div class="outline-text-2" id="text-orge783c1d">
+<section id="outline-container-orge1038cc" class="outline-2">
+<h2 id="orge1038cc">指数取模运算</h2>
+<div class="outline-text-2" id="text-orge1038cc">
 <p>
 还记得Shor算法的量子电路吗？
 </p>
 
-<div id="orgd3dd6b3" class="figure">
-<p><img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="400px" />
-</p>
-</div>
+<figure id="org4a5d66f">
+<img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="400px">
+
+</figure>
 
 <p>
 首先，我们需要一个“指数取模”的量子变换 \(U_f\) :
@@ -236,9 +235,9 @@ U_f |x\rangle|y\rangle \rightarrow |x\rangle|ya^x \mod N\rangle
 </div>
 </section>
 
-<section id="outline-container-org2e09593" class="outline-2">
-<h2 id="org2e09593">构建量子电路</h2>
-<div class="outline-text-2" id="text-org2e09593">
+<section id="outline-container-org66f704e" class="outline-2">
+<h2 id="org66f704e">构建量子电路</h2>
+<div class="outline-text-2" id="text-org66f704e">
 <p>
 有了指数取模变换，接下来就可以把它接到量子电路里去了。
 </p>
@@ -290,10 +289,10 @@ SVGCircuit(circuit)
 </p>
 
 
-<div id="org08b66b7" class="figure">
-<p><img src="../images/shor_cirq.jpg" alt="shor_cirq.jpg" width="400px" />
-</p>
-</div>
+<figure id="orgb6e4f1a">
+<img src="../images/shor_cirq.jpg" alt="shor_cirq.jpg" width="400px">
+
+</figure>
 
 <p>
 然后我们来跑一下这个电路试试，采样100次：
@@ -310,16 +309,16 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 </p>
 
 
-<div id="org8bcf65b" class="figure">
-<p><img src="../images/shor_cirq_test.png" alt="shor_cirq_test.png" width="400px" />
-</p>
-</div>
+<figure id="orgb06af04">
+<img src="../images/shor_cirq_test.png" alt="shor_cirq_test.png" width="400px">
+
+</figure>
 </div>
 </section>
 
-<section id="outline-container-org4797421" class="outline-2">
-<h2 id="org4797421">Order Finder</h2>
-<div class="outline-text-2" id="text-org4797421">
+<section id="outline-container-org804639a" class="outline-2">
+<h2 id="org804639a">Order Finder</h2>
+<div class="outline-text-2" id="text-org804639a">
 <p>
 搭建量子电路的函数有了，接下来把它包装到order finding函数里：
 </p>
@@ -367,9 +366,9 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 </div>
 </section>
 
-<section id="outline-container-org8cb4901" class="outline-2">
-<h2 id="org8cb4901">量子因式分解主函数</h2>
-<div class="outline-text-2" id="text-org8cb4901">
+<section id="outline-container-org7a51de0" class="outline-2">
+<h2 id="org7a51de0">量子因式分解主函数</h2>
+<div class="outline-text-2" id="text-org7a51de0">
 <p>
 好了，order finding的实现有了，接下来可以实现量子因式分解的主函数了。
 </p>
@@ -454,9 +453,9 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 </div>
 </section>
 
-<section id="outline-container-orgd65cdac" class="outline-2">
-<h2 id="orgd65cdac">测试一下</h2>
-<div class="outline-text-2" id="text-orgd65cdac">
+<section id="outline-container-orgfbf4704" class="outline-2">
+<h2 id="orgfbf4704">测试一下</h2>
+<div class="outline-text-2" id="text-orgfbf4704">
 <p>
 我们用主函数 <code>quantum_factor</code> 测试一下，分解N=21：
 </p>
@@ -470,7 +469,7 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 得到类似这样的输出（因为算法的随机性，每次运行的结果都会有所不同）：
 </p>
 
-<pre class="example" id="org3002bad">
+<pre class="example" id="org4269159">
 Randomly pick a=19
 Calling quantum order finding
 exponent measured: 256 nbits: 9 f: 1/2
@@ -492,7 +491,7 @@ Found factor 3!
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

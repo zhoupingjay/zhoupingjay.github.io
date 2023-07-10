@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(2) 因式分解和Order Finding问题</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,24 +71,23 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子计算会终结现在的密码体系吗？(2) 因式分解和Order Finding问题
-<br />
-<span class="subtitle">Ping Zhou, 2021-04-26</span>
-</h1>
+<header>
+<h1 class="title">量子计算会终结现在的密码体系吗？(2) 因式分解和Order Finding问题</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-04-26</p>
+</header>
 
-
-<section id="outline-container-org4619b10" class="outline-2">
-<h2 id="org4619b10">上文回顾：RSA公钥加密算法</h2>
-<div class="outline-text-2" id="text-org4619b10">
+<section id="outline-container-org51e76fe" class="outline-2">
+<h2 id="org51e76fe">上文回顾：RSA公钥加密算法</h2>
+<div class="outline-text-2" id="text-org51e76fe">
 <p>
 在<a href="shor_algorithm_1_rsa.html">上文</a>中我们讲了以RSA为代表的公钥加密算法，以及为什么其安全性的核心是因式分解问题。
 </p>
 
 
-<div id="org4161326" class="figure">
-<p><img src="../images/RSA.png" alt="RSA.png" width="480px" />
-</p>
-</div>
+<figure id="org1a25b80">
+<img src="../images/RSA.png" alt="RSA.png" width="480px">
+
+</figure>
 
 <p>
 那么为什么量子计算机能高效求解因式分解问题呢？这是因为，因式分解可以转化为Order Finding或函数周期求解问题，而这类问题，正是量子计算机所能高效求解的！
@@ -100,9 +99,9 @@
 </div>
 </section>
 
-<section id="outline-container-orgcab9c85" class="outline-2">
-<h2 id="orgcab9c85">Order Finding问题</h2>
-<div class="outline-text-2" id="text-orgcab9c85">
+<section id="outline-container-org9088edb" class="outline-2">
+<h2 id="org9088edb">Order Finding问题</h2>
+<div class="outline-text-2" id="text-org9088edb">
 <p>
 给定两个互质的数N和a，求使得 \(a^r=1 \mod N\) 的最小整数r，这就是所谓的Order Finding问题。求出的r，称为&ldquo;the order of a modulo N&rdquo;。
 </p>
@@ -123,27 +122,27 @@
 例如N=15，a=7，那么 \(f(x)=7^x \mod 15\) 函数的值：
 </p>
 
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table>
 <caption class="t-above"><span class="table-number">Table 1:</span> \(f(x)=7^x \mod 15\)</caption>
 
 <colgroup>
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-left" />
+<col  class="org-left">
 </colgroup>
 <thead>
 <tr>
@@ -183,9 +182,9 @@
 </div>
 </section>
 
-<section id="outline-container-org4a62a0d" class="outline-2">
-<h2 id="org4a62a0d">为什么因式分解问题可以转化为Order Finding？</h2>
-<div class="outline-text-2" id="text-org4a62a0d">
+<section id="outline-container-org65d1121" class="outline-2">
+<h2 id="org65d1121">为什么因式分解问题可以转化为Order Finding？</h2>
+<div class="outline-text-2" id="text-org65d1121">
 <p>
 假设要分解的大数是N，如何把它转化为Order Finding问题呢？
 </p>
@@ -273,7 +272,7 @@ GCD(7^{4/2}-1, 15) = GCD(49-1, 15) = 3 \\
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子搜索问题的扩展：量子计数</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,11 +71,10 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子搜索问题的扩展：量子计数
-<br />
-<span class="subtitle">Ping Zhou, 2021-10-19</span>
-</h1>
-<p>
+<header>
+<h1 class="title">量子搜索问题的扩展：量子计数</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-10-19</p>
+</header><p>
 前文<a href="grovers_algorithm_1.html">《量子搜索》</a>讨论了Grover算法，今天来讨论量子搜索的一个扩展问题——量子计数。
 </p>
 
@@ -104,10 +103,10 @@
 </p>
 
 
-<div id="org4d115fb" class="figure">
-<p><img src="../images/quantum_counting_grover.jpg" alt="quantum_counting_grover.jpg" width="320px" />
-</p>
-</div>
+<figure id="org1325579">
+<img src="../images/quantum_counting_grover.jpg" alt="quantum_counting_grover.jpg" width="320px">
+
+</figure>
 
 <p>
 在这个图里， \(|\alpha\rangle\) 表示所有非目标状态的叠加，而 \(|\beta\rangle\) 是所有目标状态的叠加。显然它们互相是正交的，如果用它们作为两个轴张成一个平面，那么Grover算法里的G变换就是把输入向量 \(|\psi\rangle\) 朝着 \(|\beta\rangle\) 轴旋转一个角度 \(\theta\) 。因此G变换可以写成这样的矩阵：
@@ -127,10 +126,10 @@
 </p>
 
 
-<div id="org9007b4d" class="figure">
-<p><img src="../images/quantum_counting_circuit.jpg" alt="quantum_counting_circuit.jpg" width="480px" />
-</p>
-</div>
+<figure id="org4cb61c8">
+<img src="../images/quantum_counting_circuit.jpg" alt="quantum_counting_circuit.jpg" width="480px">
+
+</figure>
 
 <p>
 假设搜索空间大小N可以用n位二进制数表示，这里输入用了n+1位，也就是把搜索空间扩大了一倍。为什么要这么做呢？
@@ -180,7 +179,7 @@ t = m + \lceil \log (2+\frac{1}{2\epsilon}) \rceil
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

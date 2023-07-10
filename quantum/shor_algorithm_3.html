@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(3) Shor算法初探</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,15 +71,14 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子计算会终结现在的密码体系吗？(3) Shor算法初探
-<br />
-<span class="subtitle">Ping Zhou, 2021-04-29</span>
-</h1>
+<header>
+<h1 class="title">量子计算会终结现在的密码体系吗？(3) Shor算法初探</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-04-29</p>
+</header>
 
-
-<section id="outline-container-orgc336062" class="outline-2">
-<h2 id="orgc336062">上文回顾：因式分解问题可以转化为Order Finding</h2>
-<div class="outline-text-2" id="text-orgc336062">
+<section id="outline-container-orge9a8fb8" class="outline-2">
+<h2 id="orge9a8fb8">上文回顾：因式分解问题可以转化为Order Finding</h2>
+<div class="outline-text-2" id="text-orge9a8fb8">
 <p>
 在<a href="shor_algorithm_2_order_finding.html">上文</a>中，我们分析了为什么因式分解问题可以转化为Order Finding，因此如果能高效求解Order Finding，也就能高效解决因式分解问题。
 </p>
@@ -94,9 +93,9 @@
 </div>
 </section>
 
-<section id="outline-container-org0ba6d4b" class="outline-2">
-<h2 id="org0ba6d4b">用量子计算机解决因式分解问题：Shor算法</h2>
-<div class="outline-text-2" id="text-org0ba6d4b">
+<section id="outline-container-org896db2c" class="outline-2">
+<h2 id="org896db2c">用量子计算机解决因式分解问题：Shor算法</h2>
+<div class="outline-text-2" id="text-org896db2c">
 <p>
 Shor算法是Peter Shor在1994年提出的一种量子计算算法，可以在多项式时间内求解因式分解问题。
 </p>
@@ -119,10 +118,10 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </ol>
 
 
-<div id="org2b97843" class="figure">
-<p><img src="../images/shor1.png" alt="shor1.png" width="400px" />
-</p>
-</div>
+<figure id="orgd735cd0">
+<img src="../images/shor1.png" alt="shor1.png" width="400px">
+
+</figure>
 
 <p>
 这就是Shor算法解决因式分解问题的总体思路！
@@ -134,9 +133,9 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </div>
 </section>
 
-<section id="outline-container-org0b4c3d0" class="outline-2">
-<h2 id="org0b4c3d0">用量子计算机求解Order Finding问题</h2>
-<div class="outline-text-2" id="text-org0b4c3d0">
+<section id="outline-container-orgea802cd" class="outline-2">
+<h2 id="orgea802cd">用量子计算机求解Order Finding问题</h2>
+<div class="outline-text-2" id="text-orgea802cd">
 <p>
 用量子计算机求解Order Finding问题，实质上是要找到函数 \(f(x)=a^x \mod N\) 的周期。看过我之前文章的朋友可能会想到，首先我们要考虑如何将这个函数整合到我们的量子电路里，也就是把它转换成一个量子电路能用的变换 \(U_f\) 。
 </p>
@@ -146,10 +145,10 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </p>
 
 
-<div id="orgdd1c92d" class="figure">
-<p><img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px" />
-</p>
-</div>
+<figure id="orgde6baa4">
+<img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px">
+
+</figure>
 
 <p>
 这个变换使用2个量子寄存器x和y。这两个寄存器都是由多个量子位构成的，可以把它们看作是多个量子位构成的二进制数。
@@ -169,10 +168,10 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 </p>
 
 
-<div id="org88c372e" class="figure">
-<p><img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px" />
-</p>
-</div>
+<figure id="org33344b4">
+<img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px">
+
+</figure>
 
 <ul class="org-ul">
 <li>第1个寄存器x：初始为 \(|0\rangle\) (注意哦，这是n个量子位组成的二进制数0，不是一个量子位) ，然后通过一个多位的H门，把它制备成 \(|0\rangle, |1\rangle, |2\rangle, \dots, |2^n-1\rangle\) 的等权叠加态：</li>
@@ -198,13 +197,13 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 还是用上次的例子，N=15, a=7, \(f(x)=7^x \mod 15\) 是一个周期为4的函数：
 </p>
 
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table>
 
 
 <colgroup>
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-right" />
+<col  class="org-right">
 </colgroup>
 <thead>
 <tr>
@@ -325,7 +324,7 @@ Shor算法求解因式分解问题的过程，分为『经典』部分和『量�
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

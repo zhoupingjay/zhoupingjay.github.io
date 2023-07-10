@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2023-04-24 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Emacs里如何把某个字符替换为“换行”？</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -50,11 +50,10 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">Emacs里如何把某个字符替换为“换行”？
-<br />
-<span class="subtitle">Ping Zhou, 2022-09-04</span>
-</h1>
-<p>
+<header>
+<h1 class="title">Emacs里如何把某个字符替换为“换行”？</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2022-09-04</p>
+</header><p>
 Emacs 的 <code>query-replace</code> 是一个很常用的查找替换命令（快捷键 <code>M-%</code> ）。这个命令会提示你输入要查找的字符串，再输入要替换的字符串，然后就会从当前位置逐个查找和确认是否替换。
 </p>
 
@@ -71,20 +70,20 @@ Emacs 的 <code>query-replace</code> 是一个很常用的查找替换命令（�
 </p>
 
 
-<div id="orge89ab91" class="figure">
-<p><img src="../images/2022/20220904_emacs_replace_newline1.png" alt="20220904_emacs_replace_newline1.png" width="640px" />
-</p>
-</div>
+<figure id="org8957199">
+<img src="../images/2022/20220904_emacs_replace_newline1.png" alt="20220904_emacs_replace_newline1.png" width="640px">
+
+</figure>
 
 <p>
 这里的 <code>C-q</code> 表示 <code>quoted-insert</code> ，意思是告诉 Emacs 输入后面的控制字符。而 <code>C-j</code> 代表的是 ASCII 码 0x0a，也就是 newline。然后按下回车，就会用 ASCII 码 0x0a 来替换字符串“;”。
 </p>
 
 
-<div id="org119b0d5" class="figure">
-<p><img src="../images/2022/20220904_emacs_replace_newline2.png" alt="20220904_emacs_replace_newline2.png" width="640px" />
-</p>
-</div>
+<figure id="orge1328f2">
+<img src="../images/2022/20220904_emacs_replace_newline2.png" alt="20220904_emacs_replace_newline2.png" width="640px">
+
+</figure>
 
 <p>
 还有种方法，就是在 <code>C-q</code> 之后输入 ASCII 码的八进制数，例如 0x0a 的八进制数就是 12 。
@@ -97,7 +96,7 @@ Emacs 的 <code>query-replace</code> 是一个很常用的查找替换命令（�
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

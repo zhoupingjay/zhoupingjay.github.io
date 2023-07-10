@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>用Lisp可视化量子因式分解Shor算法的例子</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,11 +71,10 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">用Lisp可视化量子因式分解Shor算法的例子
-<br />
-<span class="subtitle">Ping Zhou, 2021-06-11</span>
-</h1>
-<p>
+<header>
+<h1 class="title">用Lisp可视化量子因式分解Shor算法的例子</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-06-11</p>
+</header><p>
 在前文中我初步尝试了Lisp的数值计算和绘图功能，本着“拿着锤子找钉子”的精神，这次我们来搞个实际的应用，用Lisp来演示和可视化量子因式分解算法（Shor​算法）。
 </p>
 
@@ -125,7 +124,7 @@
 <code>shor-find-mods</code> 从x=0开始，逐个计算 \(a^x \mod N\) ，把结果记录到一个序列里，直到序列里发现重复，这时候序列的长度就是函数的周期r。另外序列本身也作为副产品返回给调用方。例如在前文的例子中，N=21，a=11 ，返回的序列就是 (1 11 16 8 4 2)，周期是6:
 </p>
 
-<pre class="example" id="org0e5aa24">
+<pre class="example" id="orga787cfa">
 CL-USER&gt; (shor-find-mods 11 21)
 6 (3 bits, #x6, #o6, #b110)
 (1 11 16 8 4 2)
@@ -202,10 +201,10 @@ CL-USER&gt; (shor-find-mods 11 21)
 </div>
 
 
-<div id="orga879263" class="figure">
-<p><img src="../images/shor_example_prob_dist.png" alt="shor_example_prob_dist.png" width="480px" />
-</p>
-</div>
+<figure id="orgf69106d">
+<img src="../images/shor_example_prob_dist.png" alt="shor_example_prob_dist.png" width="480px">
+
+</figure>
 
 <p>
 调整一下offset (l=0)：
@@ -217,10 +216,10 @@ CL-USER&gt; (shor-find-mods 11 21)
 </div>
 
 
-<div id="org6202d35" class="figure">
-<p><img src="../images/shor_example_prob_dist2.png" alt="shor_example_prob_dist2.png" width="480px" />
-</p>
-</div>
+<figure id="orga7558bb">
+<img src="../images/shor_example_prob_dist2.png" alt="shor_example_prob_dist2.png" width="480px">
+
+</figure>
 
 <p>
 Lisp真有意思啊！
@@ -229,7 +228,7 @@ Lisp真有意思啊！
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

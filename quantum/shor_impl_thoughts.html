@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>聊聊量子因式分解算法的实现</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,26 +71,25 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">聊聊量子因式分解算法的实现
-<br />
-<span class="subtitle">Ping Zhou, 2021-06-22</span>
-</h1>
-<p>
+<header>
+<h1 class="title">聊聊量子因式分解算法的实现</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-06-22</p>
+</header><p>
 在前面的Shor算法系列中，我讨论了用量子计算进行因式分解的思路。但是这些基本上都是理论上的推导，实际要实现量子因式分解，有哪些难点？解决的思路又是什么？今天就来聊聊我的实现方法。
 </p>
 
-<section id="outline-container-orga8d28c1" class="outline-2">
-<h2 id="orga8d28c1">Shor算法实现的难点：指数取模</h2>
-<div class="outline-text-2" id="text-orga8d28c1">
+<section id="outline-container-orgd8ef16d" class="outline-2">
+<h2 id="orgd8ef16d">Shor算法实现的难点：指数取模</h2>
+<div class="outline-text-2" id="text-orgd8ef16d">
 <p>
 在Shor算法中，我们用量子计算来寻找函数 \(f(x)=a^x \mod N\) 的周期（order），并且这一步也是Shor算法中唯一的『量子』部分。
 </p>
 
 
-<div id="org5050db0" class="figure">
-<p><img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="400px" />
-</p>
-</div>
+<figure id="org5d8a83f">
+<img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="400px">
+
+</figure>
 
 <p>
 为什么Shor算法这么设计？因为“order finding”这一步目前还没有找到高效的经典算法，而量子计算机则可以用多项式代价求解。
@@ -134,9 +133,9 @@
 </div>
 </section>
 
-<section id="outline-container-org8f6a6a4" class="outline-2">
-<h2 id="org8f6a6a4">量子指数取模</h2>
-<div class="outline-text-2" id="text-org8f6a6a4">
+<section id="outline-container-org8f9ee17" class="outline-2">
+<h2 id="org8f9ee17">量子指数取模</h2>
+<div class="outline-text-2" id="text-org8f9ee17">
 <p>
 这个『量子指数取模』变换的实现，其实方法不止一种，这里结合我对相关论文的理解，提出我的一个实现方法。
 </p>
@@ -219,10 +218,10 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<div id="orge4595b6" class="figure">
-<p><img src="../images/mod_exp.jpg" alt="mod_exp.jpg" width="400px" />
-</p>
-</div>
+<figure id="org95b7716">
+<img src="../images/mod_exp.jpg" alt="mod_exp.jpg" width="400px">
+
+</figure>
 
 <p>
 这里面，每一个V变换还带一个辅助量子寄存器（就是图中最下面一行，初始状态为 \(|0\rangle\) ）。 这是因为量子电路里的变换必须是可逆的，像这样的运算必须带相应的辅助寄存器来保证它的可逆性，在量子电路里这是常见的套路。这些变换一共有n个，可以在每次运行电路前，根据a的值构造好，然后放到电路里去。
@@ -234,18 +233,18 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </div>
 </section>
 
-<section id="outline-container-orgb3abb6d" class="outline-2">
-<h2 id="orgb3abb6d">乘积取模</h2>
-<div class="outline-text-2" id="text-orgb3abb6d">
+<section id="outline-container-org0c125fd" class="outline-2">
+<h2 id="org0c125fd">乘积取模</h2>
+<div class="outline-text-2" id="text-org0c125fd">
 <p>
 乘积取模，就是计算 \(ax \mod N\) （x是输入，a和N都是已知的数），这方面其实已经有不少论文讨论它的实现，例如 Vedral 等的 Quantum Networks for Elementary Arithmetic Operations 。考虑到篇幅，这里不做详细的展开了，总之我们可以从基本的量子电路门出发，构造这样一个『乘积取模』的变换 \(U_g\) ：
 </p>
 
 
-<div id="org5469cf0" class="figure">
-<p><a href="../images/multiply_modulo.jpg" width="280px"><img src="../images/multiply_modulo.jpg" alt="multiply_modulo.jpg" width="280px" /></a>
-</p>
-</div>
+<figure id="orgb71254c">
+<a href="../images/multiply_modulo.jpg" width="280px"><img src="../images/multiply_modulo.jpg" alt="multiply_modulo.jpg" width="280px"></a>
+
+</figure>
 
 <p>
 但是，我们的指数取模电路，需要把多个乘积取模变换连接起来，上面这个 \(U_g\) 变换并不能直接用，不信你可以试试，把多个这样的变换接起来，会变成啥样 :-)
@@ -256,10 +255,10 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<div id="org33f3b83" class="figure">
-<p><img src="../images/ax_mod_n.jpg" alt="ax_mod_n.jpg" width="240px" />
-</p>
-</div>
+<figure id="org46a5ecf">
+<img src="../images/ax_mod_n.jpg" alt="ax_mod_n.jpg" width="240px">
+
+</figure>
 
 <p>
 例如第k位对应的V变换，就是给输入乘上 \(g=a^{2^k}\) （取模乘法）。
@@ -274,20 +273,20 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<div id="org4d13bbb" class="figure">
-<p><a href="../images/multiply_modulo1.jpg" width="280px"><img src="../images/multiply_modulo1.jpg" alt="multiply_modulo1.jpg" width="280px" /></a>
-</p>
-</div>
+<figure id="orgcc992bd">
+<a href="../images/multiply_modulo1.jpg" width="280px"><img src="../images/multiply_modulo1.jpg" alt="multiply_modulo1.jpg" width="280px"></a>
+
+</figure>
 
 <p>
 如果这个逆变换里的k，取值 \(k=g^{-1} \mod N\) ，然后把它和 \(U_g\) ，中间用一个SWAP门连起来，会得到什么？
 </p>
 
 
-<div id="orga328a67" class="figure">
-<p><img src="../images/multiply_modulo2.jpg" alt="multiply_modulo2.jpg" width="480px" />
-</p>
-</div>
+<figure id="org6bc9078">
+<img src="../images/multiply_modulo2.jpg" alt="multiply_modulo2.jpg" width="480px">
+
+</figure>
 
 <p>
 在最后这个逆变换 \(U_k^{-1}\) 里， \(k=g^{-1} \mod N\) ，第一个输入 \(|u\rangle = |gx\mod N\rangle\) ，第二个输入 \(|x\rangle\) ，所以这个逆变换的两个输出，第一个还是 \(|u\rangle = |gx\mod N\rangle\) ，第二个是 \(|x-(ku \mod N)\rangle\) 。把 \(|u\rangle = |gx\mod N\rangle\) 和 \(k=g^{-1} \mod N\) 代入进去，第二个输出就变成了：
@@ -303,10 +302,10 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<div id="org5a7d278" class="figure">
-<p><img src="../images/multiply_modulo3.jpg" alt="multiply_modulo3.jpg" width="480px" />
-</p>
-</div>
+<figure id="orgc939272">
+<img src="../images/multiply_modulo3.jpg" alt="multiply_modulo3.jpg" width="480px">
+
+</figure>
 
 <p>
 所以整个过程是这样：
@@ -320,25 +319,25 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </ol>
 
 
-<div id="orgd286b3a" class="figure">
-<p><img src="../images/mod_exp2.jpg" alt="mod_exp2.jpg" width="480px" />
-</p>
-</div>
+<figure id="org12c7cfa">
+<img src="../images/mod_exp2.jpg" alt="mod_exp2.jpg" width="480px">
+
+</figure>
 </div>
 </section>
 
-<section id="outline-container-orgb67cdf0" class="outline-2">
-<h2 id="orgb67cdf0">量子加法器和乘法器</h2>
-<div class="outline-text-2" id="text-orgb67cdf0">
+<section id="outline-container-orgb042913" class="outline-2">
+<h2 id="orgb042913">量子加法器和乘法器</h2>
+<div class="outline-text-2" id="text-orgb042913">
 <p>
 乘积取模变换，内部还可以分解成乘法和加法。这些也都可以用基本的量子电路门构造出来，例如量子加法器可以这么实现：
 </p>
 
 
-<div id="org92780a8" class="figure">
-<p><img src="../images/adder.png" alt="adder.png" width="200px" />
-</p>
-</div>
+<figure id="org6bf56b6">
+<img src="../images/adder.png" alt="adder.png" width="200px">
+
+</figure>
 
 <p>
 量子乘法器和加法器，很多论文和课本里也都有详细的讨论，这里就不重复了。
@@ -346,9 +345,9 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </div>
 </section>
 
-<section id="outline-container-orgd82fe47" class="outline-2">
-<h2 id="orgd82fe47">复杂度</h2>
-<div class="outline-text-2" id="text-orgd82fe47">
+<section id="outline-container-orge2bb536" class="outline-2">
+<h2 id="orge2bb536">复杂度</h2>
+<div class="outline-text-2" id="text-orge2bb536">
 <p>
 简单聊一下这个电路的复杂度，我不是这方面的专家，只能大致估算一下，如有不对的地方请指教。
 </p>
@@ -376,7 +375,7 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

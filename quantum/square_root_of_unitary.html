@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子相位估计的应用：求解幺正变换的平方根</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,11 +71,10 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子相位估计的应用：求解幺正变换的平方根
-<br />
-<span class="subtitle">Ping Zhou, 2021-08-27</span>
-</h1>
-<p>
+<header>
+<h1 class="title">量子相位估计的应用：求解幺正变换的平方根</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-08-27</p>
+</header><p>
 在前文<a href="phase-estimation.html">《量子相位估计》</a>里，我们讨论了量子相位估计算法，它也是很多量子算法能有指数级加速的关键。今天来讨论量子相位估计的另一个应用：求解给定幺正变换的平方根。
 </p>
 
@@ -104,10 +103,10 @@ U|u\rangle = e^{i\phi}|u\rangle
 </p>
 
 
-<div id="orgd62aff3" class="figure">
-<p><img src="../images/phase_estimation_simplified.jpg" alt="phase_estimation_simplified.jpg" width="400px" />
-</p>
-</div>
+<figure id="org0df6773">
+<img src="../images/phase_estimation_simplified.jpg" alt="phase_estimation_simplified.jpg" width="400px">
+
+</figure>
 
 <p>
 你可能注意到，这里的输入 \(|u\rangle\) 是U的 <b>一个</b> 本征向量。但是，U可能有很多个本征向量，对不对？
@@ -126,10 +125,10 @@ U|u\rangle = e^{i\phi}|u\rangle
 </p>
 
 
-<div id="orge7f2d2f" class="figure">
-<p><img src="../images/phase_estimation_simplified_generic.jpg" alt="phase_estimation_simplified_generic.jpg" width="400px" />
-</p>
-</div>
+<figure id="orgc553f6d">
+<img src="../images/phase_estimation_simplified_generic.jpg" alt="phase_estimation_simplified_generic.jpg" width="400px">
+
+</figure>
 
 <p>
 答案很容易猜到，既然左边的输入是本征向量的叠加，那么右边的输出，就是对应的相位估计结果的叠加：
@@ -180,10 +179,10 @@ V^2 |u_j\rangle = VV|u_j\rangle = e^{i\phi_j}|u\rangle = U|u_j\rangle
 </p>
 
 
-<div id="orgfa47f64" class="figure">
-<p><img src="../images/phase_estimation_sqroot.jpg" alt="phase_estimation_sqroot.jpg" width="720px" />
-</p>
-</div>
+<figure id="orge4d4ef6">
+<img src="../images/phase_estimation_sqroot.jpg" alt="phase_estimation_sqroot.jpg" width="720px">
+
+</figure>
 
 <p>
 其中， \(|\psi\rangle\) 是U的所有本征向量的叠加：
@@ -268,10 +267,10 @@ t2: \sum_j \alpha_j e^{i\phi_j / 2} |\frac{2^n \phi_j}{2\pi}\rangle |u_j\rangle
 </p>
 
 
-<div id="org6763083" class="figure">
-<p><img src="../images/phase_estimation_sqroot2.jpg" alt="phase_estimation_sqroot2.jpg" width="720px" />
-</p>
-</div>
+<figure id="orgf0157ec">
+<img src="../images/phase_estimation_sqroot2.jpg" alt="phase_estimation_sqroot2.jpg" width="720px">
+
+</figure>
 
 <p>
 经过这个uncompute过程，t3时刻的状态：
@@ -292,7 +291,7 @@ t3: \sum_j \alpha_j e^{i\phi_j / 2} |0\rangle |u_j\rangle = |0\rangle U^{1/2} |u
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算编程实战 – 双比特Deutsch问题</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,17 +71,16 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子计算编程实战 – 双比特Deutsch问题
-<br />
-<span class="subtitle">Ping Zhou, 2020-09-04</span>
-</h1>
-<p>
+<header>
+<h1 class="title">量子计算编程实战 – 双比特Deutsch问题</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2020-09-04</p>
+</header><p>
 在上一篇 “一文看懂量子计算机的威力 – 从Deutsch问题说起” 中，我们看到了量子计算机只需一次查询就可以判断函数的特性。但是在那个例子中，我们讨论的是一个简单的单比特函数，如果把输入扩展到多比特，量子计算机是否仍然只需要一次查询呢？今天我们就结合谷歌的Cirq框架，看看量子计算的 <b>指数级</b> 加速。
 </p>
 
-<section id="outline-container-orgc7c73ff" class="outline-2">
-<h2 id="orgc7c73ff">双比特Deutsch问题</h2>
-<div class="outline-text-2" id="text-orgc7c73ff">
+<section id="outline-container-orged7949c" class="outline-2">
+<h2 id="orged7949c">双比特Deutsch问题</h2>
+<div class="outline-text-2" id="text-orged7949c">
 <p>
 首先和上次一样，假设我们有个函数f，但这次函数f输入2个比特，输出1个比特。这个函数f对我们是黑盒，我们不知道这个函数内部是怎么运作的，只能通过喂给它不同的输入，观察输出。因为输入有2个比特，因此共有4种可能的输入00，01，10，11。
 </p>
@@ -91,13 +90,13 @@
 <li>如果f的输出，0和1各占一半，我们称它为“平衡”函数。平衡函数有多少种可能呢？这个问题就相当于说，我们在下面表中的4个输出位置，需要填两个0和两个1，有几种填法？用简单的排列组合可以知道，一共有6种，也就是说一共有6个“平衡”函数。</li>
 </ul>
 
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table>
 
 
 <colgroup>
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-left" />
+<col  class="org-left">
 </colgroup>
 <tbody>
 <tr>
@@ -159,10 +158,10 @@ U_f |x_0\rangle |x_1\rangle |y\rangle
 </p>
 
 
-<div id="orgdb69184" class="figure">
-<p><img src="../images/2020/09/image-1.png" alt="image-1.png" width="480px" />
-</p>
-</div>
+<figure id="org9d5d769">
+<img src="../images/2020/09/image-1.png" alt="image-1.png" width="480px">
+
+</figure>
 
 <p>
 猜猜看在输出端测量，我们会得到啥？
@@ -174,9 +173,9 @@ U_f |x_0\rangle |x_1\rangle |y\rangle
 </div>
 </section>
 
-<section id="outline-container-orgbb1efac" class="outline-2">
-<h2 id="orgbb1efac">原理解析</h2>
-<div class="outline-text-2" id="text-orgbb1efac">
+<section id="outline-container-org7cdf948" class="outline-2">
+<h2 id="org7cdf948">原理解析</h2>
+<div class="outline-text-2" id="text-org7cdf948">
 <p>
 下面我们做一些推导，可以帮助您理解其中的原理。如果您不感兴趣，可以直接跳到下一篇的实战部分。其实推导并不难，不要被公式吓到 :-)
 </p>
@@ -334,7 +333,7 @@ H|0&rang;
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

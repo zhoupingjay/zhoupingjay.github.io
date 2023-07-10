@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>看懂量子计算机的威力 - 从Deutsch问题说起</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,23 +71,22 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">看懂量子计算机的威力 - 从Deutsch问题说起
-<br />
-<span class="subtitle">Ping Zhou, 2020-08-01</span>
-</h1>
-
-<section id="outline-container-orgcd0908b" class="outline-2">
-<h2 id="orgcd0908b">简介</h2>
-<div class="outline-text-2" id="text-orgcd0908b">
+<header>
+<h1 class="title">看懂量子计算机的威力 - 从Deutsch问题说起</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2020-08-01</p>
+</header>
+<section id="outline-container-org2d67f0d" class="outline-2">
+<h2 id="org2d67f0d">简介</h2>
+<div class="outline-text-2" id="text-org2d67f0d">
 <p>
 量子计算是现在的热门话题之一，很多人可能听说过诸如“量子霸权”之类的名词，那么量子计算为什么会被认为有可能比经典计算机更快呢？这里就从最简单的Deutsch问题入手，解析量子计算的一些基本思路，相信看完后你会对量子计算的潜力有更直观的认识。
 </p>
 </div>
 </section>
 
-<section id="outline-container-orgf14918f" class="outline-2">
-<h2 id="orgf14918f">一些术语和基础</h2>
-<div class="outline-text-2" id="text-orgf14918f">
+<section id="outline-container-orgca2c6d5" class="outline-2">
+<h2 id="orgca2c6d5">一些术语和基础</h2>
+<div class="outline-text-2" id="text-orgca2c6d5">
 <p>
 首先要先解释一下后面讨论中用到的一些术语和基础知识。
 </p>
@@ -122,18 +121,18 @@
 </div>
 </section>
 
-<section id="outline-container-org12ee6e0" class="outline-2">
-<h2 id="org12ee6e0">问题的提出：如何判断单比特函数的性质？</h2>
-<div class="outline-text-2" id="text-org12ee6e0">
+<section id="outline-container-org6b1b521" class="outline-2">
+<h2 id="org6b1b521">问题的提出：如何判断单比特函数的性质？</h2>
+<div class="outline-text-2" id="text-org6b1b521">
 <p>
 假设我们有个函数f，输入和输出都是1个比特： \(y=f(x)\) ：
 </p>
 
 
-<div id="orgd2f9ef9" class="figure">
-<p><img src="../images/2020/08/image-300x66.png" alt="image-300x66.png" width="320px" />
-</p>
-</div>
+<figure id="org8863c54">
+<img src="../images/2020/08/image-300x66.png" alt="image-300x66.png" width="320px">
+
+</figure>
 
 <p>
 因为输入和输出都只有1个比特，这个函数无非就是这4种可能：
@@ -176,9 +175,9 @@
 </div>
 </section>
 
-<section id="outline-container-orgf67f6ce" class="outline-2">
-<h2 id="orgf67f6ce">量子计算加速：Deutsch-Jozsa算法</h2>
-<div class="outline-text-2" id="text-orgf67f6ce">
+<section id="outline-container-org4554fc7" class="outline-2">
+<h2 id="org4554fc7">量子计算加速：Deutsch-Jozsa算法</h2>
+<div class="outline-text-2" id="text-org4554fc7">
 <p>
 在量子计算里，所有的变换都必须是 <b>可逆</b> 的，也就是“从输出能倒推出输入”。显然f(x)不一定能满足这个条件，所以首先要对它进行一下“包装处理”。
 </p>
@@ -190,10 +189,10 @@
 </p>
 
 
-<div id="org9deac67" class="figure">
-<p><img src="../images/2020/08/image-1-254x300.png" alt="image-1-254x300.png" width="160px" />
-</p>
-</div>
+<figure id="org35fee02">
+<img src="../images/2020/08/image-1-254x300.png" alt="image-1-254x300.png" width="160px">
+
+</figure>
 
 <p>
 和原来的函数f(x)相比， \(U_{f}\) 多了一个“辅助输入”（ancillary），即 \(|y\rangle\) 。这个辅助输入的作用，很快我们就能看到。
@@ -229,19 +228,19 @@ f(x)无非是0或者1：
 <ul class="org-ul">
 <li>如果f(x)=0，那么上面的结果就变成 $|x&rang;\frac{1}{\sqrt{2}}(|0&oplus;0&rang;-|1&oplus; 0&rang;) =</li>
 </ul>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table>
 
 
 <colgroup>
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 </colgroup>
 <tbody>
 <tr>
@@ -256,19 +255,19 @@ f(x)无非是0或者1：
 <ul class="org-ul">
 <li>如果f(x)=1，那么上面的结果就变成 $|x&rang;\frac{1}{\sqrt{2}}(|0&oplus;1&rang;-|1&oplus; 1&rang;) =</li>
 </ul>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table>
 
 
 <colgroup>
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 </colgroup>
 <tbody>
 <tr>
@@ -300,15 +299,15 @@ f(x)无非是0或者1：
 <ul class="org-ul">
 <li>\(f_0\) ：即f(x)总是0，那么 $U<sub>f</sub>|x&rang;|-&rang;=</li>
 </ul>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table>
 
 
 <colgroup>
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 
-<col  class="org-left" />
+<col  class="org-left">
 </colgroup>
 <tbody>
 <tr>
@@ -371,10 +370,10 @@ Z|x\rangle|-\rangle\)
 </p>
 
 
-<div id="orge8f29bb" class="figure">
-<p><img src="../images/2020/08/image-2-1536x549.png" alt="image-2-1536x549.png" width="900px" />
-</p>
-</div>
+<figure id="org2bc1927">
+<img src="../images/2020/08/image-2-1536x549.png" alt="image-2-1536x549.png" width="900px">
+
+</figure>
 
 <p>
 更重要的是，整个过程我们只对电路进行了 <b>一次测量</b> ，也就是说， <b>对f(x)进行了一次“查询”</b> ，我们就能知道f(x)是“常量”还是“平衡”的，而在经典计算机里，这个性质需要2次查询才能知道！
@@ -390,9 +389,9 @@ Z|x\rangle|-\rangle\)
 </div>
 </section>
 
-<section id="outline-container-orgdb3d30f" class="outline-2">
-<h2 id="orgdb3d30f">总结</h2>
-<div class="outline-text-2" id="text-orgdb3d30f">
+<section id="outline-container-orgb2495bf" class="outline-2">
+<h2 id="orgb2495bf">总结</h2>
+<div class="outline-text-2" id="text-orgb2495bf">
 <p>
 当然，Deutsch问题本身没有太多实用价值，但它显示了在某些场景下量子计算机可以比经典计算机更快。理解Deutsch算法可以帮助我们更好的理解量子计算的内在并行性。至于有潜力实用化的量子计算算法，例如Grover搜索，Shor因式分解等，以后有空再说。
 </p>
@@ -402,7 +401,7 @@ Z|x\rangle|-\rangle\)
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

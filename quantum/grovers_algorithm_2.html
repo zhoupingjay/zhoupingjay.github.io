@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>聊聊量子搜索算法(Grover算法) - 2</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,18 +71,17 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">聊聊量子搜索算法(Grover算法) - 2
-<br />
-<span class="subtitle">Ping Zhou, 2021-01-26</span>
-</h1>
-<p>
+<header>
+<h1 class="title">聊聊量子搜索算法(Grover算法) - 2</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-01-26</p>
+</header><p>
 在<a href="grovers_algorithm_1.html">上文</a>中我们讨论了量子搜索算法的实现，其中的关键是用G变换多次迭代，逐渐逼近答案，最后在输出端测量得到结果。
 那么为什么多次重复G变换能达到这样的效果呢？Grover算法的查询次数是\(O(\sqrt{N})\)，这个\(O(\sqrt{N})\)又是怎么来的呢？本文接着上一篇继续讨论这些问题。
 </p>
 
-<section id="outline-container-org5e13fa3" class="outline-2">
-<h2 id="org5e13fa3">Grover算法的图像化</h2>
-<div class="outline-text-2" id="text-org5e13fa3">
+<section id="outline-container-org7a04123" class="outline-2">
+<h2 id="org7a04123">Grover算法的图像化</h2>
+<div class="outline-text-2" id="text-org7a04123">
 <p>
 要理解Grover算法的原理，最直观的方法是把它图像化，从几何意义来理解。
 </p>
@@ -92,10 +91,10 @@
 </p>
 
 
-<div id="org7e2e012" class="figure">
-<p><img src="../images/Quantum Search - Grover's Algorithm.png" alt="Quantum Search - Grover's Algorithm.png" width="480px" />
-</p>
-</div>
+<figure id="org62fbeb3">
+<img src="../images/Quantum Search - Grover's Algorithm.png" alt="Quantum Search - Grover's Algorithm.png" width="480px">
+
+</figure>
 
 <p>
 我们的电路有n个搜索用的量子比特，可以表示\(N=2^{n}\)个基态，对应搜索空间0到N-1的编号。为方便讨论，我们用\(|0\rangle, |1\rangle, |2\rangle, |3\rangle, \dots, |N-1\rangle\)来表示这些基态。
@@ -129,10 +128,10 @@
 这个\(|\psi\rangle\)向量，和\(|\alpha\rangle\)轴之间的夹角，我们记作\(\frac{\theta}{2}\)，如下图所示：
 </p>
 
-<div id="org9533f14" class="figure">
-<p><img src="../images/Quantum Search - Grover's Algorithm Visualized1.png" alt="Quantum Search - Grover's Algorithm Visualized1.png" width="480px" />
-</p>
-</div>
+<figure id="orgd99695b">
+<img src="../images/Quantum Search - Grover's Algorithm Visualized1.png" alt="Quantum Search - Grover's Algorithm Visualized1.png" width="480px">
+
+</figure>
 
 <p>
 根据简单的三角函数，我们很容易得到：
@@ -157,10 +156,10 @@ G=(2|\psi\rangle \langle\psi|-I)O
 我们先从O（Oracle）变换看起。O变换干了什么呢？它是把输入的状态\(|x\rangle\)变成\((-1)^{f(x)} |x\rangle\)。如果f(x)=1，那么它就给输出加上一个-1的相位，否则不变。那么这个操作在二维平面图中，实际上就是把输入的向量对\(|\alpha\rangle\)轴做了一个 <b><b>反射</b></b> 。
 </p>
 
-<div id="org93c7db6" class="figure">
-<p><img src="../images/Quantum Search - Grover's Algorithm Visualized2.png" alt="Quantum Search - Grover's Algorithm Visualized2.png" width="480px" />
-</p>
-</div>
+<figure id="org5a255dd">
+<img src="../images/Quantum Search - Grover's Algorithm Visualized2.png" alt="Quantum Search - Grover's Algorithm Visualized2.png" width="480px">
+
+</figure>
 
 <p>
 所以，Oracle变换的作用，就是把输入向量对\(|\alpha\rangle\)轴做一个反射。
@@ -244,10 +243,10 @@ G=(2|\psi\rangle \langle\psi|-I)O
 上面这个式子，加号左边就是原向量乘-1，而加号右边的向量，所有分量都相同，都是\(2\langle\alpha\rangle\)，归一化后就是无差别叠加态\(|\psi\rangle\)。两者相加，得到的是什么？看下面的图就可以直观的理解了：
 </p>
 
-<div id="orgdf78f53" class="figure">
-<p><img src="../images/Quantum Search - Grover's Algorithm Visualized3.png" alt="Quantum Search - Grover's Algorithm Visualized3.png" width="480px" />
-</p>
-</div>
+<figure id="org54dfb27">
+<img src="../images/Quantum Search - Grover's Algorithm Visualized3.png" alt="Quantum Search - Grover's Algorithm Visualized3.png" width="480px">
+
+</figure>
 
 <p>
 所以，\(2|\psi\rangle\langle\psi|-I\)作用在任意向量上，其实就是把输入向量对\(|\psi\rangle\)做 <b><b>反射</b></b> ！
@@ -265,10 +264,10 @@ G=(2|\psi\rangle \langle\psi|-I)O
 连续两步反射操作合在一起，其实就是把输入的向量进行了 <b><b>旋转</b></b> 。那么这个旋转角度是多少呢？我们在图里画一下就能明白了：
 </p>
 
-<div id="org5bf556e" class="figure">
-<p><img src="../images/Quantum Search - Grover's Algorithm Visualized.png" alt="Quantum Search - Grover's Algorithm Visualized.png" width="480px" />
-</p>
-</div>
+<figure id="orgedf84fc">
+<img src="../images/Quantum Search - Grover's Algorithm Visualized.png" alt="Quantum Search - Grover's Algorithm Visualized.png" width="480px">
+
+</figure>
 
 <p>
 假设我们有个输入向量\(|\phi\rangle\)，它和\(|\alpha\rangle\)轴之间的夹角是\(\gamma/2\)。经过G变换的两次反射后，它和\(|\alpha\rangle\)轴的夹角变成了\(\theta/2+\theta/2+\gamma/2 = \theta+\gamma/2\)。也就是说，输入向量经过一次G变换后，朝着\(|\beta\rangle\)轴旋转了\(\theta\)。而\(|\beta\rangle\)轴意味着什么呢？它是所有 <b><b>正确答案</b></b> 的叠加态啊！如果系统的状态转到非常接近\(|\beta\rangle\)轴，测量就能得到正确答案！
@@ -280,9 +279,9 @@ G=(2|\psi\rangle \langle\psi|-I)O
 </div>
 </section>
 
-<section id="outline-container-org9cf5cf0" class="outline-2">
-<h2 id="org9cf5cf0">Grover算法的性能分析</h2>
-<div class="outline-text-2" id="text-org9cf5cf0">
+<section id="outline-container-org74633a0" class="outline-2">
+<h2 id="org74633a0">Grover算法的性能分析</h2>
+<div class="outline-text-2" id="text-org74633a0">
 <p>
 Grover算法需要试多少次能找到答案呢？这个问题实际上就是问，从初始状态\(|\psi\rangle\)出发，需要旋转多少次能接近\(|\beta\rangle\)轴？我们来做一个简要的分析。
 </p>
@@ -355,9 +354,9 @@ k=round(\frac{\pi}{2\theta} - \frac{1}{2}) \approx round(\frac{\pi}{4}\sqrt{\fra
 </div>
 </section>
 
-<section id="outline-container-orgdc4a1d6" class="outline-2">
-<h2 id="orgdc4a1d6">特殊情况讨论：如果正确答案超过一半呢？</h2>
-<div class="outline-text-2" id="text-orgdc4a1d6">
+<section id="outline-container-orgd0070dd" class="outline-2">
+<h2 id="orgd0070dd">特殊情况讨论：如果正确答案超过一半呢？</h2>
+<div class="outline-text-2" id="text-orgd0070dd">
 <p>
 想象一下，如果N个元素中有超过一半的正确答案，\(M>N/2\)，会发生什么？
 </p>
@@ -379,7 +378,7 @@ k=round(\frac{\pi}{2\theta} - \frac{1}{2}) \approx round(\frac{\pi}{4}\sqrt{\fra
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

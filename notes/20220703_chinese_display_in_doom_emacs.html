@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2023-04-24 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Doom Emacs中文字体显示问题的解决</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -50,23 +50,22 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">Doom Emacs中文字体显示问题的解决
-<br />
-<span class="subtitle">Ping Zhou, 2022-07-03</span>
-</h1>
-
-<section id="outline-container-org4fd8b3f" class="outline-2">
-<h2 id="org4fd8b3f">问题</h2>
-<div class="outline-text-2" id="text-org4fd8b3f">
+<header>
+<h1 class="title">Doom Emacs中文字体显示问题的解决</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2022-07-03</p>
+</header>
+<section id="outline-container-org0dd333b" class="outline-2">
+<h2 id="org0dd333b">问题</h2>
+<div class="outline-text-2" id="text-org0dd333b">
 <p>
 Doom Emacs 别的都挺好，就是有个奇怪的小问题，在显示中文的时候，会出现下面这样字体不一致的情况：
 </p>
 
 
-<div id="org438991f" class="figure">
-<p><img src="../images/2022/20220703_151615screenshot.png" alt="20220703_151615screenshot.png" width="640px" />
-</p>
-</div>
+<figure id="org5ccbccc">
+<img src="../images/2022/20220703_151615screenshot.png" alt="20220703_151615screenshot.png" width="640px">
+
+</figure>
 
 <p>
 可以看到，同一行文字里的中文字符，它似乎用了不同的字体来显示，导致显示出来的文字大小样式不一，显得很奇怪。这种情况，我在以前的 Emacs 配置里没有遇到过，感觉似乎是 Doom 里某些编码没有指定字体？
@@ -74,9 +73,9 @@ Doom Emacs 别的都挺好，就是有个奇怪的小问题，在显示中文的
 </div>
 </section>
 
-<section id="outline-container-org93d67ca" class="outline-2">
-<h2 id="org93d67ca">解决</h2>
-<div class="outline-text-2" id="text-org93d67ca">
+<section id="outline-container-org65f0a9d" class="outline-2">
+<h2 id="org65f0a9d">解决</h2>
+<div class="outline-text-2" id="text-org65f0a9d">
 <p>
 开始我以为只是 org-mode 的问题，后来发现，这个问题在其他模式（例如代码注释）里也存在，因此是 Doom Emacs 本身的问题。
 </p>
@@ -91,12 +90,12 @@ Doom Emacs 别的都挺好，就是有个奇怪的小问题，在显示中文的
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">defun</span> <span class="org-function-name">pz/setup-cjk-fonts</span> <span class="org-rainbow-delimiters-depth-2">()</span>
-  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">interactive</span><span class="org-rainbow-delimiters-depth-2">)</span>
-  <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-keyword">if</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-function-name">display-graphic-p</span><span class="org-rainbow-delimiters-depth-3">)</span>
-      <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-keyword">dolist</span> <span class="org-rainbow-delimiters-depth-4">(</span>charset <span class="org-highlight-quoted-quote">'</span><span class="org-rainbow-delimiters-depth-1">(</span>kana han cjk-misc bopomofo<span class="org-rainbow-delimiters-depth-1">)</span><span class="org-rainbow-delimiters-depth-4">)</span>
-        <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-constant">set-fontset-font</span> <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-constant">frame-parameter</span> nil <span class="org-highlight-quoted-quote">'</span><span class="org-highlight-quoted-symbol">font</span><span class="org-rainbow-delimiters-depth-1">)</span>
-                          charset <span class="org-rainbow-delimiters-depth-1">(</span><span class="org-constant">font-spec</span> <span class="org-builtin">:family</span> <span class="org-string">"Noto Sans Mono CJK SC"</span><span class="org-rainbow-delimiters-depth-1">)</span><span class="org-rainbow-delimiters-depth-4">)</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">pz/setup-cjk-fonts</span> ()
+  (<span class="org-keyword">interactive</span>)
+  (<span class="org-keyword">if</span> (display-graphic-p)
+      (<span class="org-keyword">dolist</span> (charset '(kana han cjk-misc bopomofo))
+        (set-fontset-font (frame-parameter nil 'font)
+                          charset (font-spec <span class="org-builtin">:family</span> <span class="org-string">"Noto Sans Mono CJK SC"</span>)))))
 </pre>
 </div>
 
@@ -104,7 +103,7 @@ Doom Emacs 别的都挺好，就是有个奇怪的小问题，在显示中文的
 <code>set-font-set</code> 函数的定义如下：
 </p>
 
-<pre class="example" id="org14c54ab">
+<pre class="example" id="org935c325">
 (set-fontset-font NAME TARGET FONT-SPEC &amp;optional FRAME ADD)
 </pre>
 
@@ -135,17 +134,17 @@ Doom Emacs 别的都挺好，就是有个奇怪的小问题，在显示中文的
 </p>
 
 
-<div id="orge040e60" class="figure">
-<p><img src="../images/2022/20220704_111359screenshot.png" alt="20220704_111359screenshot.png" width="640px" />
-</p>
-</div>
+<figure id="org0930a40">
+<img src="../images/2022/20220704_111359screenshot.png" alt="20220704_111359screenshot.png" width="640px">
+
+</figure>
 </div>
 </section>
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

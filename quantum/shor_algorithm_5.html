@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(5) 回到Shor算法</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,24 +71,23 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子计算会终结现在的密码体系吗？(5) 回到Shor算法
-<br />
-<span class="subtitle">Ping Zhou, 2021-05-17</span>
-</h1>
+<header>
+<h1 class="title">量子计算会终结现在的密码体系吗？(5) 回到Shor算法</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-05-17</p>
+</header>
 
-
-<section id="outline-container-orgc774e14" class="outline-2">
-<h2 id="orgc774e14">上文回顾：量子傅立叶变换</h2>
-<div class="outline-text-2" id="text-orgc774e14">
+<section id="outline-container-org07fc703" class="outline-2">
+<h2 id="org07fc703">上文回顾：量子傅立叶变换</h2>
+<div class="outline-text-2" id="text-org07fc703">
 <p>
 量子傅立叶变换是Shor算法的核心步骤之一。今天我们回到Shor算法，看看如何用量子傅立叶变换来求解Order Finding和函数周期问题。
 </p>
 </div>
 </section>
 
-<section id="outline-container-org444cc79" class="outline-2">
-<h2 id="org444cc79">Shor算法第一步</h2>
-<div class="outline-text-2" id="text-org444cc79">
+<section id="outline-container-orgb97df81" class="outline-2">
+<h2 id="orgb97df81">Shor算法第一步</h2>
+<div class="outline-text-2" id="text-orgb97df81">
 <p>
 用量子计算机求解Order Finding问题，实质上是要找到函数 \(f(x)=a^x \mod N\) 的周期。
 </p>
@@ -98,20 +97,20 @@ Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这
 </p>
 
 
-<div id="orgc1786df" class="figure">
-<p><img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px" />
-</p>
-</div>
+<figure id="orge745ba8">
+<img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px">
+
+</figure>
 
 <p>
 然后给它制备输入： 
 </p>
 
 
-<div id="orgba4a573" class="figure">
-<p><img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px" />
-</p>
-</div>
+<figure id="orgad438ad">
+<img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px">
+
+</figure>
 
 <p>
 在输出端测量 \(|\beta\rangle\) ，使得它坍缩到某个值z，这时 \(\alpha\) 就会坍缩到 \(|l\rangle, |l+r\rangle, |l+2r\rangle, \dots, |l+Ar\rangle\) 的叠加态：
@@ -131,18 +130,18 @@ Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这
 </div>
 </section>
 
-<section id="outline-container-orgf1809f4" class="outline-2">
-<h2 id="orgf1809f4">Shor算法的关键：用量子傅立叶变换提取周期信息</h2>
-<div class="outline-text-2" id="text-orgf1809f4">
+<section id="outline-container-org3c377f8" class="outline-2">
+<h2 id="org3c377f8">Shor算法的关键：用量子傅立叶变换提取周期信息</h2>
+<div class="outline-text-2" id="text-org3c377f8">
 <p>
 接着上一步：如果我们对 \(|\alpha\rangle\) 做量子傅立叶变换，会发生什么？
 </p>
 
 
-<div id="org2f5204d" class="figure">
-<p><img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="480px" />
-</p>
-</div>
+<figure id="orgc23f76d">
+<img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="480px">
+
+</figure>
 
 <p>
 节省大家时间，先把答案放在这里，如果你有兴趣可以看我后文的推导。
@@ -179,10 +178,10 @@ Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这
 </p>
 
 
-<div id="org8e46536" class="figure">
-<p><img src="../images/shor1.png" alt="shor1.png" width="400px" />
-</p>
-</div>
+<figure id="orgbedab0c">
+<img src="../images/shor1.png" alt="shor1.png" width="400px">
+
+</figure>
 
 <p>
 感谢阅读！
@@ -193,7 +192,7 @@ Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

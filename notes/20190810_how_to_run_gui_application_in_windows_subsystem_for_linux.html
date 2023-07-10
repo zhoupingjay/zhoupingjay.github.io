@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2023-04-24 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>How to Run GUI Application in Windows Subsystem for Linux (WSL)</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -50,14 +50,13 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">How to Run GUI Application in Windows Subsystem for Linux (WSL)
-<br />
-<span class="subtitle">Ping Zhou, 2019-08-10</span>
-</h1>
-
-<section id="outline-container-orgea75d8c" class="outline-2">
-<h2 id="orgea75d8c">Install WSL</h2>
-<div class="outline-text-2" id="text-orgea75d8c">
+<header>
+<h1 class="title">How to Run GUI Application in Windows Subsystem for Linux (WSL)</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2019-08-10</p>
+</header>
+<section id="outline-container-org937f99d" class="outline-2">
+<h2 id="org937f99d">Install WSL</h2>
+<div class="outline-text-2" id="text-org937f99d">
 <p>
 Basically you need to turn on WSL in Program Features. Refer to this document for the steps:
 <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">https://docs.microsoft.com/en-us/windows/wsl/install-win10</a>
@@ -65,9 +64,9 @@ Basically you need to turn on WSL in Program Features. Refer to this document fo
 </div>
 </section>
 
-<section id="outline-container-orgb9480fb" class="outline-2">
-<h2 id="orgb9480fb">Install Linux distribution in WSL</h2>
-<div class="outline-text-2" id="text-orgb9480fb">
+<section id="outline-container-org88576b3" class="outline-2">
+<h2 id="org88576b3">Install Linux distribution in WSL</h2>
+<div class="outline-text-2" id="text-org88576b3">
 <p>
 Refer to same document for steps. I installed Ubuntu but there are other distributions available.
 <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">https://docs.microsoft.com/en-us/windows/wsl/install-win10</a>
@@ -75,23 +74,23 @@ Refer to same document for steps. I installed Ubuntu but there are other distrib
 </div>
 </section>
 
-<section id="outline-container-orgb7ffbfb" class="outline-2">
-<h2 id="orgb7ffbfb">Install Dependencies</h2>
-<div class="outline-text-2" id="text-orgb7ffbfb">
+<section id="outline-container-org0585c2f" class="outline-2">
+<h2 id="org0585c2f">Install Dependencies</h2>
+<div class="outline-text-2" id="text-org0585c2f">
 <p>
 GUI applications may have additional dependencies (libraries, etc). An easy way to install proper libraries is by installing some GUI programs, which will automatically resolve and install needed libraries. For example:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span class="org-type">sudo</span> apt install x11-apps
+<pre class="src src-shell">sudo apt install x11-apps
 </pre>
 </div>
 </div>
 </section>
 
-<section id="outline-container-orgb2f5dda" class="outline-2">
-<h2 id="orgb2f5dda">Configure X-Window Server</h2>
-<div class="outline-text-2" id="text-orgb2f5dda">
+<section id="outline-container-orgc14c25c" class="outline-2">
+<h2 id="orgc14c25c">Configure X-Window Server</h2>
+<div class="outline-text-2" id="text-orgc14c25c">
 <p>
 There are several choices available. I used the X-Win server from Cygwin because I already have one installed.
 </p>
@@ -101,7 +100,7 @@ However, the default X-Win configuration doesn’t work for WSL. After some rese
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell">C:\cygwin64\bin\run.exe --quote /usr/bin/bash.exe -l -c <span class="org-string">"</span><span class="org-type"><span class="org-string">cd</span></span><span class="org-string">; exec /usr/bin/startxwin  -- -listen tcp"</span>
+<pre class="src src-shell">C:\cygwin64\bin\run.exe --quote /usr/bin/bash.exe -l -c <span class="org-string">"cd; exec /usr/bin/startxwin  -- -listen tcp"</span>
 </pre>
 </div>
 
@@ -122,16 +121,16 @@ Try running some GUI application from WSL. For example, “xeye”, or launching
 If you see authorization error like this, it means need to configure xauth for WSL. See following section for steps.
 </p>
 
-<pre class="example" id="orgeaa239f">
+<pre class="example" id="orgd2c355f">
 Authorization required, but no authorization protocol specified
 Error: Can't open display: :0
 </pre>
 </div>
 </section>
 
-<section id="outline-container-org456464d" class="outline-2">
-<h2 id="org456464d">Configure xauth</h2>
-<div class="outline-text-2" id="text-org456464d">
+<section id="outline-container-org3112110" class="outline-2">
+<h2 id="org3112110">Configure xauth</h2>
+<div class="outline-text-2" id="text-org3112110">
 <p>
 There are two options to solve this problem. First one is to copy the “.Xauthority” file from Cygwin to your WSL home folder.
 </p>
@@ -139,14 +138,14 @@ There are two options to solve this problem. First one is to copy the “.Xautho
 <p>
 Source file:
 </p>
-<pre class="example" id="org810c732">
+<pre class="example" id="org68dc067">
 C:\cygwin64\home\&lt;CYGWIN_USER&gt;
 </pre>
 
 <p>
 Destination file:
 </p>
-<pre class="example" id="orgcdd82ea">
+<pre class="example" id="org4260d8f">
 C:\Users\&lt;WINDOWS_USER&gt;\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\&lt;WSL_USER&gt;
 </pre>
 
@@ -159,8 +158,8 @@ You need to set correct owner/permssion on the “.Xauthority” file that was c
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span class="org-type">sudo</span> <span class="org-type">chown</span> &lt;WSL_USER&gt; .Xauthority
-<span class="org-type">chmod</span> +rwx .Xauthority
+<pre class="src src-shell">sudo chown &lt;WSL_USER&gt; .Xauthority
+chmod +rwx .Xauthority
 </pre>
 </div>
 
@@ -173,17 +172,17 @@ Done! Now you should be able to run GUI applications in WSL. For example, Emacs 
 </p>
 
 
-<div id="org2751942" class="figure">
-<p><img src="../images/2019/08/image.png" alt="image.png" width="480px" />
-</p>
-</div>
+<figure id="orgf34954b">
+<img src="../images/2019/08/image.png" alt="image.png" width="480px">
+
+</figure>
 </div>
 </section>
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

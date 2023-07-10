@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>理解量子计算机的威力：Deutsch问题</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,23 +71,22 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">理解量子计算机的威力：Deutsch问题
-<br />
-<span class="subtitle">Ping Zhou, 2020-08-01</span>
-</h1>
-
-<section id="outline-container-orge106bb9" class="outline-2">
-<h2 id="orge106bb9">简介</h2>
-<div class="outline-text-2" id="text-orge106bb9">
+<header>
+<h1 class="title">理解量子计算机的威力：Deutsch问题</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2020-08-01</p>
+</header>
+<section id="outline-container-orgd933e2c" class="outline-2">
+<h2 id="orgd933e2c">简介</h2>
+<div class="outline-text-2" id="text-orgd933e2c">
 <p>
 量子计算是现在的热门话题之一，很多人可能听说过诸如“量子霸权”之类的名词，那么量子计算为什么会被认为有可能比经典计算机更快呢？这里就从最简单的Deutsch问题入手，解析量子计算的一些基本思路，相信看完后你会对量子计算的潜力有更直观的认识。
 </p>
 </div>
 </section>
 
-<section id="outline-container-org4feb586" class="outline-2">
-<h2 id="org4feb586">一些术语和基础概念</h2>
-<div class="outline-text-2" id="text-org4feb586">
+<section id="outline-container-org8b04d7d" class="outline-2">
+<h2 id="org8b04d7d">一些术语和基础概念</h2>
+<div class="outline-text-2" id="text-org8b04d7d">
 <p>
 首先要先解释一下后面讨论中用到的一些术语和基础知识。
 </p>
@@ -126,17 +125,17 @@ HIH=I
 </div>
 </section>
 
-<section id="outline-container-org2da8099" class="outline-2">
-<h2 id="org2da8099">问题的提出：如何判断单比特函数的性质？</h2>
-<div class="outline-text-2" id="text-org2da8099">
+<section id="outline-container-orgce29c7b" class="outline-2">
+<h2 id="orgce29c7b">问题的提出：如何判断单比特函数的性质？</h2>
+<div class="outline-text-2" id="text-orgce29c7b">
 <p>
 假设我们有个函数f，输入和输出都是1个比特： \(y=f(x)\) ： 
 </p>
 
-<div id="org934c58a" class="figure">
-<p><img src="../images/deutsch-fx.png" alt="deutsch-fx.png" width="320px" />
-</p>
-</div>
+<figure id="org2ba0564">
+<img src="../images/deutsch-fx.png" alt="deutsch-fx.png" width="320px">
+
+</figure>
 
 <p>
 因为输入和输出都只有1个比特，这个函数无非就是这4种可能：
@@ -185,9 +184,9 @@ HIH=I
 </div>
 </section>
 
-<section id="outline-container-org4db1193" class="outline-2">
-<h2 id="org4db1193">量子计算加速：Deutsch-Jozsa算法</h2>
-<div class="outline-text-2" id="text-org4db1193">
+<section id="outline-container-org411e692" class="outline-2">
+<h2 id="org411e692">量子计算加速：Deutsch-Jozsa算法</h2>
+<div class="outline-text-2" id="text-org411e692">
 <p>
 在量子计算里，所有的变换都必须是**可逆**的，也就是“从输出能倒推出输入”。显然f(x)不一定能满足这个条件，所以首先要对它进行一下“包装处理”。
 </p>
@@ -205,10 +204,10 @@ HIH=I
 </p>
 
 
-<div id="orgdbbef6a" class="figure">
-<p><img src="../images/deutsch-uf.png" alt="deutsch-uf.png" width="120px" />
-</p>
-</div>
+<figure id="orge8a6259">
+<img src="../images/deutsch-uf.png" alt="deutsch-uf.png" width="120px">
+
+</figure>
 
 <p>
 和原来的函数f(x)相比， \(U_{f}\) 多了一个“辅助输入”（ancillary），即 \(|y\rangle\) 。这个辅助输入的作用，很快我们就能看到。
@@ -314,10 +313,10 @@ HIH=I
 </p>
 
 
-<div id="org7c45138" class="figure">
-<p><img src="../images/deutsch-circuit.jpg" alt="deutsch-circuit.jpg" width="720px" />
-</p>
-</div>
+<figure id="orgb9e1697">
+<img src="../images/deutsch-circuit.jpg" alt="deutsch-circuit.jpg" width="720px">
+
+</figure>
 
 <p>
 更重要的是，整个过程我们只对电路进行了 <b>一次测量</b> ，也就是说， <b>对f(x)进行了一次“查询”</b> ，我们就能知道f(x)是“常量”还是“平衡”的，而在经典计算机里，这个性质需要2次查询才能知道！
@@ -333,9 +332,9 @@ HIH=I
 </div>
 </section>
 
-<section id="outline-container-org749c78e" class="outline-2">
-<h2 id="org749c78e">总结</h2>
-<div class="outline-text-2" id="text-org749c78e">
+<section id="outline-container-org143ee1b" class="outline-2">
+<h2 id="org143ee1b">总结</h2>
+<div class="outline-text-2" id="text-org143ee1b">
 <p>
 当然，Deutsch问题本身没有太多实用价值，但它显示了在某些场景下量子计算机可以比经典计算机更快。理解Deutsch算法可以帮助我们更好的理解量子计算的内在并行性。至于有潜力实用化的量子计算算法，例如Grover搜索，Shor因式分解等，以后有空再说。
 </p>
@@ -345,7 +344,7 @@ HIH=I
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

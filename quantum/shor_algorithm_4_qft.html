@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(4) 量子傅立叶变换</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,24 +71,23 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子计算会终结现在的密码体系吗？(4) 量子傅立叶变换
-<br />
-<span class="subtitle">Ping Zhou, 2021-05-03</span>
-</h1>
+<header>
+<h1 class="title">量子计算会终结现在的密码体系吗？(4) 量子傅立叶变换</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-05-03</p>
+</header>
 
-
-<section id="outline-container-orga494d9f" class="outline-2">
-<h2 id="orga494d9f">上文回顾：Shor算法初探</h2>
-<div class="outline-text-2" id="text-orga494d9f">
+<section id="outline-container-org06dda6e" class="outline-2">
+<h2 id="org06dda6e">上文回顾：Shor算法初探</h2>
+<div class="outline-text-2" id="text-org06dda6e">
 <p>
 用量子计算机求解Order Finding问题，其实就是要找到函数 \(f(x)=a^x \mod N\) 的周期。在上文中我们已经看到，如果我们把f(x)包装成量子变换 \(U_f\) ，然后把它的输入x制备成叠加态，在输出端就能得到 \(|l\rangle, |l+r\rangle, |l+2r\rangle, \dots\) 的叠加态。但是这个叠加态并不能直接告诉我们周期（r）是什么，我们还需要对它做更多的处理才能提取出有用的信息。这个处理过程，就是 <b>量子傅里叶变换</b> 。
 </p>
 </div>
 </section>
 
-<section id="outline-container-org072ee8c" class="outline-2">
-<h2 id="org072ee8c">离散傅里叶变换（DFT）</h2>
-<div class="outline-text-2" id="text-org072ee8c">
+<section id="outline-container-org77af63c" class="outline-2">
+<h2 id="org77af63c">离散傅里叶变换（DFT）</h2>
+<div class="outline-text-2" id="text-org77af63c">
 <p>
 先复习一下傅里叶变换…
 </p>
@@ -163,9 +162,9 @@
 </div>
 </section>
 
-<section id="outline-container-orgb58b3d9" class="outline-2">
-<h2 id="orgb58b3d9">量子傅里叶变换（QFT）</h2>
-<div class="outline-text-2" id="text-orgb58b3d9">
+<section id="outline-container-orgd4daca2" class="outline-2">
+<h2 id="orgd4daca2">量子傅里叶变换（QFT）</h2>
+<div class="outline-text-2" id="text-orgd4daca2">
 <p>
 傅里叶变换加上量子，听上去很炫的名字！其实干的事情是和离散傅里叶变换是一样的。:-)
 </p>
@@ -175,9 +174,9 @@
 </p>
 </div>
 
-<div id="outline-container-org0f5ffa0" class="outline-3">
-<h3 id="org0f5ffa0">从基矢变换的角度理解</h3>
-<div class="outline-text-3" id="text-org0f5ffa0">
+<div id="outline-container-org437c2a5" class="outline-3">
+<h3 id="org437c2a5">从基矢变换的角度理解</h3>
+<div class="outline-text-3" id="text-org437c2a5">
 <p>
 假如我们的系统有n个量子位，那么计算基态computational basis有 \(2^n\) 个： \(|0\rangle, |1\rangle, \dots, |2^n-1\rangle\) 。
 </p>
@@ -241,9 +240,9 @@ QFT变换后的基态 \(|\tilde y\rangle\) ，用矩阵表示的话就是这样�
 </div>
 </div>
 
-<div id="outline-container-org41e0ba6" class="outline-3">
-<h3 id="org41e0ba6">从状态变换的角度理解</h3>
-<div class="outline-text-3" id="text-org41e0ba6">
+<div id="outline-container-orgb9bfc95" class="outline-3">
+<h3 id="orgb9bfc95">从状态变换的角度理解</h3>
+<div class="outline-text-3" id="text-orgb9bfc95">
 <p>
 假如我们的系统处于某个任意状态：
 </p>
@@ -298,7 +297,7 @@ QFT变换后的基态 \(|\tilde y\rangle\) ，用矩阵表示的话就是这样�
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

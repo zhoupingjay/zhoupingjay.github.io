@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2023-04-24 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>用Emacs做PPT演示</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -50,19 +50,18 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">用Emacs做PPT演示
-<br />
-<span class="subtitle">Ping Zhou, 2022-07-09</span>
-</h1>
+<header>
+<h1 class="title">用Emacs做PPT演示</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2022-07-09</p>
+</header>
+<figure id="org7b757db">
+<img src="../images/2022/2022-07-09_10-56-47_screenshot.png" alt="2022-07-09_10-56-47_screenshot.png" width="640px">
 
-<div id="org4cbc8e1" class="figure">
-<p><img src="../images/2022/2022-07-09_10-56-47_screenshot.png" alt="2022-07-09_10-56-47_screenshot.png" width="640px" />
-</p>
-</div>
+</figure>
 
-<section id="outline-container-orgf816473" class="outline-2">
-<h2 id="orgf816473">为什么要用 Emacs 做 PPT 演示</h2>
-<div class="outline-text-2" id="text-orgf816473">
+<section id="outline-container-org071ea99" class="outline-2">
+<h2 id="org071ea99">为什么要用 Emacs 做 PPT 演示</h2>
+<div class="outline-text-2" id="text-org071ea99">
 <ul class="org-ul">
 <li>我也不知道为啥，看起来酷呗 :-)</li>
 </ul>
@@ -81,23 +80,23 @@
 </div>
 </section>
 
-<section id="outline-container-org7d745e7" class="outline-2">
-<h2 id="org7d745e7">安装 org-present 包</h2>
-<div class="outline-text-2" id="text-org7d745e7">
+<section id="outline-container-org7d59e2f" class="outline-2">
+<h2 id="org7d59e2f">安装 org-present 包</h2>
+<div class="outline-text-2" id="text-org7d59e2f">
 <p>
 如果是 Doom Emacs，它已经自带了 org-present 支持，只需要打开即可。打开 <code>.doom.d/init.el</code> ，在 org 那栏加上 present 即可：
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">doom!</span> <span class="org-builtin">:input</span>
+<pre class="src src-emacs-lisp">(doom! <span class="org-builtin">:input</span>
        <span class="org-comment-delimiter">;; </span><span class="org-comment">......</span>
        <span class="org-builtin">:lang</span>
        <span class="org-comment-delimiter">;; </span><span class="org-comment">......</span>
-       <span class="org-rainbow-delimiters-depth-2">(</span>org                <span class="org-comment-delimiter">; </span><span class="org-comment">organize your plain life in plain text</span>
+       (org                <span class="org-comment-delimiter">; </span><span class="org-comment">organize your plain life in plain text</span>
         <span class="org-comment-delimiter">;; </span><span class="org-comment">......</span>
         +present
         +pretty
-        +roam2<span class="org-rainbow-delimiters-depth-2">)</span>
+        +roam2)
        <span class="org-comment-delimiter">;; </span><span class="org-comment">......</span>
 </pre>
 </div>
@@ -108,9 +107,9 @@
 </div>
 </section>
 
-<section id="outline-container-org93270ed" class="outline-2">
-<h2 id="org93270ed">开始演示</h2>
-<div class="outline-text-2" id="text-org93270ed">
+<section id="outline-container-org76c23f7" class="outline-2">
+<h2 id="org76c23f7">开始演示</h2>
+<div class="outline-text-2" id="text-org76c23f7">
 <ul class="org-ul">
 <li>进入演示模式 <code>org-present</code></li>
 <li>第一页就是 org 文件的 title 和第一个一级标题之间的内容</li>
@@ -118,9 +117,9 @@
 </div>
 </section>
 
-<section id="outline-container-orga9a71dd" class="outline-2">
-<h2 id="orga9a71dd">页面导航</h2>
-<div class="outline-text-2" id="text-orga9a71dd">
+<section id="outline-container-org8e5fcf3" class="outline-2">
+<h2 id="org8e5fcf3">页面导航</h2>
+<div class="outline-text-2" id="text-org8e5fcf3">
 <p>
 演示模式下，每一页就显示一个一级标题。如果这个一级标题下还有更多内容，可以向下滚动。
 </p>
@@ -138,95 +137,95 @@
 </div>
 </section>
 
-<section id="outline-container-orgf361645" class="outline-2">
-<h2 id="orgf361645">字体设置</h2>
-<div class="outline-text-2" id="text-orgf361645">
+<section id="outline-container-org795f32d" class="outline-2">
+<h2 id="org795f32d">字体设置</h2>
+<div class="outline-text-2" id="text-org795f32d">
 <ul class="org-ul">
 <li>演示模式的字体，如果还用原有的大小，就会显得太小。</li>
 <li>进入 org-present-mode 时放大字体 (<code>org-present-mode-hook</code>)：</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq-local</span> <span class="org-variable-name">face-remapping-alist</span> <span class="org-highlight-quoted-quote">'</span><span class="org-rainbow-delimiters-depth-2">(</span><span class="org-rainbow-delimiters-depth-3">(</span>default <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-builtin">:height</span> <span class="org-highlight-numbers-number">1.5</span><span class="org-rainbow-delimiters-depth-4">)</span> variable-pitch<span class="org-rainbow-delimiters-depth-3">)</span>
-                                   <span class="org-rainbow-delimiters-depth-3">(</span>header-line <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-builtin">:height</span> <span class="org-highlight-numbers-number">4.5</span><span class="org-rainbow-delimiters-depth-4">)</span> variable-pitch<span class="org-rainbow-delimiters-depth-3">)</span>
-                                   <span class="org-rainbow-delimiters-depth-3">(</span>org-code <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-builtin">:height</span> <span class="org-highlight-numbers-number">1.55</span><span class="org-rainbow-delimiters-depth-4">)</span> org-code<span class="org-rainbow-delimiters-depth-3">)</span>
-                                   <span class="org-rainbow-delimiters-depth-3">(</span>org-verbatim <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-builtin">:height</span> <span class="org-highlight-numbers-number">1.55</span><span class="org-rainbow-delimiters-depth-4">)</span> org-verbatim<span class="org-rainbow-delimiters-depth-3">)</span>
-                                   <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-constant">org-block</span> <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-builtin">:height</span> <span class="org-highlight-numbers-number">1.25</span><span class="org-rainbow-delimiters-depth-4">)</span> org-block<span class="org-rainbow-delimiters-depth-3">)</span>
-                                   <span class="org-rainbow-delimiters-depth-3">(</span>org-block-begin-line <span class="org-rainbow-delimiters-depth-4">(</span><span class="org-builtin">:height</span> <span class="org-highlight-numbers-number">0.7</span><span class="org-rainbow-delimiters-depth-4">)</span> org-block<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-emacs-lisp">(<span class="org-keyword">setq-local</span> face-remapping-alist '((default (<span class="org-builtin">:height</span> 1.5) variable-pitch)
+                                   (header-line (<span class="org-builtin">:height</span> 4.5) variable-pitch)
+                                   (org-code (<span class="org-builtin">:height</span> 1.55) org-code)
+                                   (org-verbatim (<span class="org-builtin">:height</span> 1.55) org-verbatim)
+                                   (org-block (<span class="org-builtin">:height</span> 1.25) org-block)
+                                   (org-block-begin-line (<span class="org-builtin">:height</span> 0.7) org-block)))
 </pre>
 </div>
 <ul class="org-ul">
 <li>退出 org-present-mode 时恢复字体 (<code>org-present-mode-quit-hook</code>)：</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq-local</span> <span class="org-variable-name">face-remapping-alist</span> <span class="org-highlight-quoted-quote">'</span><span class="org-rainbow-delimiters-depth-2">(</span><span class="org-rainbow-delimiters-depth-3">(</span>default variable-pitch default<span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-emacs-lisp">(<span class="org-keyword">setq-local</span> face-remapping-alist '((default variable-pitch default)))
 </pre>
 </div>
 </div>
 </section>
 
-<section id="outline-container-orgdd75463" class="outline-2">
-<h2 id="orgdd75463">其他设置</h2>
-<div class="outline-text-2" id="text-orgdd75463">
+<section id="outline-container-org95421a8" class="outline-2">
+<h2 id="org95421a8">其他设置</h2>
+<div class="outline-text-2" id="text-org95421a8">
 <ul class="org-ul">
 <li>演示模式时关闭菜单条、工具条和滚动条</li>
 </ul>
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-variable-name">menu-bar-mode</span> <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-variable-name">tool-bar-mode</span> <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-variable-name">scroll-bar-mode</span> <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-emacs-lisp">(menu-bar-mode 0)
+(tool-bar-mode 0)
+(scroll-bar-mode 0)
 </pre>
 </div>
 </div>
 </section>
 
-<section id="outline-container-org4b61841" class="outline-2">
-<h2 id="org4b61841">半透明背景</h2>
-<div class="outline-text-2" id="text-org4b61841">
+<section id="outline-container-org61067b0" class="outline-2">
+<h2 id="org61067b0">半透明背景</h2>
+<div class="outline-text-2" id="text-org61067b0">
 <ul class="org-ul">
 <li>Emacs 还可以把背景设为半透明</li>
 </ul>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-function-name">set-frame-parameter</span> <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-constant">selected-frame</span><span class="org-rainbow-delimiters-depth-2">)</span> <span class="org-highlight-quoted-quote">'</span><span class="org-highlight-quoted-symbol">alpha</span> <span class="org-highlight-quoted-quote">'</span><span class="org-rainbow-delimiters-depth-2">(</span><span class="org-highlight-numbers-number">97</span> . <span class="org-highlight-numbers-number">100</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-function-name">add-to-list</span> <span class="org-highlight-quoted-quote">'</span><span class="org-variable-name">default-frame-alist</span> <span class="org-highlight-quoted-quote">'</span><span class="org-rainbow-delimiters-depth-2">(</span>alpha . <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-highlight-numbers-number">90</span> . <span class="org-highlight-numbers-number">90</span><span class="org-rainbow-delimiters-depth-3">)</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-emacs-lisp">(set-frame-parameter (selected-frame) 'alpha '(97 . 100))
+(add-to-list 'default-frame-alist '(alpha . (90 . 90)))
 </pre>
 </div>
 </div>
 </section>
 
-<section id="outline-container-orga7ab268" class="outline-2">
-<h2 id="orga7ab268">效果演示</h2>
-<div class="outline-text-2" id="text-orga7ab268">
+<section id="outline-container-org6f65769" class="outline-2">
+<h2 id="org6f65769">效果演示</h2>
+<div class="outline-text-2" id="text-org6f65769">
 
-<div id="org528b91f" class="figure">
-<p><img src="../images/2022/2022-07-09_11-00-09_screenshot.png" alt="2022-07-09_11-00-09_screenshot.png" width="640px" />
-</p>
-</div>
+<figure id="org4f297de">
+<img src="../images/2022/2022-07-09_11-00-09_screenshot.png" alt="2022-07-09_11-00-09_screenshot.png" width="640px">
 
-
-<div id="org5153549" class="figure">
-<p><img src="../images/2022/2022-07-09_11-01-23_screenshot.png" alt="2022-07-09_11-01-23_screenshot.png" width="640px" />
-</p>
-</div>
+</figure>
 
 
-<div id="orgd0241bf" class="figure">
-<p><img src="../images/2022/2022-07-09_10-46-41_screenshot.png" alt="2022-07-09_10-46-41_screenshot.png" width="640px" />
-</p>
-</div>
+<figure id="org5329a0d">
+<img src="../images/2022/2022-07-09_11-01-23_screenshot.png" alt="2022-07-09_11-01-23_screenshot.png" width="640px">
+
+</figure>
 
 
-<div id="org00a55a3" class="figure">
-<p><img src="../images/2022/2022-07-09_10-47-55_screenshot.png" alt="2022-07-09_10-47-55_screenshot.png" width="640px" />
-</p>
-</div>
+<figure id="orgf5e3446">
+<img src="../images/2022/2022-07-09_10-46-41_screenshot.png" alt="2022-07-09_10-46-41_screenshot.png" width="640px">
+
+</figure>
+
+
+<figure id="org8f5cc29">
+<img src="../images/2022/2022-07-09_10-47-55_screenshot.png" alt="2022-07-09_10-47-55_screenshot.png" width="640px">
+
+</figure>
 </div>
 </section>
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>用谷歌Cirq模拟双比特Deutsch问题</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,14 +71,13 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">用谷歌Cirq模拟双比特Deutsch问题
-<br />
-<span class="subtitle">Ping Zhou, 2020-09-13</span>
-</h1>
-
-<section id="outline-container-org79e118a" class="outline-2">
-<h2 id="org79e118a">谷歌量子计算框架Cirq</h2>
-<div class="outline-text-2" id="text-org79e118a">
+<header>
+<h1 class="title">用谷歌Cirq模拟双比特Deutsch问题</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2020-09-13</p>
+</header>
+<section id="outline-container-org5c6b4f8" class="outline-2">
+<h2 id="org5c6b4f8">谷歌量子计算框架Cirq</h2>
+<div class="outline-text-2" id="text-org5c6b4f8">
 <p>
 Cirq是谷歌开发的开源量子计算框架，它让开发者能够方便的用Python搭建量子电路。您可能会问，我没有量子计算机，如何运行我设计的电路呢？别急，Cirq内置了模拟器，您在自己的电脑上就可以模拟您设计的量子电路。如果想在真实的量子计算机上运行，Cirq也提供了相应的接口。
 </p>
@@ -107,18 +106,18 @@ python -m pip install cirq
 </div>
 </section>
 
-<section id="outline-container-orge2a6e24" class="outline-2">
-<h2 id="orge2a6e24">回顾一下双比特Deutsch问题</h2>
-<div class="outline-text-2" id="text-orge2a6e24">
+<section id="outline-container-orgf6fe933" class="outline-2">
+<h2 id="orgf6fe933">回顾一下双比特Deutsch问题</h2>
+<div class="outline-text-2" id="text-orgf6fe933">
 <p>
 回顾一下双比特Deutsch问题：有人给你一个函数f，不告诉你它内部是怎么运作的，只知道它输入2个比特，输出1个比特，并且f有可能是常量函数（无论什么输入，输出总是0或者总是1），也有可能是平衡函数（对所有可能的输入，一半的情况下输出0，另一半情况输出1）。我们只能通过对f的查询，来判断f的性质。在上文我们讨论过，这样的函数f总共有8种可能（2个常量函数，6个平衡函数）。所以，提问的人实际上是从这8个可能的f函数中，随机抽一个给我们来判断。
 </p>
 
 
-<div id="org87c654f" class="figure">
-<p><img src="../images/2-bit deutsch.svg" alt="2-bit deutsch.svg" class="org-svg" width="400px" />
-</p>
-</div>
+<figure id="org013a6cd">
+<img src="../images/2-bit deutsch.svg" alt="2-bit deutsch.svg" class="org-svg" width="400px">
+
+</figure>
 
 <p>
 我们知道量子计算里，每个这样的函数f，都可以包装成相应的可逆变换Uf。所以在量子计算环境下，提问的人实际上是把这8种可能的函数f包装成8个Uf，从里面随机抽一个作为黑盒给我们，让我们判断相应的函数f的性质。
@@ -136,15 +135,15 @@ python -m pip install cirq
 假如有这样一个平衡函数函数f，它在输入是00或01的情况下输出0，其余情况下输出1，我们把它和相应的Uf输出列在下面的表里：
 </p>
 
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<table>
 
 
 <colgroup>
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-right" />
+<col  class="org-right">
 
-<col  class="org-left" />
+<col  class="org-left">
 </colgroup>
 <thead>
 <tr>
@@ -189,10 +188,10 @@ python -m pip install cirq
 </p>
 
 
-<div id="org4c52751" class="figure">
-<p><img src="../images/2-bit deutsch 2.svg" alt="2-bit deutsch 2.svg" class="org-svg" width="400px" />
-</p>
-</div>
+<figure id="org127f121">
+<img src="../images/2-bit deutsch 2.svg" alt="2-bit deutsch 2.svg" class="org-svg" width="400px">
+
+</figure>
 
 <p>
 <b><b>以此类推，对每一个函数f，我们都可以用量子电路来实现相应的Uf。</b></b>
@@ -204,13 +203,13 @@ python -m pip install cirq
 </div>
 </section>
 
-<section id="outline-container-org2c0a128" class="outline-2">
-<h2 id="org2c0a128">用Cirq模拟双比特Deutsch问题</h2>
-<div class="outline-text-2" id="text-org2c0a128">
+<section id="outline-container-orgfaf7d48" class="outline-2">
+<h2 id="orgfaf7d48">用Cirq模拟双比特Deutsch问题</h2>
+<div class="outline-text-2" id="text-orgfaf7d48">
 </div>
-<div id="outline-container-orged7ac6d" class="outline-3">
-<h3 id="orged7ac6d">首先我们要导入Cirq包：</h3>
-<div class="outline-text-3" id="text-orged7ac6d">
+<div id="outline-container-org77594a0" class="outline-3">
+<h3 id="org77594a0">首先我们要导入Cirq包：</h3>
+<div class="outline-text-3" id="text-org77594a0">
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">import</span> cirq
 <span class="org-keyword">import</span> random
@@ -219,9 +218,9 @@ python -m pip install cirq
 </div>
 </div>
 
-<div id="outline-container-org381d541" class="outline-3">
-<h3 id="org381d541">然后生成这个Uf池子：</h3>
-<div class="outline-text-3" id="text-org381d541">
+<div id="outline-container-orgfe4866e" class="outline-3">
+<h3 id="orgfe4866e">然后生成这个Uf池子：</h3>
+<div class="outline-text-3" id="text-orgfe4866e">
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-variable-name">q0</span>, <span class="org-variable-name">q1</span>, <span class="org-variable-name">q2</span> = cirq.LineQubit.<span class="org-builtin">range</span>(3)
 <span class="org-variable-name">constant</span> = [[], [cirq.X(q2)]]
@@ -258,18 +257,18 @@ Uf_attributes = [
 </div>
 </div>
 
-<div id="outline-container-org2990c94" class="outline-3">
-<h3 id="org2990c94">根据Uf生成量子电路</h3>
-<div class="outline-text-3" id="text-org2990c94">
+<div id="outline-container-org4ea8dc2" class="outline-3">
+<h3 id="org4ea8dc2">根据Uf生成量子电路</h3>
+<div class="outline-text-3" id="text-org4ea8dc2">
 <p>
 接下来，我们要写一个函数，根据提问者给出的Uf，生成相应的量子电路。
 </p>
 
 
-<div id="org7bd9a9e" class="figure">
-<p><img src="file:///home/zhouping/git/zhoupingjay/my_web_backup/images/2-bit deutsch 3.svg" alt="2-bit deutsch 3.svg" class="org-svg" width="480" />
-</p>
-</div>
+<figure id="orge139a85">
+<img src="file:///home/zhouping/git/zhoupingjay/my_web_backup/images/2-bit deutsch 3.svg" alt="2-bit deutsch 3.svg" class="org-svg" width="480">
+
+</figure>
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">generate_two_bit_deutsch</span>(Uf):
@@ -301,7 +300,7 @@ Uf_attributes = [
 </pre>
 </div>
 
-<pre class="example" id="orgac946a2">
+<pre class="example" id="orgea35d63">
 0: ───────H───@───────H───M───
               │
 1: ───────H───┼───@───H───M───
@@ -326,9 +325,9 @@ Uf_attributes = [
 </div>
 </div>
 
-<div id="outline-container-org65ee93c" class="outline-3">
-<h3 id="org65ee93c">模拟提问和回答的过程</h3>
-<div class="outline-text-3" id="text-org65ee93c">
+<div id="outline-container-orge079497" class="outline-3">
+<h3 id="orge079497">模拟提问和回答的过程</h3>
+<div class="outline-text-3" id="text-orge079497">
 <p>
 接下来我们来模拟提问和回答的过程：
 </p>
@@ -370,7 +369,7 @@ circuit = generate_two_bit_deutsch(Uf)
 </pre>
 </div>
 
-<pre class="example" id="org88d08f1">
+<pre class="example" id="orgbc6af96">
 Random pick Uf[1]: [cirq.X.on(cirq.LineQubit(2))]
 Generated circuit
 0: ───────H───────H───M───
@@ -391,9 +390,9 @@ Actual result: constant
 </div>
 </section>
 
-<section id="outline-container-orga12cd38" class="outline-2">
-<h2 id="orga12cd38">总结</h2>
-<div class="outline-text-2" id="text-orga12cd38">
+<section id="outline-container-orgf8324fd" class="outline-2">
+<h2 id="orgf8324fd">总结</h2>
+<div class="outline-text-2" id="text-orgf8324fd">
 <p>
 Cirq并不是唯一的量子计算编程框架，IBM，微软，百度都有各自的量子计算编程框架，可见各大公司都在积极布局量子计算。虽然量子计算现在还在早期，不过谁知道呢，也许以后量子计算也会像人工智能一样普及？
 </p>
@@ -403,7 +402,7 @@ Cirq并不是唯一的量子计算编程框架，IBM，微软，百度都有各�
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

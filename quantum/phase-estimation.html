@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子相位估计 Phase Estimation</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,17 +71,16 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子相位估计 Phase Estimation
-<br />
-<span class="subtitle">Ping Zhou, 2021-07-26</span>
-</h1>
-<p>
+<header>
+<h1 class="title">量子相位估计 Phase Estimation</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-07-26</p>
+</header><p>
 之前的Shor算法系列，其实还有个相关的坑，就是“量子相位估计” (Phase Estimation)，今天也来填一下。:-)
 </p>
 
-<section id="outline-container-orgf4f8c61" class="outline-2">
-<h2 id="orgf4f8c61">什么是“量子相位估计”？</h2>
-<div class="outline-text-2" id="text-orgf4f8c61">
+<section id="outline-container-org2d832c3" class="outline-2">
+<h2 id="org2d832c3">什么是“量子相位估计”？</h2>
+<div class="outline-text-2" id="text-org2d832c3">
 <p>
 假如我们有一个幺正算符 \(U\) ，他的本征矢量是 \(|u\rangle\) ，本征值是 \(e^{i\phi}\) （ \(\phi\) 在0到 \(2\pi\) 之间）。
 </p>
@@ -96,9 +95,9 @@ Estimate phase \(\phi\) of an eigenvalue of an unitary operator \(U\), given its
 </div>
 </section>
 
-<section id="outline-container-orgbdfbd82" class="outline-2">
-<h2 id="orgbdfbd82">量子相位估计算法</h2>
-<div class="outline-text-2" id="text-orgbdfbd82">
+<section id="outline-container-org1a1a0f4" class="outline-2">
+<h2 id="org1a1a0f4">量子相位估计算法</h2>
+<div class="outline-text-2" id="text-org1a1a0f4">
 <p>
 既然幺正算符 \(U\) 的本征矢量是 \(|u\rangle\) ，并且其对应的本征值是 \(e^{i\phi}\) ，那么根据本征矢量的定义：
 </p>
@@ -136,10 +135,10 @@ CU, CU^2, CU^4, CU^8, \dots, CU^{2^{n-1}}
 </p>
 
 
-<div id="orgfc5808b" class="figure">
-<p><img src="../images/phase_estimation_p1.jpg" alt="phase_estimation_p1.jpg" width="640px" />
-</p>
-</div>
+<figure id="org41d7a8d">
+<img src="../images/phase_estimation_p1.jpg" alt="phase_estimation_p1.jpg" width="640px">
+
+</figure>
 
 <p>
 右边会是什么状态？我们来推导一下。
@@ -223,10 +222,10 @@ e^{i 2^k \phi} = e^{2\pi i 2^k 0.\psi_1\psi_2\dots\psi_n} \\
 </p>
 
 
-<div id="org5cb78dc" class="figure">
-<p><img src="../images/phase_estimation_p2.jpg" alt="phase_estimation_p2.jpg" width="720px" />
-</p>
-</div>
+<figure id="org9d2d737">
+<img src="../images/phase_estimation_p2.jpg" alt="phase_estimation_p2.jpg" width="720px">
+
+</figure>
 
 <p>
 总结一下，这个“量子相位估计”电路的作用，就是对给定的幺正变换 \(U\) 和它的本征矢量 \(|u\rangle\) ，给出其本征值的相位 \(\psi=\phi/2\pi\) 的 <b>n位二进制近似</b> 。
@@ -234,9 +233,9 @@ e^{i 2^k \phi} = e^{2\pi i 2^k 0.\psi_1\psi_2\dots\psi_n} \\
 </div>
 </section>
 
-<section id="outline-container-org52657be" class="outline-2">
-<h2 id="org52657be">量子相位估计有什么用？</h2>
-<div class="outline-text-2" id="text-org52657be">
+<section id="outline-container-orgd018af1" class="outline-2">
+<h2 id="orgd018af1">量子相位估计有什么用？</h2>
+<div class="outline-text-2" id="text-orgd018af1">
 <p>
 其实…之前的量子因式分解Shor算法就可以看作是量子相位估计的一个应用。
 </p>
@@ -291,7 +290,7 @@ U|u_s\rangle = e^{\frac{2\pi is}{r}} |u_s\rangle
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

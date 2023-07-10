@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2023-04-24 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Doom Emacs on Ubuntu Linux 尝鲜</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -50,23 +50,22 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">Doom Emacs on Ubuntu Linux 尝鲜
-<br />
-<span class="subtitle">Ping Zhou, 2022-05-21</span>
-</h1>
-
-<section id="outline-container-org4302789" class="outline-2">
-<h2 id="org4302789">Doom Emacs简介</h2>
-<div class="outline-text-2" id="text-org4302789">
+<header>
+<h1 class="title">Doom Emacs on Ubuntu Linux 尝鲜</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2022-05-21</p>
+</header>
+<section id="outline-container-org3320669" class="outline-2">
+<h2 id="org3320669">Doom Emacs简介</h2>
+<div class="outline-text-2" id="text-org3320669">
 <p>
 Doom Emacs 是一个 Emacs 的配置框架，相比原厂的 Emacs 配置，Doom Emacs 提供了更方便完善的默认设置，预装了常用的包，并且提供了一个很容易自定义的框架。同时，Doom Emacs 启动速度也很快。最近在 Ubuntu 上试用了一下，感觉不错，正在考虑将我原有的配置移到 Doom Emacs 上去。
 </p>
 
 
-<div id="org74b2491" class="figure">
-<p><img src="../images/2022/2022-05-21_19-14-11_screenshot.png" alt="2022-05-21_19-14-11_screenshot.png" width="640px" />
-</p>
-</div>
+<figure id="org93993a6">
+<img src="../images/2022/2022-05-21_19-14-11_screenshot.png" alt="2022-05-21_19-14-11_screenshot.png" width="640px">
+
+</figure>
 
 <p>
 注意，Doom Emacs 不是 Emacs 发行版，只是一组 Emacs 配置，你运行 Doom Emacs 时，运行的还是系统上安装的 Emacs。Doom Emacs 需要 Emacs 27.1 以上，如果你的 Emacs 版本太低，需要先升级才能使用。
@@ -74,9 +73,9 @@ Doom Emacs 是一个 Emacs 的配置框架，相比原厂的 Emacs 配置，Doom
 </div>
 </section>
 
-<section id="outline-container-orga23d3b7" class="outline-2">
-<h2 id="orga23d3b7">在 Ubuntu 上安装 Doom Emacs</h2>
-<div class="outline-text-2" id="text-orga23d3b7">
+<section id="outline-container-org313a63f" class="outline-2">
+<h2 id="org313a63f">在 Ubuntu 上安装 Doom Emacs</h2>
+<div class="outline-text-2" id="text-org313a63f">
 <p>
 首先你需要 Emacs 27.1 以上，个人推荐最新的 28.1 ，并带上 native-compilation 。
 </p>
@@ -86,8 +85,8 @@ Doom Emacs 是一个 Emacs 的配置框架，相比原厂的 Emacs 配置，Doom
             --with-native-compilation <span class="org-sh-escaped-newline">\</span>
             --with-x --with-json <span class="org-sh-escaped-newline">\</span>
             --with-jpeg --with-tiff --with-png
-<span class="org-type">make</span> -j4
-<span class="org-type">make</span> install
+make -j4
+make install
 </pre>
 </div>
 
@@ -110,8 +109,8 @@ Doom Emacs 是一个 Emacs 的配置框架，相比原厂的 Emacs 配置，Doom
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span class="org-type">sudo</span> apt install fd-find
-<span class="org-type">ln</span> -s $<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-builtin">which</span> fdfind<span class="org-rainbow-delimiters-depth-1">)</span> ~/.local/bin/fd
+<pre class="src src-shell">sudo apt install fd-find
+ln -s $(<span class="org-builtin">which</span> fdfind) ~/.local/bin/fd
 </pre>
 </div>
 
@@ -120,7 +119,7 @@ Doom Emacs 是一个 Emacs 的配置框架，相比原厂的 Emacs 配置，Doom
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span class="org-type">git</span> clone --depth <span class="org-highlight-numbers-number">1</span> https://github.com/doomemacs/doomemacs ~/.emacs.d
+<pre class="src src-shell">git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
 </pre>
 </div>
 
@@ -129,10 +128,10 @@ Doom Emacs 是一个 Emacs 的配置框架，相比原厂的 Emacs 配置，Doom
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span class="org-type">git</span> clone --depth <span class="org-highlight-numbers-number">1</span> https://github.com/doomemacs/doomemacs ~/git/doomemacs
+<pre class="src src-shell">git clone --depth 1 https://github.com/doomemacs/doomemacs ~/git/doomemacs
 <span class="org-comment-delimiter"># </span><span class="org-comment">&#23558;&#21407;&#26377;&#30340;.emacs.d&#30446;&#24405;&#37325;&#21629;&#21517;&#65292;&#28982;&#21518;&#20570;&#19968;&#20010;&#31526;&#21495;&#36830;&#25509;&#21040;Doom Emacs&#20195;&#30721;&#24211;</span>
-<span class="org-type">mv</span> ~/.emacs.d ~/.emacs.d.orig
-<span class="org-type">ln</span> -s ~/git/doomemacs ~/.emacs.d
+mv ~/.emacs.d ~/.emacs.d.orig
+ln -s ~/git/doomemacs ~/.emacs.d
 </pre>
 </div>
 
@@ -155,9 +154,9 @@ Doom Emacs 是一个 Emacs 的配置框架，相比原厂的 Emacs 配置，Doom
 </div>
 </section>
 
-<section id="outline-container-org2915957" class="outline-2">
-<h2 id="org2915957">Doom Emacs配置初探</h2>
-<div class="outline-text-2" id="text-org2915957">
+<section id="outline-container-org6f08dea" class="outline-2">
+<h2 id="org6f08dea">Doom Emacs配置初探</h2>
+<div class="outline-text-2" id="text-org6f08dea">
 <p>
 Doom Emacs 安装完成后，会生成一个 <code>.doom.d</code> 目录，里面存放 Doom Emacs 的本地配置。
 </p>
@@ -179,7 +178,7 @@ Doom Emacs 安装完成后，会生成一个 <code>.doom.d</code> 目录，里�
 例如我在 <code>init.el</code> 里激活了中文输入，go，C/C++, Common Lisp等包：
 </p>
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">doom!</span> <span class="org-builtin">:input</span>
+<pre class="src src-emacs-lisp">(doom! <span class="org-builtin">:input</span>
        <span class="org-comment-delimiter">;;</span><span class="org-comment">bidi              ; (tfel ot) thgir etirw uoy gnipleh</span>
        chinese
        <span class="org-comment-delimiter">;;</span><span class="org-comment">japanese</span>
@@ -188,7 +187,7 @@ Doom Emacs 安装完成后，会生成一个 <code>.doom.d</code> 目录，里�
        <span class="org-builtin">:lang</span>
        <span class="org-comment-delimiter">;;</span><span class="org-comment">agda              ; types of types of types of types...</span>
        <span class="org-comment-delimiter">;;</span><span class="org-comment">beancount         ; mind the GAAP</span>
-       <span class="org-rainbow-delimiters-depth-2">(</span>cc +lsp<span class="org-rainbow-delimiters-depth-2">)</span>         <span class="org-comment-delimiter">; </span><span class="org-comment">C &gt; C++ == 1</span>
+       (cc +lsp)         <span class="org-comment-delimiter">; </span><span class="org-comment">C &gt; C++ == 1</span>
        <span class="org-comment-delimiter">;;</span><span class="org-comment">clojure           ; java with a lisp</span>
        common-lisp       <span class="org-comment-delimiter">; </span><span class="org-comment">if you've seen one lisp, you've seen them all</span>
        <span class="org-comment-delimiter">;;</span><span class="org-comment">coq               ; proofs-as-programs</span>
@@ -208,9 +207,9 @@ Doom Emacs 安装完成后，会生成一个 <code>.doom.d</code> 目录，里�
        <span class="org-comment-delimiter">;;</span><span class="org-comment">fsharp            ; ML stands for Microsoft's Language</span>
        <span class="org-comment-delimiter">;;</span><span class="org-comment">fstar             ; (dependent) types and (monadic) effects and Z3</span>
        <span class="org-comment-delimiter">;;</span><span class="org-comment">gdscript          ; the language you waited for</span>
-       <span class="org-rainbow-delimiters-depth-2">(</span>go +lsp<span class="org-rainbow-delimiters-depth-2">)</span>         <span class="org-comment-delimiter">; </span><span class="org-comment">the hipster dialect</span>
+       (go +lsp)         <span class="org-comment-delimiter">; </span><span class="org-comment">the hipster dialect</span>
        <span class="org-comment-delimiter">;; </span><span class="org-comment">......</span>
-       <span class="org-rainbow-delimiters-depth-1">)</span>
+       )
 </pre>
 </div>
 
@@ -247,7 +246,7 @@ Doom Emacs 会自动同步配置并安装所需的包，然后重新启动 Doom 
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2023-04-24 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Emacs集成开发环境和远程开发配置</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -50,11 +50,10 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">Emacs集成开发环境和远程开发配置
-<br />
-<span class="subtitle">Ping Zhou, 2022-08-14</span>
-</h1>
-<p>
+<header>
+<h1 class="title">Emacs集成开发环境和远程开发配置</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2022-08-14</p>
+</header><p>
 一个经典问题，如何把 Emacs 配置出 IDE 的效果？
 </p>
 
@@ -70,7 +69,7 @@
 如何生成 compile<sub>commands.json</sub> 文件呢？取决于项目的构建工具。如果是 cmake，ninja 等比较现代的工具，都内置了导出 compile<sub>commands.json</sub> 文件的功能，比如 cmake 里只要加上这个环境变量就行了：
 </p>
 
-<pre class="example" id="orgd235395">
+<pre class="example" id="org617e20f">
 CMAKE_EXPORT_COMPILE_COMMANDS
 </pre>
 
@@ -80,7 +79,7 @@ CMAKE_EXPORT_COMPILE_COMMANDS
 
 <div class="org-src-container">
 <pre class="src src-shell">./configure
-bear <span class="org-type">make</span>
+bear make
 </pre>
 </div>
 
@@ -100,7 +99,7 @@ bear <span class="org-type">make</span>
 Emacs 内置有远程连接的客户端 tramp，支持 SSH 等多种连接方式。我们可以通过 tramp 来访问远程机器上的文件。例如我们在打开文件时输入这样的地址：
 </p>
 
-<pre class="example" id="orge869a68">
+<pre class="example" id="org076ccc4">
 /ssh:user@192.168.0.100#1234:/home/user/test.c
 </pre>
 
@@ -116,7 +115,7 @@ Emacs 内置有远程连接的客户端 tramp，支持 SSH 等多种连接方式
 给 tramp 设置一个专用的终端类型：
 </p>
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">setq</span> tramp-terminal-type <span class="org-string">"tramp"</span><span class="org-rainbow-delimiters-depth-1">)</span>
+<pre class="src src-emacs-lisp">(<span class="org-keyword">setq</span> tramp-terminal-type <span class="org-string">"tramp"</span>)
 </pre>
 </div>
 
@@ -125,7 +124,7 @@ Emacs 内置有远程连接的客户端 tramp，支持 SSH 等多种连接方式
 </p>
 
 <div class="org-src-container">
-<pre class="src src-shell"><span class="org-rainbow-delimiters-depth-1">[</span><span class="org-rainbow-delimiters-depth-2">[</span> $<span class="org-variable-name">TERM</span> == <span class="org-string">"tramp"</span> <span class="org-rainbow-delimiters-depth-2">]</span><span class="org-rainbow-delimiters-depth-1">]</span> &amp;&amp; <span class="org-builtin">unsetopt</span> zle &amp;&amp; <span class="org-variable-name">PS1</span>=<span class="org-string">'$ '</span>
+<pre class="src src-shell">[[ $<span class="org-variable-name">TERM</span> == <span class="org-string">"tramp"</span> ]] &amp;&amp; <span class="org-builtin">unsetopt</span> zle &amp;&amp; <span class="org-variable-name">PS1</span>=<span class="org-string">'$ '</span>
 </pre>
 </div>
 
@@ -142,12 +141,12 @@ Emacs 内置有远程连接的客户端 tramp，支持 SSH 等多种连接方式
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-constant">lsp-register-client</span>
- <span class="org-rainbow-delimiters-depth-2">(</span><span class="org-constant">make-lsp-client</span> <span class="org-builtin">:new-connection</span> <span class="org-rainbow-delimiters-depth-3">(</span><span class="org-constant">lsp-tramp-connection</span> <span class="org-string">"/usr/bin/clangd"</span><span class="org-rainbow-delimiters-depth-3">)</span>
-                  <span class="org-builtin">:major-modes</span> <span class="org-highlight-quoted-quote">'</span><span class="org-rainbow-delimiters-depth-3">(</span>c-mode cc-mode<span class="org-rainbow-delimiters-depth-3">)</span>
+<pre class="src src-emacs-lisp">(lsp-register-client
+ (make-lsp-client <span class="org-builtin">:new-connection</span> (lsp-tramp-connection <span class="org-string">"/usr/bin/clangd"</span>)
+                  <span class="org-builtin">:major-modes</span> '(c-mode cc-mode)
                   <span class="org-builtin">:remote?</span> t
-                  <span class="org-builtin">:server-id</span> <span class="org-highlight-quoted-quote">'</span><span class="org-highlight-quoted-symbol">clangd-remote</span><span class="org-rainbow-delimiters-depth-2">)</span><span class="org-rainbow-delimiters-depth-1">)</span>
-<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-function-name">add-to-list</span> <span class="org-highlight-quoted-quote">'</span><span class="org-variable-name">lsp-enabled-clients</span> <span class="org-highlight-quoted-quote">'</span><span class="org-highlight-quoted-symbol">clangd-remote</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                  <span class="org-builtin">:server-id</span> 'clangd-remote))
+(add-to-list 'lsp-enabled-clients 'clangd-remote)
 </pre>
 </div>
 
@@ -166,7 +165,7 @@ tramp 还有个方便的功能：如果当前文件是远程的，那么当我�
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.6.1).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>

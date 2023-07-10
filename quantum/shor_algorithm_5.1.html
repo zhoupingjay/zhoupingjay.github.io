@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!-- 2022-05-21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<!-- 2023-07-10 -->
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子计算会终结现在的密码体系吗？(5.1) Shor算法详解</title>
 <meta name="author" content="Ping Zhou" />
@@ -16,6 +14,8 @@
 <link rel='stylesheet' href='/css/site.css' type='text/css'/>
 <link rel='stylesheet' href='/css/custom.css' type='text/css'/>
 <link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
+     crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -71,17 +71,16 @@
 </div>
 </header>
 <main id="content" class="content">
-<h1 class="title">量子计算会终结现在的密码体系吗？(5.1) Shor算法详解
-<br />
-<span class="subtitle">Ping Zhou, 2021-05-27</span>
-</h1>
-<p>
+<header>
+<h1 class="title">量子计算会终结现在的密码体系吗？(5.1) Shor算法详解</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-05-27</p>
+</header><p>
 在前文“回到Shor算法”中我们用QFT提取函数周期信息，但是​这个过程的原理是什么？本文接着详解……
 </p>
 
-<section id="outline-container-org08d5bcd" class="outline-2">
-<h2 id="org08d5bcd">Shor算法关键：如何用QFT提取函数周期信息？</h2>
-<div class="outline-text-2" id="text-org08d5bcd">
+<section id="outline-container-org65ffd00" class="outline-2">
+<h2 id="org65ffd00">Shor算法关键：如何用QFT提取函数周期信息？</h2>
+<div class="outline-text-2" id="text-org65ffd00">
 <p>
 用量子计算机求解Order Finding问题，实质上是要找到函数 \(f(x)=a^x \mod N\) 的周期。
 </p>
@@ -91,20 +90,20 @@ Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这
 </p>
 
 
-<div id="org04678d0" class="figure">
-<p><img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px" />
-</p>
-</div>
+<figure id="orge880e25">
+<img src="../images/shor2_uf.png" alt="shor2_uf.png" width="280px">
+
+</figure>
 
 <p>
 然后给它制备输入： 
 </p>
 
 
-<div id="org596fb8e" class="figure">
-<p><img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px" />
-</p>
-</div>
+<figure id="org0d41d17">
+<img src="../images/shor2_uf2.png" alt="shor2_uf2.png" width="320px">
+
+</figure>
 
 <p>
 在输出端测量 \(|\beta\rangle\) ，使得它坍缩到某个值z，这时 \(\alpha\) 就会坍缩到 \(|l\rangle, |l+r\rangle, |l+2r\rangle, \dots, |l+Ar\rangle\) 的叠加态：
@@ -128,9 +127,9 @@ Shor算法的第一步，是构造函数f(x)对应的可逆变换 \(U_f\) （这
 </div>
 </section>
 
-<section id="outline-container-orgc956fad" class="outline-2">
-<h2 id="orgc956fad">先考虑一个简化情况</h2>
-<div class="outline-text-2" id="text-orgc956fad">
+<section id="outline-container-orgd9e4e9c" class="outline-2">
+<h2 id="orgd9e4e9c">先考虑一个简化情况</h2>
+<div class="outline-text-2" id="text-orgd9e4e9c">
 <p>
 先考虑一个简化情况：
 </p>
@@ -275,9 +274,9 @@ QFT|\alpha\rangle = \frac{1}{\sqrt{r}} \sum_{k=0}^{r-1} e^{\frac{2\pi ilk}{r}} |
 </div>
 </section>
 
-<section id="outline-container-orgb400456" class="outline-2">
-<h2 id="orgb400456">简化条件不成立？</h2>
-<div class="outline-text-2" id="text-orgb400456">
+<section id="outline-container-org6afbc8b" class="outline-2">
+<h2 id="org6afbc8b">简化条件不成立？</h2>
+<div class="outline-text-2" id="text-org6afbc8b">
 <p>
 这个故事就长了，下次再说，免得把你绕晕了。:-)
 </p>
@@ -287,7 +286,7 @@ QFT|\alpha\rangle = \frac{1}{\sqrt{r}} \sum_{k=0}^{r-1} e^{\frac{2\pi ilk}{r}} |
 <footer id="postamble" class="status">
 <div class='footer'>
     Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.1 (<a href="https://orgmode.org">Org</a> mode 9.4.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
     </div>
 </footer>
 </body>
