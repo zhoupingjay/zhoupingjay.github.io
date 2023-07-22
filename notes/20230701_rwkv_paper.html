@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-10 -->
+<!-- 2023-07-21 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>颠覆Transformer？新语言模型算法RWKV解读</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
 <link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
-<link rel='stylesheet' href='/css/site.css' type='text/css'/>
-<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
-<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
-<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
-     crossorigin='anonymous'></script>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -36,27 +31,38 @@
      }
 // @license-end
 </script>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        displayAlign: "center",
-        displayIndent: "0em",
-
-        "HTML-CSS": { scale: 100,
-                        linebreaks: { automatic: "false" },
-                        webFont: "TeX"
-                       },
-        SVG: {scale: 100,
-              linebreaks: { automatic: "false" },
-              font: "TeX"},
-        NativeMML: {scale: 100},
-        TeX: { equationNumbers: {autoNumber: "AMS"},
-               MultLineWidth: "85%",
-               TagSide: "right",
-               TagIndent: ".8em"
-             }
-});
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 </head>
 <body>
 <div id="org-div-home-and-up">
@@ -79,7 +85,7 @@ RWKV 是 Peng Bo 提出的一个新的语言模型算法，它融合了 Transfor
 </p>
 
 
-<figure id="org4493fc9">
+<figure id="org582c8ed">
 <img src="../images/2023/20230707-171611_screenshot.png" alt="20230707-171611_screenshot.png" width="640px">
 
 </figure>
@@ -139,7 +145,7 @@ Transformer 的成功，我认为关键是两点：一是 Transformer 的注意�
 </p>
 
 
-<figure id="orgcfb07fb">
+<figure id="org8ca7567">
 <img src="../images/2023/20230702-122855_screenshot.png" alt="20230702-122855_screenshot.png" width="480px">
 
 </figure>
@@ -237,7 +243,7 @@ RNN/LSTM 的工作方式跟状态机有点类似，它内部有个隐状态（hi
 </p>
 
 
-<figure id="orgaa34a73">
+<figure id="org711b39f">
 <img src="../images/2023/20230702-164256_screenshot.png" alt="20230702-164256_screenshot.png" width="320px">
 
 </figure>
@@ -254,7 +260,7 @@ RNN/LSTM 的工作方式跟状态机有点类似，它内部有个隐状态（hi
 </p>
 
 
-<figure id="orgef20249">
+<figure id="orgd247d00">
 <img src="../images/2023/20230704-161915_screenshot.png" alt="20230704-161915_screenshot.png" width="640px">
 
 </figure>
@@ -266,7 +272,7 @@ RNN/LSTM 的工作方式跟状态机有点类似，它内部有个隐状态（hi
 <p>
 再看个简单的例子，假如我们的序列有 4 个输入 x1, x2, x3, x4，每个位置的隐状态就是当前输入的累加，也就是上一个隐状态与当前输入之和：
 </p>
-<pre class="example" id="org983b47d">
+<pre class="example" id="org38ec48d">
 h0 = 0
 h1 = h0 + x1 = x1
 h2 = h1 + x2 = x1 + x2
@@ -277,7 +283,7 @@ h4 = h3 + x4 = x1 + x2 + x3 + x4
 <p>
 这种情况，前后状态之间是线性依赖，我们只需要构造一个下三角矩阵：
 </p>
-<pre class="example" id="org1329e84">
+<pre class="example" id="org65921c8">
 1 0 0 0
 1 1 0 0
 1 1 1 0
@@ -290,7 +296,7 @@ h4 = h3 + x4 = x1 + x2 + x3 + x4
 <p>
 但是，如果我们的隐状态和上一个状态是非线性依赖的，例如 <code>h(t) = sigmoid(h(t-1)) + x(t)</code> :
 </p>
-<pre class="example" id="org0203f6b">
+<pre class="example" id="orgb2fbe29">
 h0 = 0
 h1 = sigmoid(h0) + x1
 h2 = sigmoid(h1) + x2
@@ -311,7 +317,7 @@ Transformer 的注意力机制可以用下面这个公式来表达（关于 Tran
 </p>
 
 
-<figure id="orgb926842">
+<figure id="org9dad703">
 <img src="../images/2023/20230702-164432_screenshot.png" alt="20230702-164432_screenshot.png" width="320px">
 
 </figure>
@@ -321,7 +327,7 @@ Transformer 的注意力机制可以用下面这个公式来表达（关于 Tran
 </p>
 
 
-<figure id="org952eb49">
+<figure id="org1be05c8">
 <img src="../images/2023/20230702-164600_screenshot.png" alt="20230702-164600_screenshot.png" width="360px">
 
 </figure>
@@ -336,7 +342,7 @@ RWKV 的灵感来自于 2021 年 Apple 的一篇论文『Attention Free Transfor
 </p>
 
 
-<figure id="orge89cc50">
+<figure id="orgefa19f9">
 <img src="../images/2023/20230702-164618_screenshot.png" alt="20230702-164618_screenshot.png" width="360px">
 
 </figure>
@@ -368,7 +374,7 @@ RWKV 模型的架构，和 Transformer 非常类似，也是由多个 RWKV block
 </p>
 
 
-<figure id="org0771481">
+<figure id="org95be91c">
 <img src="../images/2023/20230702-164959_screenshot.png" alt="20230702-164959_screenshot.png" width="480px">
 
 </figure>
@@ -378,7 +384,7 @@ RWKV block 内部的 Time Mixing 和 Channel Mixing 模块：
 </p>
 
 
-<figure id="org74030f3">
+<figure id="orgb41e6e1">
 <img src="../images/2023/20230702-165032_screenshot.png" alt="20230702-165032_screenshot.png" width="480px">
 
 </figure>
@@ -393,7 +399,7 @@ RWKV block 的 Time Mixing 模块，可以用下面的一组公式来描述：
 </p>
 
 
-<figure id="org27bf704">
+<figure id="org3b794a4">
 <img src="../images/2023/20230702-165233_screenshot.png" alt="20230702-165233_screenshot.png" width="360px">
 
 </figure>
@@ -413,7 +419,7 @@ WKV 的计算有点类似于 Softmax，但是在分子和分母上分别加了�
 </p>
 
 
-<figure id="org0708a6a">
+<figure id="org0e294a2">
 <img src="../images/2023/20230704-204127_screenshot.png" alt="20230704-204127_screenshot.png" width="400px">
 
 </figure>
@@ -432,7 +438,7 @@ Channel Mixing 模块就简单多了，R和 K 同前面的 Time Mixing 一样，
 </p>
 
 
-<figure id="org2f6056c">
+<figure id="org85c7582">
 <img src="../images/2023/20230702-165253_screenshot.png" alt="20230702-165253_screenshot.png" width="360px">
 
 </figure>
@@ -459,7 +465,7 @@ Time Mixing 部分，核心是 WKV 计算（公式 14)。
 </p>
 
 
-<figure id="org49dc0ad">
+<figure id="org4a2b7c6">
 <img src="../images/2023/20230705-183250_screenshot.png" alt="20230705-183250_screenshot.png" width="360px">
 
 </figure>
@@ -469,7 +475,7 @@ Time Mixing 部分，核心是 WKV 计算（公式 14)。
 </p>
 
 
-<figure id="org038f7c4">
+<figure id="orga21e3cb">
 <img src="../images/2023/20230706-185301_screenshot.png" alt="20230706-185301_screenshot.png" width="800px">
 
 </figure>
@@ -492,7 +498,7 @@ RWKV 算法可以写成 RNN 那样的递归形式，因此也具有 RNN 推理�
 </p>
 
 
-<figure id="org41d6a4c">
+<figure id="orgf766248">
 <img src="../images/2023/20230706-212343_screenshot.png" alt="20230706-212343_screenshot.png" width="280px">
 
 </figure>
@@ -502,7 +508,7 @@ RWKV 算法可以写成 RNN 那样的递归形式，因此也具有 RNN 推理�
 </p>
 
 
-<figure id="org4b3a8ca">
+<figure id="orgaead4ad">
 <img src="../images/2023/20230706-212634_screenshot.png" alt="20230706-212634_screenshot.png" width="400px">
 
 </figure>
@@ -512,7 +518,7 @@ RWKV 算法可以写成 RNN 那样的递归形式，因此也具有 RNN 推理�
 </p>
 
 
-<figure id="orge6e3971">
+<figure id="org7650e52">
 <img src="../images/2023/20230702-165512_screenshot.png" alt="20230702-165512_screenshot.png" width="480px">
 
 </figure>
@@ -552,8 +558,7 @@ RWKV 的缺点：和 RNN 一样，历史信息是靠隐状态（WKV）来记忆�
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).
     </div>
 </footer>
 </body>

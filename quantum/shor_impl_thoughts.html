@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-10 -->
+<!-- 2023-07-21 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>聊聊量子因式分解算法的实现</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
 <link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
-<link rel='stylesheet' href='/css/site.css' type='text/css'/>
-<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
-<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
-<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
-     crossorigin='anonymous'></script>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -36,27 +31,38 @@
      }
 // @license-end
 </script>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        displayAlign: "center",
-        displayIndent: "0em",
-
-        "HTML-CSS": { scale: 100,
-                        linebreaks: { automatic: "false" },
-                        webFont: "TeX"
-                       },
-        SVG: {scale: 100,
-              linebreaks: { automatic: "false" },
-              font: "TeX"},
-        NativeMML: {scale: 100},
-        TeX: { equationNumbers: {autoNumber: "AMS"},
-               MultLineWidth: "85%",
-               TagSide: "right",
-               TagIndent: ".8em"
-             }
-});
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 </head>
 <body>
 <div id="org-div-home-and-up">
@@ -86,7 +92,7 @@
 </p>
 
 
-<figure id="org5d8a83f">
+<figure id="orgd466d9f">
 <img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="400px">
 
 </figure>
@@ -218,7 +224,7 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<figure id="org95b7716">
+<figure id="org984bbe0">
 <img src="../images/mod_exp.jpg" alt="mod_exp.jpg" width="400px">
 
 </figure>
@@ -241,7 +247,7 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<figure id="orgb71254c">
+<figure id="orgec91239">
 <a href="../images/multiply_modulo.jpg" width="280px"><img src="../images/multiply_modulo.jpg" alt="multiply_modulo.jpg" width="280px"></a>
 
 </figure>
@@ -255,7 +261,7 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<figure id="org46a5ecf">
+<figure id="org7745767">
 <img src="../images/ax_mod_n.jpg" alt="ax_mod_n.jpg" width="240px">
 
 </figure>
@@ -273,7 +279,7 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<figure id="orgcc992bd">
+<figure id="orge119be4">
 <a href="../images/multiply_modulo1.jpg" width="280px"><img src="../images/multiply_modulo1.jpg" alt="multiply_modulo1.jpg" width="280px"></a>
 
 </figure>
@@ -283,7 +289,7 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<figure id="org6bc9078">
+<figure id="orgeeee34e">
 <img src="../images/multiply_modulo2.jpg" alt="multiply_modulo2.jpg" width="480px">
 
 </figure>
@@ -302,7 +308,7 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<figure id="orgc939272">
+<figure id="orge3b92f7">
 <img src="../images/multiply_modulo3.jpg" alt="multiply_modulo3.jpg" width="480px">
 
 </figure>
@@ -319,7 +325,7 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </ol>
 
 
-<figure id="org12c7cfa">
+<figure id="org576fcbb">
 <img src="../images/mod_exp2.jpg" alt="mod_exp2.jpg" width="480px">
 
 </figure>
@@ -334,7 +340,7 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </p>
 
 
-<figure id="org6bf56b6">
+<figure id="org9396a19">
 <img src="../images/adder.png" alt="adder.png" width="200px">
 
 </figure>
@@ -374,8 +380,7 @@ a^x \mod N = a^{ x_{n-1}2^{n-1} + x_{n-2}2^{n-2} \dots x_02^0} \mod N\\
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).
     </div>
 </footer>
 </body>

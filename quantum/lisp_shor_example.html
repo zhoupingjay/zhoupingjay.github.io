@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-10 -->
+<!-- 2023-07-21 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>用Lisp可视化量子因式分解Shor算法的例子</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
 <link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
-<link rel='stylesheet' href='/css/site.css' type='text/css'/>
-<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
-<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
-<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
-     crossorigin='anonymous'></script>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -36,27 +31,38 @@
      }
 // @license-end
 </script>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        displayAlign: "center",
-        displayIndent: "0em",
-
-        "HTML-CSS": { scale: 100,
-                        linebreaks: { automatic: "false" },
-                        webFont: "TeX"
-                       },
-        SVG: {scale: 100,
-              linebreaks: { automatic: "false" },
-              font: "TeX"},
-        NativeMML: {scale: 100},
-        TeX: { equationNumbers: {autoNumber: "AMS"},
-               MultLineWidth: "85%",
-               TagSide: "right",
-               TagIndent: ".8em"
-             }
-});
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 </head>
 <body>
 <div id="org-div-home-and-up">
@@ -124,7 +130,7 @@
 <code>shor-find-mods</code> 从x=0开始，逐个计算 \(a^x \mod N\) ，把结果记录到一个序列里，直到序列里发现重复，这时候序列的长度就是函数的周期r。另外序列本身也作为副产品返回给调用方。例如在前文的例子中，N=21，a=11 ，返回的序列就是 (1 11 16 8 4 2)，周期是6:
 </p>
 
-<pre class="example" id="orga787cfa">
+<pre class="example" id="orgca246d9">
 CL-USER&gt; (shor-find-mods 11 21)
 6 (3 bits, #x6, #o6, #b110)
 (1 11 16 8 4 2)
@@ -201,7 +207,7 @@ CL-USER&gt; (shor-find-mods 11 21)
 </div>
 
 
-<figure id="orgf69106d">
+<figure id="orgb185a46">
 <img src="../images/shor_example_prob_dist.png" alt="shor_example_prob_dist.png" width="480px">
 
 </figure>
@@ -216,7 +222,7 @@ CL-USER&gt; (shor-find-mods 11 21)
 </div>
 
 
-<figure id="orga7558bb">
+<figure id="orgd43208d">
 <img src="../images/shor_example_prob_dist2.png" alt="shor_example_prob_dist2.png" width="480px">
 
 </figure>
@@ -227,8 +233,7 @@ Lisp真有意思啊！
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).
     </div>
 </footer>
 </body>

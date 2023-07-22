@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-10 -->
+<!-- 2023-07-21 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Run Emacs Server on MacOS</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
 <link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
-<link rel='stylesheet' href='/css/site.css' type='text/css'/>
-<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
-<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
-<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
-     crossorigin='anonymous'></script>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -76,7 +71,7 @@ First, I created a “plist” file in my LaunchAgents folder: ~/Library/LaunchA
 Here is an example of the plist file for Emacs server. Assuming Emacs binary is at /Applications/Emacs.app/Contents/MacOS/Emacs and the argument “–daemon” launches Emacs in server (daemon) mode.
 </p>
 
-<pre class="example" id="org18334f0">
+<pre class="example" id="org3582dc3">
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
     "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
@@ -151,7 +146,7 @@ Now that Emacs server is up and running, you can launch emacsclient just like an
 One caveat is that if you have multiple emacs installed (e.g. MacOS comes with an old version of Emacs, and you installed Emacs 26.x), you need to make sure client and server are from the same Emacs installation. For example, if Emacs server is at:
 </p>
 
-<pre class="example" id="org1dd2339">
+<pre class="example" id="org5aadd88">
 /Applications/Emacs.app/Contents/MacOS/Emacs
 </pre>
 
@@ -181,8 +176,7 @@ A note about GUI – By default emacsclient is launched in console. To launch em
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).
     </div>
 </footer>
 </body>

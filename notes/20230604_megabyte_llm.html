@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-10 -->
+<!-- 2023-07-21 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>超长上下文+无分词器，新一代大模型架构？Meta最新论文MegaByte解读</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
 <link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
-<link rel='stylesheet' href='/css/site.css' type='text/css'/>
-<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
-<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
-<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
-     crossorigin='anonymous'></script>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -36,27 +31,38 @@
      }
 // @license-end
 </script>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        displayAlign: "center",
-        displayIndent: "0em",
-
-        "HTML-CSS": { scale: 100,
-                        linebreaks: { automatic: "false" },
-                        webFont: "TeX"
-                       },
-        SVG: {scale: 100,
-              linebreaks: { automatic: "false" },
-              font: "TeX"},
-        NativeMML: {scale: 100},
-        TeX: { equationNumbers: {autoNumber: "AMS"},
-               MultLineWidth: "85%",
-               TagSide: "right",
-               TagIndent: ".8em"
-             }
-});
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 </head>
 <body>
 <div id="org-div-home-and-up">
@@ -89,7 +95,7 @@
 例如在下面这个会话里，如果我们把上下文窗口的长度设为 10 个 token，可以看到模型就不能记住之前对话的内容了：
 </p>
 
-<pre class="example" id="orgecdfdf9">
+<pre class="example" id="org11187c6">
 User&gt; Hi, my name is Ping
 AI&gt; Hello Ping, it's nice to meet you! My name is OpenAI.
     How can I assist you today?
@@ -164,7 +170,7 @@ AI&gt; I'm sorry, I don't have access to that information.
 </p>
 
 
-<figure id="org7fb73c7">
+<figure id="org9f76de3">
 <img src="../images/2023/20230609-204323_screenshot.png" alt="20230609-204323_screenshot.png" width="480px">
 
 </figure>
@@ -184,7 +190,7 @@ MegaByte 的总体思路很简单，用几句话或者一张图就能概括：
 </ul>
 
 
-<figure id="orgc1cb82e">
+<figure id="org96a7847">
 <img src="../images/2023/20230609-204532_screenshot.png" alt="20230609-204532_screenshot.png" width="400px">
 
 </figure>
@@ -212,7 +218,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<figure id="org177ef72">
+<figure id="org57b15a2">
 <img src="../images/2023/20230613-094634_screenshot.png" alt="20230613-094634_screenshot.png" width="400px">
 
 </figure>
@@ -222,7 +228,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<figure id="org9c7b0a4">
+<figure id="org4679eb9">
 <img src="../images/2023/20230612-230850_screenshot.png" alt="20230612-230850_screenshot.png" width="400px">
 
 </figure>
@@ -240,7 +246,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<figure id="org22ade1f">
+<figure id="orgf517660">
 <img src="../images/2023/20230612-231040_screenshot.png" alt="20230612-231040_screenshot.png" width="400px">
 
 </figure>
@@ -251,7 +257,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 <h3 id="org072b355">Global Model</h3>
 <div class="outline-text-3" id="text-org072b355">
 
-<figure id="orgd682b23">
+<figure id="orgc17e61b">
 <img src="../images/2023/20230613-100248_screenshot.png" alt="20230613-100248_screenshot.png" width="400px">
 
 </figure>
@@ -261,7 +267,7 @@ Global Model 就是一个普通的 Transformer decoder，它的输入序列长�
 </p>
 
 
-<figure id="orgf879646">
+<figure id="org7680805">
 <img src="../images/2023/20230613-093845_screenshot.png" alt="20230613-093845_screenshot.png" width="400px">
 
 </figure>
@@ -276,7 +282,7 @@ Gobal Model 的输出，是 K 个 patch 的表征（representation）向量，�
 <h3 id="org1a76849">Local Model</h3>
 <div class="outline-text-3" id="text-org1a76849">
 
-<figure id="org898cc5d">
+<figure id="org5509d57">
 <img src="../images/2023/20230613-102342_screenshot.png" alt="20230613-102342_screenshot.png" width="400px">
 
 </figure>
@@ -298,7 +304,7 @@ Gobal Model 的输出是 K 个 patch 向量，每个 patch 向量的大小（维
 </p>
 
 
-<figure id="org3fac828">
+<figure id="org533b9c6">
 <img src="../images/2023/20230613-102942_screenshot.png" alt="20230613-102942_screenshot.png" width="640px">
 
 </figure>
@@ -308,7 +314,7 @@ K 个 Local Model 副本，在 K 个 patch 上独立运行，因此在推理和�
 </p>
 
 
-<figure id="org473a6df">
+<figure id="org66e3832">
 <img src="../images/2023/20230613-101813_screenshot.png" alt="20230613-101813_screenshot.png" width="400px">
 
 </figure>
@@ -318,7 +324,7 @@ K 个 Local Model 副本，在 K 个 patch 上独立运行，因此在推理和�
 </p>
 
 
-<figure id="org84a328d">
+<figure id="org30e23d1">
 <img src="../images/2023/20230613-102226_screenshot.png" alt="20230613-102226_screenshot.png" width="400px">
 
 </figure>
@@ -417,7 +423,7 @@ MegaByte 依赖 Global Model 来提取长距离依赖，但是我们也可以在
 </p>
 
 
-<figure id="org7e01cf6">
+<figure id="orgc956007">
 <img src="../images/2023/20230613-135610_screenshot.png" alt="20230613-135610_screenshot.png" width="480px">
 
 </figure>
@@ -450,21 +456,21 @@ MegaByte 的设计目标之一就是多模态，所以作者除了语言模型�
             local_args,
             patch_size,
     ):
-        <span class="org-keyword">self</span>.pad = 0
-        <span class="org-keyword">self</span>.<span class="org-variable-name">patch_size</span> = patch_size
-        <span class="org-keyword">self</span>.<span class="org-variable-name">globalmodel</span> = TransformerDecoder(global_args)
-        <span class="org-keyword">self</span>.<span class="org-variable-name">localmodel</span> = TransformerDecoder(local_args)
+        <span class="org-keyword">self</span>.<span class="org-variable-name">pad</span> <span class="org-operator">=</span> 0
+        <span class="org-keyword">self</span>.<span class="org-variable-name">patch_size</span> <span class="org-operator">=</span> patch_size
+        <span class="org-keyword">self</span>.<span class="org-variable-name">globalmodel</span> <span class="org-operator">=</span> TransformerDecoder(global_args)
+        <span class="org-keyword">self</span>.<span class="org-variable-name">localmodel</span> <span class="org-operator">=</span> TransformerDecoder(local_args)
 
     <span class="org-keyword">def</span> <span class="org-function-name">forward</span>(
             <span class="org-keyword">self</span>,
             <span class="org-builtin">bytes</span>, ):
-        <span class="org-variable-name">bytes_global</span>, <span class="org-variable-name">bytes_local</span> = <span class="org-keyword">self</span>.prepare_input(<span class="org-builtin">bytes</span>)
-        <span class="org-variable-name">global_bytes_embedded</span> = <span class="org-keyword">self</span>.globalmodel.embed(bytes_global)
+        <span class="org-variable-name">bytes_global</span>, <span class="org-variable-name">bytes_local</span> <span class="org-operator">=</span> <span class="org-keyword">self</span>.prepare_input(<span class="org-builtin">bytes</span>)
+        <span class="org-variable-name">global_bytes_embedded</span> <span class="org-operator">=</span> <span class="org-keyword">self</span>.globalmodel.embed(bytes_global)
         <span class="org-comment-delimiter"># </span><span class="org-comment">b: batch size</span>
         <span class="org-comment-delimiter"># </span><span class="org-comment">t: &#24207;&#21015;&#38271;&#24230;&#65288;patch&#25968;, &#24212;&#35813;&#20063;&#26159;local model&#21103;&#26412;&#25968;&#65289;</span>
         <span class="org-comment-delimiter"># </span><span class="org-comment">p: patch&#38271;&#24230;</span>
         <span class="org-comment-delimiter"># </span><span class="org-comment">e: &#27599;&#20010;&#23383;&#33410;embedding&#38271;&#24230;</span>
-        global_in = rearrange(
+        <span class="org-variable-name">global_in</span> <span class="org-operator">=</span> rearrange(
             global_bytes_embedded,
             <span class="org-comment-delimiter"># </span><span class="org-comment">&#36755;&#20837;&#24418;&#29366;&#65306;</span>
             <span class="org-comment-delimiter">#   </span><span class="org-comment">b: batch&#37324;&#26377;b&#20010;&#24207;&#21015;&#65292;</span>
@@ -475,25 +481,25 @@ MegaByte 的设计目标之一就是多模态，所以作者除了语言模型�
             <span class="org-comment-delimiter">#   </span><span class="org-comment">t: &#27599;&#20010;&#24207;&#21015;&#26377;t&#20010;patch</span>
             <span class="org-comment-delimiter">#   </span><span class="org-comment">(p e): &#27599;&#20010;patch&#38271;&#24230;&#20026;p*e</span>
             <span class="org-string">"b (t p) e -&gt; b t (p e)"</span>,
-            p=<span class="org-keyword">self</span>.patch_size,
+            p<span class="org-operator">=</span><span class="org-keyword">self</span>.patch_size,
         )
-        global_output = <span class="org-keyword">self</span>.globalmodel(global_in)
+        <span class="org-variable-name">global_output</span> <span class="org-operator">=</span> <span class="org-keyword">self</span>.globalmodel(global_in)
 
-        global_output_reshaped = rearrange(
+        <span class="org-variable-name">global_output_reshaped</span> <span class="org-operator">=</span> rearrange(
             global_output,
             <span class="org-comment-delimiter"># </span><span class="org-comment">&#23558;&#36755;&#20986;&#21464;&#25104;(b*t)&#20010;patch&#65292;&#27599;&#20010;patch&#26377;p&#23383;&#33410;&#65292;</span>
             <span class="org-comment-delimiter"># </span><span class="org-comment">&#27599;&#20010;&#23383;&#33410;embedding&#22823;&#23567;e</span>
             <span class="org-string">"b t (p e) -&gt; (b t) p e"</span>,
-            p=<span class="org-keyword">self</span>.patch_size,
+            p<span class="org-operator">=</span><span class="org-keyword">self</span>.patch_size,
         )
-        local_bytes_embedded = <span class="org-keyword">self</span>.localmodel.embed(bytes_local)
-        local_in = local_bytes_embedded + global_output_reshaped
-        local_output = <span class="org-keyword">self</span>.localmodel(local_in)
+        <span class="org-variable-name">local_bytes_embedded</span> <span class="org-operator">=</span> <span class="org-keyword">self</span>.localmodel.embed(bytes_local)
+        <span class="org-variable-name">local_in</span> <span class="org-operator">=</span> local_bytes_embedded <span class="org-operator">+</span> global_output_reshaped
+        <span class="org-variable-name">local_output</span> <span class="org-operator">=</span> <span class="org-keyword">self</span>.localmodel(local_in)
 
-        batch_size = bytes_global.shape[0]
+        <span class="org-variable-name">batch_size</span> <span class="org-operator">=</span> bytes_global.shape[0]
         <span class="org-comment-delimiter"># </span><span class="org-comment">local&#30340;&#36755;&#20986;&#26159;(b*t)&#20010;patch&#65292;l&#24212;&#35813;&#23601;&#26159;&#21069;&#38754;&#30340;p, v&#24212;&#35813;&#23601;&#26159;&#21069;&#38754;&#30340;e&#65311;</span>
         <span class="org-comment-delimiter"># </span><span class="org-comment">reshape&#25104;b&#20010;&#24207;&#21015;&#65292;&#27599;&#20010;&#24207;&#21015;&#26377;(t*l)&#20010;&#23383;&#33410;embedding</span>
-        x = rearrange(local_output, <span class="org-string">"(b t) l v  -&gt; b (t l) v"</span>, b=batch_size)
+        <span class="org-variable-name">x</span> <span class="org-operator">=</span> rearrange(local_output, <span class="org-string">"(b t) l v  -&gt; b (t l) v"</span>, b<span class="org-operator">=</span>batch_size)
         <span class="org-keyword">return</span> x
 
     <span class="org-comment-delimiter"># </span><span class="org-comment">&#36825;&#20010;&#20989;&#25968;&#23558;&#23383;&#33410;&#24207;&#21015;&#36716;&#25104;global&#21644;local&#33021;&#29992;&#30340;&#24418;&#29366;&#65292;&#27880;&#24847;&#36825;&#37324;&#26159;&#23383;&#33410;&#24207;&#21015;&#65292;</span>
@@ -505,19 +511,19 @@ MegaByte 的设计目标之一就是多模态，所以作者除了语言模型�
     <span class="org-keyword">def</span> <span class="org-function-name">prepare_input</span>(<span class="org-keyword">self</span>, <span class="org-builtin">bytes</span>):
         <span class="org-comment-delimiter"># </span><span class="org-comment">&#30475;&#21518;&#38754;&#30340;&#25805;&#20316;&#65292;bytes&#24212;&#35813;&#26159;(b,T)&#30340;2&#32500;&#25968;&#32452;&#65292;b&#20026;batch&#22823;&#23567;&#65292;T&#20026;&#24207;&#21015;&#30340;&#38271;&#24230;&#65288;&#23383;&#33410;&#25968;&#65289;</span>
         <span class="org-comment-delimiter"># </span><span class="org-comment">padding_global&#24418;&#29366;&#65292;&#24212;&#35813;&#26159;(b,p)</span>
-        padding_global = <span class="org-builtin">bytes</span>.new(<span class="org-builtin">bytes</span>.shape[0], <span class="org-keyword">self</span>.patch_size).fill_(<span class="org-keyword">self</span>.pad)
+        <span class="org-variable-name">padding_global</span> <span class="org-operator">=</span> <span class="org-builtin">bytes</span>.new(<span class="org-builtin">bytes</span>.shape[0], <span class="org-keyword">self</span>.patch_size).fill_(<span class="org-keyword">self</span>.pad)
 
         <span class="org-comment-delimiter"># </span><span class="org-comment">&#36825;&#37324;&#23601;&#26159;&#21435;&#25481;&#26368;&#21518;&#19968;&#20010;patch&#65292;&#21069;&#38754;&#25554;&#19978;padding</span>
-        bytes_global = torch.cat((padding_global, <span class="org-builtin">bytes</span>[:, : -<span class="org-keyword">self</span>.patch_size]), -1)
+        <span class="org-variable-name">bytes_global</span> <span class="org-operator">=</span> torch.cat((padding_global, <span class="org-builtin">bytes</span>[:, : <span class="org-operator">-</span><span class="org-keyword">self</span>.patch_size]), <span class="org-operator">-</span>1)
 
         <span class="org-comment-delimiter"># </span><span class="org-comment">bytes_input&#24418;&#29366;&#65292;&#24212;&#35813;&#26159;(b*t)&#20010;patch&#65292;&#27599;&#20010;patch&#26377;p&#20010;&#23383;&#33410;</span>
-        bytes_input = rearrange(<span class="org-builtin">bytes</span>, <span class="org-string">"b (t p) -&gt; (b t) p"</span>, p=<span class="org-keyword">self</span>.patch_size)
+        <span class="org-variable-name">bytes_input</span> <span class="org-operator">=</span> rearrange(<span class="org-builtin">bytes</span>, <span class="org-string">"b (t p) -&gt; (b t) p"</span>, p<span class="org-operator">=</span><span class="org-keyword">self</span>.patch_size)
 
         <span class="org-comment-delimiter"># </span><span class="org-comment">padding_local&#21644;padding_global&#31867;&#20284;&#65292;&#24418;&#29366;&#26159; (b*t, p)</span>
-        padding_local = bytes_input.new(bytes_input.shape[0], 1).fill_(<span class="org-keyword">self</span>.pad)
+        <span class="org-variable-name">padding_local</span> <span class="org-operator">=</span> bytes_input.new(bytes_input.shape[0], 1).fill_(<span class="org-keyword">self</span>.pad)
 
         <span class="org-comment-delimiter"># </span><span class="org-comment">&#32473;local&#30340;&#24418;&#29366;&#65292;&#24212;&#35813;&#36824;&#26159;(b*t,p)&#65292;&#25172;&#25481;&#26368;&#21518;&#19968;&#20010;&#65292;&#21069;&#38754;&#25554;&#20837;&#19968;&#20010;padding</span>
-        bytes_local = torch.cat((padding_local, bytes_input[:, :-1]), -1)
+        <span class="org-variable-name">bytes_local</span> <span class="org-operator">=</span> torch.cat((padding_local, bytes_input[:, :<span class="org-operator">-</span>1]), <span class="org-operator">-</span>1)
 
         <span class="org-keyword">return</span> bytes_global, bytes_local
 </pre>
@@ -544,8 +550,7 @@ MegaByte 是一个可扩展的架构，它使 Transformer 大模型能够支持�
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).
     </div>
 </footer>
 </body>

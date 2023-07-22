@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-10 -->
+<!-- 2023-07-21 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>实战：用Cirq实现量子因式分解算法</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
 <link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
-<link rel='stylesheet' href='/css/site.css' type='text/css'/>
-<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
-<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
-<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
-     crossorigin='anonymous'></script>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -36,27 +31,38 @@
      }
 // @license-end
 </script>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        displayAlign: "center",
-        displayIndent: "0em",
-
-        "HTML-CSS": { scale: 100,
-                        linebreaks: { automatic: "false" },
-                        webFont: "TeX"
-                       },
-        SVG: {scale: 100,
-              linebreaks: { automatic: "false" },
-              font: "TeX"},
-        NativeMML: {scale: 100},
-        TeX: { equationNumbers: {autoNumber: "AMS"},
-               MultLineWidth: "85%",
-               TagSide: "right",
-               TagIndent: ".8em"
-             }
-});
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 </head>
 <body>
 <div id="org-div-home-and-up">
@@ -93,7 +99,7 @@
 <span class="org-keyword">import</span> cirq
 <span class="org-keyword">from</span> cirq.contrib.svg <span class="org-keyword">import</span> SVGCircuit
 <span class="org-keyword">from</span> typing <span class="org-keyword">import</span> Callable, List, Optional, Sequence, Union
-%matplotlib inline
+<span class="org-operator">%</span>matplotlib inline
 </pre>
 </div>
 </div>
@@ -106,7 +112,7 @@
 还记得Shor算法的量子电路吗？
 </p>
 
-<figure id="org4a5d66f">
+<figure id="orgf40c962">
 <img src="../images/shor2_uf3.png" alt="shor2_uf3.png" width="400px">
 
 </figure>
@@ -128,10 +134,10 @@ U_f |x\rangle|y\rangle \rightarrow |x\rangle|ya^x \mod N\rangle
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">mod_pow</span>(a:<span class="org-builtin">int</span>, x:<span class="org-builtin">int</span>, N:<span class="org-builtin">int</span>, y:<span class="org-builtin">int</span>=1) -&gt; <span class="org-builtin">int</span>:
-    p = y
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">mod_pow</span>(a:<span class="org-builtin">int</span>, x:<span class="org-builtin">int</span>, N:<span class="org-builtin">int</span>, y:<span class="org-builtin">int</span><span class="org-operator">=</span>1) <span class="org-operator">-&gt;</span> <span class="org-builtin">int</span>:
+    <span class="org-variable-name">p</span> <span class="org-operator">=</span> y
     <span class="org-keyword">for</span> i <span class="org-keyword">in</span> <span class="org-builtin">range</span>(x):
-        p = (p * a) % N
+        <span class="org-variable-name">p</span> <span class="org-operator">=</span> (p <span class="org-operator">*</span> a) <span class="org-operator">%</span> N
         <span class="org-keyword">return</span> p
 
 <span class="org-keyword">class</span> <span class="org-type">ModularExp</span>(cirq.ArithmeticOperation):
@@ -141,29 +147,29 @@ U_f |x\rangle|y\rangle \rightarrow |x\rangle|ya^x \mod N\rangle
         x: Union[<span class="org-builtin">int</span>, Sequence[cirq.Qid]],
         a: <span class="org-builtin">int</span>,
         N: <span class="org-builtin">int</span>,
-    ) -&gt; <span class="org-constant">None</span>:
-        <span class="org-keyword">if</span> <span class="org-builtin">len</span>(y) &lt; N.bit_length():
+    ) <span class="org-operator">-&gt;</span> <span class="org-constant">None</span>:
+        <span class="org-keyword">if</span> <span class="org-builtin">len</span>(y) <span class="org-operator">&lt;</span> N.bit_length():
             <span class="org-keyword">raise</span> <span class="org-type">ValueError</span>(
                 f<span class="org-string">'Register with </span>{<span class="org-builtin">len</span>(y)}<span class="org-string"> qubits is too small for N </span>{N}<span class="org-string">'</span>
             )
-        <span class="org-keyword">self</span>.y = y
-        <span class="org-keyword">self</span>.x = x
-        <span class="org-keyword">self</span>.a = a
-        <span class="org-keyword">self</span>.N = N
+        <span class="org-keyword">self</span>.<span class="org-variable-name">y</span> <span class="org-operator">=</span> y
+        <span class="org-keyword">self</span>.<span class="org-variable-name">x</span> <span class="org-operator">=</span> x
+        <span class="org-keyword">self</span>.<span class="org-variable-name">a</span> <span class="org-operator">=</span> a
+        <span class="org-keyword">self</span>.<span class="org-variable-name">N</span> <span class="org-operator">=</span> N
 
-    <span class="org-keyword">def</span> <span class="org-function-name">registers</span>(<span class="org-keyword">self</span>) -&gt; Sequence[Union[<span class="org-builtin">int</span>, Sequence[cirq.Qid]]]:
+    <span class="org-keyword">def</span> <span class="org-function-name">registers</span>(<span class="org-keyword">self</span>) <span class="org-operator">-&gt;</span> Sequence[Union[<span class="org-builtin">int</span>, Sequence[cirq.Qid]]]:
         <span class="org-keyword">return</span> <span class="org-keyword">self</span>.y, <span class="org-keyword">self</span>.x, <span class="org-keyword">self</span>.a, <span class="org-keyword">self</span>.N
 
     <span class="org-keyword">def</span> <span class="org-function-name">with_registers</span>(
         <span class="org-keyword">self</span>,
-        *new_registers: Union[<span class="org-builtin">int</span>, Sequence[<span class="org-string">'cirq.Qid'</span>]],
-    ) -&gt; <span class="org-string">'ModularExp'</span>:
-        <span class="org-keyword">if</span> <span class="org-builtin">len</span>(new_registers) != 4:
+        <span class="org-operator">*</span>new_registers: Union[<span class="org-builtin">int</span>, Sequence[<span class="org-string">'cirq.Qid'</span>]],
+    ) <span class="org-operator">-&gt;</span> <span class="org-string">'ModularExp'</span>:
+        <span class="org-keyword">if</span> <span class="org-builtin">len</span>(new_registers) <span class="org-operator">!=</span> 4:
             <span class="org-keyword">raise</span> <span class="org-type">ValueError</span>(
                 f<span class="org-string">'Expected 4 registers (y, x, a, '</span>
                 f<span class="org-string">'N), but got </span>{<span class="org-builtin">len</span>(new_registers)}<span class="org-string">'</span>
             )
-        <span class="org-variable-name">y</span>, <span class="org-variable-name">x</span>, <span class="org-variable-name">a</span>, <span class="org-variable-name">N</span> = new_registers
+        <span class="org-variable-name">y</span>, <span class="org-variable-name">x</span>, <span class="org-variable-name">a</span>, <span class="org-variable-name">N</span> <span class="org-operator">=</span> new_registers
         <span class="org-keyword">if</span> <span class="org-keyword">not</span> <span class="org-builtin">isinstance</span>(y, Sequence):
             <span class="org-keyword">raise</span> <span class="org-type">ValueError</span>(f<span class="org-string">'y must be a qubit register, got </span>{<span class="org-builtin">type</span>(y)}<span class="org-string">'</span>)
         <span class="org-keyword">if</span> <span class="org-keyword">not</span> <span class="org-builtin">isinstance</span>(a, <span class="org-builtin">int</span>):
@@ -172,36 +178,36 @@ U_f |x\rangle|y\rangle \rightarrow |x\rangle|ya^x \mod N\rangle
             <span class="org-keyword">raise</span> <span class="org-type">ValueError</span>(f<span class="org-string">'N must be a classical constant, got </span>{<span class="org-builtin">type</span>(N)}<span class="org-string">'</span>)
         <span class="org-keyword">return</span> ModularExp(y, x, a, N)
 
-    <span class="org-keyword">def</span> <span class="org-function-name">apply</span>(<span class="org-keyword">self</span>, *register_values: <span class="org-builtin">int</span>) -&gt; <span class="org-builtin">int</span>:
-        <span class="org-keyword">assert</span> <span class="org-builtin">len</span>(register_values) == 4
-        <span class="org-variable-name">y</span>, <span class="org-variable-name">x</span>, <span class="org-variable-name">a</span>, <span class="org-variable-name">N</span> = register_values
-        <span class="org-keyword">if</span> y &gt;= N:
+    <span class="org-keyword">def</span> <span class="org-function-name">apply</span>(<span class="org-keyword">self</span>, <span class="org-operator">*</span>register_values: <span class="org-builtin">int</span>) <span class="org-operator">-&gt;</span> <span class="org-builtin">int</span>:
+        <span class="org-keyword">assert</span> <span class="org-builtin">len</span>(register_values) <span class="org-operator">==</span> 4
+        <span class="org-variable-name">y</span>, <span class="org-variable-name">x</span>, <span class="org-variable-name">a</span>, <span class="org-variable-name">N</span> <span class="org-operator">=</span> register_values
+        <span class="org-keyword">if</span> y <span class="org-operator">&gt;=</span> N:
             <span class="org-keyword">return</span> y
         <span class="org-comment-delimiter"># </span><span class="org-comment">return (y * a ** x) % N</span>
-        <span class="org-keyword">return</span> mod_pow(a=a, x=x, N=N, y=y)
+        <span class="org-keyword">return</span> mod_pow(a<span class="org-operator">=</span>a, x<span class="org-operator">=</span>x, N<span class="org-operator">=</span>N, y<span class="org-operator">=</span>y)
 
     <span class="org-keyword">def</span> <span class="org-function-name">_circuit_diagram_info_</span>(
         <span class="org-keyword">self</span>,
         args: cirq.CircuitDiagramInfoArgs,
-    ) -&gt; cirq.CircuitDiagramInfo:
+    ) <span class="org-operator">-&gt;</span> cirq.CircuitDiagramInfo:
         <span class="org-keyword">assert</span> args.known_qubits <span class="org-keyword">is</span> <span class="org-keyword">not</span> <span class="org-constant">None</span>
-        wire_symbols: List[<span class="org-builtin">str</span>] = []
-        t, e = 0, 0
+        <span class="org-variable-name">wire_symbols</span>: List[<span class="org-builtin">str</span>] <span class="org-operator">=</span> []
+        <span class="org-variable-name">t</span>, <span class="org-variable-name">e</span> <span class="org-operator">=</span> 0, 0
         <span class="org-keyword">for</span> qubit <span class="org-keyword">in</span> args.known_qubits:
             <span class="org-keyword">if</span> qubit <span class="org-keyword">in</span> <span class="org-keyword">self</span>.y:
-                <span class="org-keyword">if</span> t == 0:
+                <span class="org-keyword">if</span> t <span class="org-operator">==</span> 0:
                     <span class="org-keyword">if</span> <span class="org-builtin">isinstance</span>(<span class="org-keyword">self</span>.x, Sequence):
-                        e_str = <span class="org-string">'e'</span>
+                        <span class="org-variable-name">e_str</span> <span class="org-operator">=</span> <span class="org-string">'e'</span>
                     <span class="org-keyword">else</span>:
-                        e_str = <span class="org-builtin">str</span>(<span class="org-keyword">self</span>.x)
+                        <span class="org-variable-name">e_str</span> <span class="org-operator">=</span> <span class="org-builtin">str</span>(<span class="org-keyword">self</span>.x)
                     wire_symbols.append(f<span class="org-string">'ModularExp(t*</span>{<span class="org-keyword">self</span>.a}<span class="org-string">**</span>{e_str}<span class="org-string"> % </span>{<span class="org-keyword">self</span>.N}<span class="org-string">)'</span>)
                 <span class="org-keyword">else</span>:
-                    wire_symbols.append(<span class="org-string">'t'</span> + <span class="org-builtin">str</span>(t))
-                t += 1
+                    wire_symbols.append(<span class="org-string">'t'</span> <span class="org-operator">+</span> <span class="org-builtin">str</span>(t))
+                <span class="org-variable-name">t</span> <span class="org-operator">+=</span> 1
             <span class="org-keyword">if</span> <span class="org-builtin">isinstance</span>(<span class="org-keyword">self</span>.x, Sequence) <span class="org-keyword">and</span> qubit <span class="org-keyword">in</span> <span class="org-keyword">self</span>.x:
-                wire_symbols.append(<span class="org-string">'e'</span> + <span class="org-builtin">str</span>(e))
-                e += 1
-        <span class="org-keyword">return</span> cirq.CircuitDiagramInfo(wire_symbols=<span class="org-builtin">tuple</span>(wire_symbols))
+                wire_symbols.append(<span class="org-string">'e'</span> <span class="org-operator">+</span> <span class="org-builtin">str</span>(e))
+                <span class="org-variable-name">e</span> <span class="org-operator">+=</span> 1
+        <span class="org-keyword">return</span> cirq.CircuitDiagramInfo(wire_symbols<span class="org-operator">=</span><span class="org-builtin">tuple</span>(wire_symbols))
 </pre>
 </div>
 
@@ -210,13 +216,13 @@ U_f |x\rangle|y\rangle \rightarrow |x\rangle|ya^x \mod N\rangle
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">apply</span>(<span class="org-keyword">self</span>, *register_values: <span class="org-builtin">int</span>) -&gt; <span class="org-builtin">int</span>:
-    <span class="org-keyword">assert</span> <span class="org-builtin">len</span>(register_values) == 4
-    <span class="org-variable-name">y</span>, <span class="org-variable-name">x</span>, <span class="org-variable-name">a</span>, <span class="org-variable-name">N</span> = register_values
-    <span class="org-keyword">if</span> y &gt;= N:
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">apply</span>(<span class="org-keyword">self</span>, <span class="org-operator">*</span>register_values: <span class="org-builtin">int</span>) <span class="org-operator">-&gt;</span> <span class="org-builtin">int</span>:
+    <span class="org-keyword">assert</span> <span class="org-builtin">len</span>(register_values) <span class="org-operator">==</span> 4
+    <span class="org-variable-name">y</span>, <span class="org-variable-name">x</span>, <span class="org-variable-name">a</span>, <span class="org-variable-name">N</span> <span class="org-operator">=</span> register_values
+    <span class="org-keyword">if</span> y <span class="org-operator">&gt;=</span> N:
         <span class="org-keyword">return</span> y
     <span class="org-comment-delimiter"># </span><span class="org-comment">return (y * a ** x) % N</span>
-    <span class="org-keyword">return</span> mod_pow(a=a, x=x, N=N, y=y)
+    <span class="org-keyword">return</span> mod_pow(a<span class="org-operator">=</span>a, x<span class="org-operator">=</span>x, N<span class="org-operator">=</span>N, y<span class="org-operator">=</span>y)
 </pre>
 </div>
 
@@ -225,10 +231,10 @@ U_f |x\rangle|y\rangle \rightarrow |x\rangle|ya^x \mod N\rangle
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">mod_pow</span>(a:<span class="org-builtin">int</span>, x:<span class="org-builtin">int</span>, N:<span class="org-builtin">int</span>, y:<span class="org-builtin">int</span>=1) -&gt; <span class="org-builtin">int</span>:
-    p = y
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">mod_pow</span>(a:<span class="org-builtin">int</span>, x:<span class="org-builtin">int</span>, N:<span class="org-builtin">int</span>, y:<span class="org-builtin">int</span><span class="org-operator">=</span>1) <span class="org-operator">-&gt;</span> <span class="org-builtin">int</span>:
+    <span class="org-variable-name">p</span> <span class="org-operator">=</span> y
     <span class="org-keyword">for</span> i <span class="org-keyword">in</span> <span class="org-builtin">range</span>(x):
-        p = (p * a) % N
+        <span class="org-variable-name">p</span> <span class="org-operator">=</span> (p <span class="org-operator">*</span> a) <span class="org-operator">%</span> N
     <span class="org-keyword">return</span> p
 </pre>
 </div>
@@ -243,17 +249,17 @@ U_f |x\rangle|y\rangle \rightarrow |x\rangle|ya^x \mod N\rangle
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">make_order_finding_circuit</span>(a: <span class="org-builtin">int</span>, N: <span class="org-builtin">int</span>) -&gt; cirq.<span class="org-variable-name">Circuit</span>:
-    N2 = N*N
-    <span class="org-variable-name">L</span> = N2.bit_length()
-    <span class="org-variable-name">y</span> = cirq.LineQubit.<span class="org-builtin">range</span>(L)
-    <span class="org-variable-name">x</span> = cirq.LineQubit.<span class="org-builtin">range</span>(L, 2 * L)
+<pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">make_order_finding_circuit</span>(a: <span class="org-builtin">int</span>, N: <span class="org-builtin">int</span>) <span class="org-operator">-&gt;</span> cirq.Circuit:
+    <span class="org-variable-name">N2</span> <span class="org-operator">=</span> N<span class="org-operator">*</span>N
+    <span class="org-variable-name">L</span> <span class="org-operator">=</span> N2.bit_length()
+    <span class="org-variable-name">y</span> <span class="org-operator">=</span> cirq.LineQubit.<span class="org-builtin">range</span>(L)
+    <span class="org-variable-name">x</span> <span class="org-operator">=</span> cirq.LineQubit.<span class="org-builtin">range</span>(L, 2 <span class="org-operator">*</span> L)
     <span class="org-keyword">return</span> cirq.Circuit(
-        cirq.X(y[L - 1]),
-        cirq.H.on_each(*x),
+        cirq.X(y[L <span class="org-operator">-</span> 1]),
+        cirq.H.on_each(<span class="org-operator">*</span>x),
         ModularExp(y, x, a, N),
-        cirq.qft(*x, inverse=<span class="org-constant">True</span>),
-        cirq.measure(*x, key=<span class="org-string">'exponent'</span>),
+        cirq.qft(<span class="org-operator">*</span>x, inverse<span class="org-operator">=</span><span class="org-constant">True</span>),
+        cirq.measure(<span class="org-operator">*</span>x, key<span class="org-operator">=</span><span class="org-string">'exponent'</span>),
         <span class="org-comment-delimiter"># </span><span class="org-comment">This is not needed but it's an implicit measurement.</span>
         <span class="org-comment-delimiter"># </span><span class="org-comment">cirq.measure(*y, key='mod')</span>
     )
@@ -279,7 +285,7 @@ U_f |x\rangle|y\rangle \rightarrow |x\rangle|ya^x \mod N\rangle
 举个简单的例子，要分解的数N=15，随机选a=7，搭个电路试试看：
 </p>
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">circuit</span> = make_order_finding_circuit(a=7, N=15)
+<pre class="src src-python"><span class="org-variable-name">circuit</span> <span class="org-operator">=</span> make_order_finding_circuit(a<span class="org-operator">=</span>7, N<span class="org-operator">=</span>15)
 SVGCircuit(circuit)
 </pre>
 </div>
@@ -289,7 +295,7 @@ SVGCircuit(circuit)
 </p>
 
 
-<figure id="orgb6e4f1a">
+<figure id="org218d250">
 <img src="../images/shor_cirq.jpg" alt="shor_cirq.jpg" width="400px">
 
 </figure>
@@ -299,8 +305,8 @@ SVGCircuit(circuit)
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">result</span> = cirq.sample(circuit, repetitions=100)
-result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins=16)
+<pre class="src src-python"><span class="org-variable-name">result</span> <span class="org-operator">=</span> cirq.sample(circuit, repetitions<span class="org-operator">=</span>100)
+result.data.plot(kind<span class="org-operator">=</span><span class="org-string">'hist'</span>, xlim<span class="org-operator">=</span>(0,256), bins<span class="org-operator">=</span>16)
 </pre>
 </div>
 
@@ -309,7 +315,7 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 </p>
 
 
-<figure id="orgb06af04">
+<figure id="orgc17cc8f">
 <img src="../images/shor_cirq_test.png" alt="shor_cirq_test.png" width="400px">
 
 </figure>
@@ -326,22 +332,22 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">quantum_order_finder</span>(
         a: <span class="org-builtin">int</span>, N: <span class="org-builtin">int</span>,
-        repetitions:<span class="org-builtin">int</span> = 1
-) -&gt; Optional[<span class="org-builtin">int</span>]:
-    <span class="org-keyword">if</span> a &lt; 2 <span class="org-keyword">or</span> N &lt;= a <span class="org-keyword">or</span> math.gcd(a, N) &gt; 1:
+        repetitions:<span class="org-builtin">int</span> <span class="org-operator">=</span> 1
+) <span class="org-operator">-&gt;</span> Optional[<span class="org-builtin">int</span>]:
+    <span class="org-keyword">if</span> a <span class="org-operator">&lt;</span> 2 <span class="org-keyword">or</span> N <span class="org-operator">&lt;=</span> a <span class="org-keyword">or</span> math.gcd(a, N) <span class="org-operator">&gt;</span> 1:
         <span class="org-keyword">raise</span> <span class="org-type">ValueError</span>(f<span class="org-string">'Invalid a=</span>{a}<span class="org-string"> for N=</span>{N}<span class="org-string">.'</span>)
 
-    circuit = make_order_finding_circuit(a, N)
-    result = cirq.sample(circuit, repetitions=repetitions)
-    nbits = result.measurements[<span class="org-string">'exponent'</span>].shape[1]
+    <span class="org-variable-name">circuit</span> <span class="org-operator">=</span> make_order_finding_circuit(a, N)
+    <span class="org-variable-name">result</span> <span class="org-operator">=</span> cirq.sample(circuit, repetitions<span class="org-operator">=</span>repetitions)
+    <span class="org-variable-name">nbits</span> <span class="org-operator">=</span> result.measurements[<span class="org-string">'exponent'</span>].shape[1]
     <span class="org-keyword">for</span> i <span class="org-keyword">in</span> <span class="org-builtin">range</span>(repetitions):
-        exponent = result.data[<span class="org-string">'exponent'</span>][i]
-        f = fractions.Fraction.from_float(exponent/(2**nbits)).limit_denominator(N)
+        <span class="org-variable-name">exponent</span> <span class="org-operator">=</span> result.data[<span class="org-string">'exponent'</span>][i]
+        <span class="org-variable-name">f</span> <span class="org-operator">=</span> fractions.Fraction.from_float(exponent<span class="org-operator">/</span>(2<span class="org-operator">**</span>nbits)).limit_denominator(N)
         <span class="org-builtin">print</span>(<span class="org-string">'exponent measured:'</span>, exponent, <span class="org-string">'nbits:'</span>, nbits, <span class="org-string">'f:'</span>, f)
-        <span class="org-keyword">if</span> f.numerator != 0:
-            r = f.denominator
+        <span class="org-keyword">if</span> f.numerator <span class="org-operator">!=</span> 0:
+            <span class="org-variable-name">r</span> <span class="org-operator">=</span> f.denominator
             <span class="org-comment-delimiter"># </span><span class="org-comment">Check if r is the order and if it's an even number.</span>
-            <span class="org-keyword">if</span> (r % 2) == 0 <span class="org-keyword">and</span> ((a ** r) % N) == 1:
+            <span class="org-keyword">if</span> (r <span class="org-operator">%</span> 2) <span class="org-operator">==</span> 0 <span class="org-keyword">and</span> ((a <span class="org-operator">**</span> r) <span class="org-operator">%</span> N) <span class="org-operator">==</span> 1:
                 <span class="org-builtin">print</span>(f<span class="org-string">'Found order r=</span>{r}<span class="org-string">!'</span>)
                 <span class="org-keyword">return</span> r
     <span class="org-keyword">return</span> <span class="org-constant">None</span>
@@ -356,7 +362,7 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 这里面一个重要的步骤是如何解读测量结果。我们测量得到的值，与 \(q=2^L\) 的比值，因该非常接近某个数k与r的比值。这里用了fractions包里的连分数算法：
 </p>
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">f</span> = fractions.Fraction.from_float(exponent/(2**nbits)).limit_denominator(N)
+<pre class="src src-python"><span class="org-variable-name">f</span> <span class="org-operator">=</span> fractions.Fraction.from_float(exponent<span class="org-operator">/</span>(2<span class="org-operator">**</span>nbits)).limit_denominator(N)
 </pre>
 </div>
 
@@ -379,18 +385,18 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">quantum_factor_helper</span>(
         N: <span class="org-builtin">int</span>, a: <span class="org-builtin">int</span>,
-        repetitions:<span class="org-builtin">int</span> = 10
-) -&gt; Optional[<span class="org-builtin">int</span>]:
-    r = quantum_order_finder(a=a, N=N, repetitions=repetitions)
+        repetitions:<span class="org-builtin">int</span> <span class="org-operator">=</span> 10
+) <span class="org-operator">-&gt;</span> Optional[<span class="org-builtin">int</span>]:
+    <span class="org-variable-name">r</span> <span class="org-operator">=</span> quantum_order_finder(a<span class="org-operator">=</span>a, N<span class="org-operator">=</span>N, repetitions<span class="org-operator">=</span>repetitions)
     <span class="org-keyword">if</span> r <span class="org-keyword">is</span> <span class="org-keyword">not</span> <span class="org-constant">None</span>:
-        k = (a**(r//2) % N)
-        c1 = math.gcd(k - 1, N)
-        c2 = math.gcd(k + 1, N)
+        <span class="org-variable-name">k</span> <span class="org-operator">=</span> (a<span class="org-operator">**</span>(r<span class="org-operator">//</span>2) <span class="org-operator">%</span> N)
+        <span class="org-variable-name">c1</span> <span class="org-operator">=</span> math.gcd(k <span class="org-operator">-</span> 1, N)
+        <span class="org-variable-name">c2</span> <span class="org-operator">=</span> math.gcd(k <span class="org-operator">+</span> 1, N)
         <span class="org-builtin">print</span>(f<span class="org-string">'a=</span>{a}<span class="org-string">, N=</span>{N}<span class="org-string">, r=</span>{r}<span class="org-string">, k=</span>{k}<span class="org-string">, c1=</span>{c1}<span class="org-string">, c2=</span>{c2}<span class="org-string">'</span>)
-        <span class="org-keyword">if</span> c1 &gt; 1 <span class="org-keyword">and</span> c1 &lt; N <span class="org-keyword">and</span> math.gcd(c1, N) &gt; 1:
+        <span class="org-keyword">if</span> c1 <span class="org-operator">&gt;</span> 1 <span class="org-keyword">and</span> c1 <span class="org-operator">&lt;</span> N <span class="org-keyword">and</span> math.gcd(c1, N) <span class="org-operator">&gt;</span> 1:
             <span class="org-builtin">print</span>(f<span class="org-string">'Factor of </span>{N}<span class="org-string"> is </span>{c1}<span class="org-string">'</span>)
             <span class="org-keyword">return</span> c1
-        <span class="org-keyword">if</span> c2 &gt; 1 <span class="org-keyword">and</span> c2 &lt; N <span class="org-keyword">and</span> math.gcd(c2, N) &gt; 1:
+        <span class="org-keyword">if</span> c2 <span class="org-operator">&gt;</span> 1 <span class="org-keyword">and</span> c2 <span class="org-operator">&lt;</span> N <span class="org-keyword">and</span> math.gcd(c2, N) <span class="org-operator">&gt;</span> 1:
             <span class="org-builtin">print</span>(f<span class="org-string">'Factor of </span>{N}<span class="org-string"> is </span>{c2}<span class="org-string">'</span>)
             <span class="org-keyword">return</span> c2
     <span class="org-keyword">return</span> <span class="org-constant">None</span>
@@ -406,15 +412,15 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 </p>
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">quantum_factor</span>(
-        N: <span class="org-builtin">int</span>, attempts: <span class="org-builtin">int</span> = 30, seed: <span class="org-builtin">int</span> = <span class="org-constant">None</span>
-) -&gt; Optional[<span class="org-builtin">int</span>]:
+        N: <span class="org-builtin">int</span>, attempts: <span class="org-builtin">int</span> <span class="org-operator">=</span> 30, seed: <span class="org-builtin">int</span> <span class="org-operator">=</span> <span class="org-constant">None</span>
+) <span class="org-operator">-&gt;</span> Optional[<span class="org-builtin">int</span>]:
     <span class="org-keyword">if</span> <span class="org-builtin">type</span>(N) <span class="org-keyword">is</span> <span class="org-keyword">not</span> <span class="org-builtin">int</span>:
         <span class="org-keyword">raise</span> <span class="org-type">TypeError</span>(<span class="org-string">"n must be an integer."</span>)
-    <span class="org-keyword">if</span> N &gt; (2 ** 30):
+    <span class="org-keyword">if</span> N <span class="org-operator">&gt;</span> (2 <span class="org-operator">**</span> 30):
         <span class="org-keyword">raise</span> <span class="org-type">ValueError</span>(<span class="org-string">"Number is too large. Try n &lt;= 2^30."</span>)
-    <span class="org-keyword">if</span> N &lt; 1:
+    <span class="org-keyword">if</span> N <span class="org-operator">&lt;</span> 1:
         <span class="org-keyword">raise</span> <span class="org-type">ValueError</span>(<span class="org-string">"Number must be positive integer greater than 1."</span>)
-    <span class="org-keyword">if</span> N % 2 == 0:
+    <span class="org-keyword">if</span> N <span class="org-operator">%</span> 2 <span class="org-operator">==</span> 0:
         <span class="org-builtin">print</span>(f<span class="org-string">"</span>{N}<span class="org-string"> has trivial factor of 2."</span>)
         <span class="org-keyword">return</span> 2
     <span class="org-keyword">if</span> sympy.isprime(N):
@@ -424,15 +430,15 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
     random.seed(seed)
 
     <span class="org-keyword">for</span> i <span class="org-keyword">in</span> <span class="org-builtin">range</span>(attempts):
-        a = random.randint(2, N-1)
+        <span class="org-variable-name">a</span> <span class="org-operator">=</span> random.randint(2, N<span class="org-operator">-</span>1)
         <span class="org-builtin">print</span>(f<span class="org-string">'Randomly pick a=</span>{a}<span class="org-string">'</span>)
-        gcd = math.gcd(a, N)
-        <span class="org-keyword">if</span> gcd &gt; 1:
+        <span class="org-variable-name">gcd</span> <span class="org-operator">=</span> math.gcd(a, N)
+        <span class="org-keyword">if</span> gcd <span class="org-operator">&gt;</span> 1:
             <span class="org-builtin">print</span>(f<span class="org-string">'gcd(</span>{a}<span class="org-string">, </span>{N}<span class="org-string">)=</span>{gcd}<span class="org-string">, found factor!'</span>)
             <span class="org-keyword">return</span> gcd
 
         <span class="org-builtin">print</span>(<span class="org-string">'Calling quantum order finding'</span>)
-        c = quantum_factor_helper(a=a, N=N)
+        <span class="org-variable-name">c</span> <span class="org-operator">=</span> quantum_factor_helper(a<span class="org-operator">=</span>a, N<span class="org-operator">=</span>N)
         <span class="org-keyword">if</span> c <span class="org-keyword">is</span> <span class="org-keyword">not</span> <span class="org-constant">None</span>:
             <span class="org-builtin">print</span>(f<span class="org-string">'Found factor </span>{c}<span class="org-string">!'</span>)
             <span class="org-keyword">return</span> c
@@ -469,7 +475,7 @@ result.data.plot(kind=<span class="org-string">'hist'</span>, xlim=(0,256), bins
 得到类似这样的输出（因为算法的随机性，每次运行的结果都会有所不同）：
 </p>
 
-<pre class="example" id="org4269159">
+<pre class="example" id="orgf8259a7">
 Randomly pick a=19
 Calling quantum order finding
 exponent measured: 256 nbits: 9 f: 1/2
@@ -490,8 +496,7 @@ Found factor 3!
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).
     </div>
 </footer>
 </body>

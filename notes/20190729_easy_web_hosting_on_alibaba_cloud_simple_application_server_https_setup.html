@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-10 -->
+<!-- 2023-07-21 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Easy Web Hosting on Alibaba Cloud – Simple Application Server + HTTPS Setup</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
 <link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
-<link rel='stylesheet' href='/css/site.css' type='text/css'/>
-<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
-<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
-<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
-     crossorigin='anonymous'></script>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -80,7 +75,7 @@ Setting up HTTPS requires a little more work. First, you need SSL certificate as
 </p>
 
 
-<figure id="org0e738d7">
+<figure id="orgf6a4fbc">
 <img src="../images/2019/07/Screen-Shot-2019-07-29-at-10.44.10-PM.png" alt="Screen-Shot-2019-07-29-at-10.44.10-PM.png" width="480px">
 
 </figure>
@@ -95,7 +90,7 @@ Automatic FTP Verification: If you are running a VM, you can setup an FTP server
 Manual Verification: You need to download two verification files to your local computer, and upload them to your website under folder named “.well-known/acme-challenge”. SSL For Free then tries to access these verification files at URLs like:
 </p>
 
-<pre class="example" id="org0022cea">
+<pre class="example" id="org3b2dca3">
 http://&lt;your_domain&gt;/.well-known/acme-challenge/&lt;verification_file&gt;
 </pre>
 
@@ -114,7 +109,7 @@ Next step is to upload your SSL Certificate to Alibaba Cloud. This is done in th
 </p>
 
 
-<figure id="org2fff83d">
+<figure id="org7d17674">
 <img src="../images/2019/07/Screen-Shot-2019-07-29-at-11.04.11-PM.png" alt="Screen-Shot-2019-07-29-at-11.04.11-PM.png" width="480px">
 
 </figure>
@@ -129,7 +124,7 @@ Instead, you should go back to your Simple Application Server console and config
 </p>
 
 
-<figure id="org9fd974f">
+<figure id="orgca8fa77">
 <img src="../images/2019/07/Screen-Shot-2019-07-29-at-11.11.59-PM.png" alt="Screen-Shot-2019-07-29-at-11.11.59-PM.png" width="480px">
 
 </figure>
@@ -154,8 +149,7 @@ Congrats, you now have a personal website that supports HTTPS!
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).
     </div>
 </footer>
 </body>

@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-10 -->
+<!-- 2023-07-21 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>量子神经网络</title>
 <meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
 <link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
-<link rel='stylesheet' href='/css/site.css' type='text/css'/>
-<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
-<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
-<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313'
-     crossorigin='anonymous'></script>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
      function CodeHighlightOn(elem, id)
@@ -36,27 +31,38 @@
      }
 // @license-end
 </script>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        displayAlign: "center",
-        displayIndent: "0em",
-
-        "HTML-CSS": { scale: 100,
-                        linebreaks: { automatic: "false" },
-                        webFont: "TeX"
-                       },
-        SVG: {scale: 100,
-              linebreaks: { automatic: "false" },
-              font: "TeX"},
-        NativeMML: {scale: 100},
-        TeX: { equationNumbers: {autoNumber: "AMS"},
-               MultLineWidth: "85%",
-               TagSide: "right",
-               TagIndent: ".8em"
-             }
-});
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 </head>
 <body>
 <div id="org-div-home-and-up">
@@ -102,7 +108,7 @@
 </p>
 
 
-<figure id="org4c53844">
+<figure id="org10dd2f7">
 <img src="../images/2020/12/QNN-MNIST.png" alt="QNN-MNIST.png" width="500px">
 
 </figure>
@@ -134,7 +140,7 @@
 <span class="org-keyword">import</span> collections
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">visualization tools</span>
-%matplotlib inline
+<span class="org-operator">%</span>matplotlib inline
 <span class="org-keyword">import</span> matplotlib.pyplot <span class="org-keyword">as</span> plt
 <span class="org-keyword">from</span> cirq.contrib.svg <span class="org-keyword">import</span> SVGCircuit
 </pre>
@@ -145,10 +151,10 @@
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python">(x_train, y_train), (<span class="org-variable-name">x_test</span>, <span class="org-variable-name">y_test</span>) = tf.keras.datasets.mnist.load_data()
+<pre class="src src-python">(x_train, y_train), (<span class="org-variable-name">x_test</span>, <span class="org-variable-name">y_test</span>) <span class="org-operator">=</span> tf.keras.datasets.mnist.load_data()
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">Rescale the images from [0,255] to the [0.0,1.0] range.</span>
-<span class="org-variable-name">x_train</span>, <span class="org-variable-name">x_test</span> = x_train[..., np.newaxis]/255.0, x_test[..., np.newaxis]/255.0
+<span class="org-variable-name">x_train</span>, <span class="org-variable-name">x_test</span> <span class="org-operator">=</span> x_train[..., np.newaxis]<span class="org-operator">/</span>255.0, x_test[..., np.newaxis]<span class="org-operator">/</span>255.0
 
 <span class="org-builtin">print</span>(<span class="org-string">"Number of original training examples:"</span>, <span class="org-builtin">len</span>(x_train))
 <span class="org-builtin">print</span>(<span class="org-string">"Number of original test examples:"</span>, <span class="org-builtin">len</span>(x_test))
@@ -166,20 +172,20 @@ Number of original test examples: 10000
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">filter_36</span>(x, y):
-    <span class="org-variable-name">keep</span> = (y == 3) | (y == 6)
-    <span class="org-variable-name">x</span>, <span class="org-variable-name">y</span> = x[keep], y[keep]
-    y = y == 3
+    <span class="org-variable-name">keep</span> <span class="org-operator">=</span> (y <span class="org-operator">==</span> 3) <span class="org-operator">|</span> (y <span class="org-operator">==</span> 6)
+    <span class="org-variable-name">x</span>, <span class="org-variable-name">y</span> <span class="org-operator">=</span> x[keep], y[keep]
+    <span class="org-variable-name">y</span> <span class="org-operator">=</span> y <span class="org-operator">==</span> 3
     <span class="org-keyword">return</span> x,y
 
-<span class="org-variable-name">x_train</span>, <span class="org-variable-name">y_train</span> = filter_36(x_train, y_train)
-<span class="org-variable-name">x_test</span>, <span class="org-variable-name">y_test</span> = filter_36(x_test, y_test)
+<span class="org-variable-name">x_train</span>, <span class="org-variable-name">y_train</span> <span class="org-operator">=</span> filter_36(x_train, y_train)
+<span class="org-variable-name">x_test</span>, <span class="org-variable-name">y_test</span> <span class="org-operator">=</span> filter_36(x_test, y_test)
 
 <span class="org-builtin">print</span>(<span class="org-string">"Number of filtered training examples:"</span>, <span class="org-builtin">len</span>(x_train))
 <span class="org-builtin">print</span>(<span class="org-string">"Number of filtered test examples:"</span>, <span class="org-builtin">len</span>(x_test))
 </pre>
 </div>
 
-<pre class="example" id="org3fe6efc">
+<pre class="example" id="org04b4059">
 Number of filtered training examples: 12049
 Number of filtered test examples: 1968
 </pre>
@@ -199,7 +205,7 @@ plt.colorbar()
 </div>
 
 
-<figure id="orga084ca0">
+<figure id="org2fca0f2">
 <img src="../images/2020/12/output_9_2.png" alt="output_9_2.png" width="320px">
 
 </figure>
@@ -209,13 +215,13 @@ plt.colorbar()
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">x_train_small</span> = tf.image.resize(x_train, (4,4)).numpy()
-<span class="org-variable-name">x_test_small</span> = tf.image.resize(x_test, (4,4)).numpy()
+<pre class="src src-python"><span class="org-variable-name">x_train_small</span> <span class="org-operator">=</span> tf.image.resize(x_train, (4,4)).numpy()
+<span class="org-variable-name">x_test_small</span> <span class="org-operator">=</span> tf.image.resize(x_test, (4,4)).numpy()
 <span class="org-builtin">print</span>(x_train_small.shape)
 </pre>
 </div>
 
-<pre class="example" id="org0ac17f0">
+<pre class="example" id="org831fde2">
 (12049, 4, 4, 1)
 </pre>
 
@@ -226,13 +232,13 @@ plt.colorbar()
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-builtin">print</span>(y_train[0])
 
-plt.imshow(x_train_small[0,:,:,0], vmin=0, vmax=1)
+plt.imshow(x_train_small[0,:,:,0], vmin<span class="org-operator">=</span>0, vmax<span class="org-operator">=</span>1)
 plt.colorbar()
 </pre>
 </div>
 
 
-<figure id="org18a9900">
+<figure id="orgde0719c">
 <img src="../images/2020/12/output_13_2.png" alt="output_13_2.png" width="320px">
 
 </figure>
@@ -243,25 +249,25 @@ plt.colorbar()
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">remove_contradicting</span>(xs, ys):
-    <span class="org-variable-name">mapping</span> = collections.defaultdict(<span class="org-builtin">set</span>)
+    <span class="org-variable-name">mapping</span> <span class="org-operator">=</span> collections.defaultdict(<span class="org-builtin">set</span>)
     <span class="org-comment-delimiter"># </span><span class="org-comment">Determine the set of labels for each unique image:</span>
     <span class="org-keyword">for</span> x,y <span class="org-keyword">in</span> <span class="org-builtin">zip</span>(xs,ys):
        mapping[<span class="org-builtin">tuple</span>(x.flatten())].add(y)
 
-    new_x = []
-    <span class="org-variable-name">new_y</span> = []
+    <span class="org-variable-name">new_x</span> <span class="org-operator">=</span> []
+    <span class="org-variable-name">new_y</span> <span class="org-operator">=</span> []
     <span class="org-keyword">for</span> x,y <span class="org-keyword">in</span> <span class="org-builtin">zip</span>(xs, ys):
-      <span class="org-variable-name">labels</span> = mapping[<span class="org-builtin">tuple</span>(x.flatten())]
-      <span class="org-keyword">if</span> <span class="org-builtin">len</span>(labels) == 1:
+      <span class="org-variable-name">labels</span> <span class="org-operator">=</span> mapping[<span class="org-builtin">tuple</span>(x.flatten())]
+      <span class="org-keyword">if</span> <span class="org-builtin">len</span>(labels) <span class="org-operator">==</span> 1:
           new_x.append(x)
           new_y.append(<span class="org-builtin">list</span>(labels)[0])
       <span class="org-keyword">else</span>:
           <span class="org-comment-delimiter"># </span><span class="org-comment">Throw out images that match more than one label.</span>
           <span class="org-keyword">pass</span>
 
-    num_3 = <span class="org-builtin">sum</span>(1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values() <span class="org-keyword">if</span> <span class="org-constant">True</span> <span class="org-keyword">in</span> value)
-    <span class="org-variable-name">num_6</span> = <span class="org-builtin">sum</span>(1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values() <span class="org-keyword">if</span> <span class="org-constant">False</span> <span class="org-keyword">in</span> value)
-    <span class="org-variable-name">num_both</span> = <span class="org-builtin">sum</span>(1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values() <span class="org-keyword">if</span> <span class="org-builtin">len</span>(value) == 2)
+    <span class="org-variable-name">num_3</span> <span class="org-operator">=</span> <span class="org-builtin">sum</span>(1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values() <span class="org-keyword">if</span> <span class="org-constant">True</span> <span class="org-keyword">in</span> value)
+    <span class="org-variable-name">num_6</span> <span class="org-operator">=</span> <span class="org-builtin">sum</span>(1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values() <span class="org-keyword">if</span> <span class="org-constant">False</span> <span class="org-keyword">in</span> value)
+    <span class="org-variable-name">num_both</span> <span class="org-operator">=</span> <span class="org-builtin">sum</span>(1 <span class="org-keyword">for</span> value <span class="org-keyword">in</span> mapping.values() <span class="org-keyword">if</span> <span class="org-builtin">len</span>(value) <span class="org-operator">==</span> 2)
 
     <span class="org-builtin">print</span>(<span class="org-string">"Number of unique images:"</span>, <span class="org-builtin">len</span>(mapping.values()))
     <span class="org-builtin">print</span>(<span class="org-string">"Number of 3s: "</span>, num_3)
@@ -273,11 +279,11 @@ plt.colorbar()
 
     <span class="org-keyword">return</span> np.array(new_x), np.array(new_y)
 
-<span class="org-variable-name">x_train_nocon</span>, <span class="org-variable-name">y_train_nocon</span> = remove_contradicting(x_train_small, y_train)
+<span class="org-variable-name">x_train_nocon</span>, <span class="org-variable-name">y_train_nocon</span> <span class="org-operator">=</span> remove_contradicting(x_train_small, y_train)
 </pre>
 </div>
 
-<pre class="example" id="org27ea5f1">
+<pre class="example" id="orgcc76030">
 Number of unique images: 10387
 Number of 3s:  4961
 Number of 6s:  5475
@@ -292,10 +298,10 @@ Remaining non-contradictory examples:  11520
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">THRESHOLD</span> = 0.5
+<pre class="src src-python"><span class="org-variable-name">THRESHOLD</span> <span class="org-operator">=</span> 0.5
 
-<span class="org-variable-name">x_train_bin</span> = np.array(x_train_nocon &gt; THRESHOLD, dtype=np.float32)
-x_test_bin = np.array(x_test_small &gt; THRESHOLD, dtype=np.float32)
+<span class="org-variable-name">x_train_bin</span> <span class="org-operator">=</span> np.array(x_train_nocon <span class="org-operator">&gt;</span> THRESHOLD, dtype<span class="org-operator">=</span>np.float32)
+<span class="org-variable-name">x_test_bin</span> <span class="org-operator">=</span> np.array(x_test_small <span class="org-operator">&gt;</span> THRESHOLD, dtype<span class="org-operator">=</span>np.float32)
 </pre>
 </div>
 
@@ -306,23 +312,23 @@ x_test_bin = np.array(x_test_small &gt; THRESHOLD, dtype=np.float32)
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">convert_to_circuit</span>(image):
     <span class="org-doc">"""Encode truncated classical image into quantum datapoint."""</span>
-    <span class="org-variable-name">values</span> = np.ndarray.flatten(image)
-    <span class="org-variable-name">qubits</span> = cirq.GridQubit.rect(4, 4)
-    <span class="org-variable-name">circuit</span> = cirq.Circuit()
+    <span class="org-variable-name">values</span> <span class="org-operator">=</span> np.ndarray.flatten(image)
+    <span class="org-variable-name">qubits</span> <span class="org-operator">=</span> cirq.GridQubit.rect(4, 4)
+    <span class="org-variable-name">circuit</span> <span class="org-operator">=</span> cirq.Circuit()
     <span class="org-keyword">for</span> i, value <span class="org-keyword">in</span> <span class="org-builtin">enumerate</span>(values):
-        <span class="org-keyword">if</span> <span class="org-variable-name">value</span>:
+        <span class="org-keyword">if</span> value:
             circuit.append(cirq.X(qubits[i]))
     <span class="org-keyword">return</span> circuit
 
 
-x_train_circ = [convert_to_circuit(x) <span class="org-keyword">for</span> x <span class="org-keyword">in</span> x_train_bin]
-<span class="org-variable-name">x_test_circ</span> = [convert_to_circuit(x) <span class="org-keyword">for</span> x <span class="org-keyword">in</span> x_test_bin]
+<span class="org-variable-name">x_train_circ</span> <span class="org-operator">=</span> [convert_to_circuit(x) <span class="org-keyword">for</span> x <span class="org-keyword">in</span> x_train_bin]
+<span class="org-variable-name">x_test_circ</span> <span class="org-operator">=</span> [convert_to_circuit(x) <span class="org-keyword">for</span> x <span class="org-keyword">in</span> x_test_bin]
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">x_train_tfcirc</span> = tfq.convert_to_tensor(x_train_circ)
-<span class="org-variable-name">x_test_tfcirc</span> = tfq.convert_to_tensor(x_test_circ)
+<pre class="src src-python"><span class="org-variable-name">x_train_tfcirc</span> <span class="org-operator">=</span> tfq.convert_to_tensor(x_train_circ)
+<span class="org-variable-name">x_test_tfcirc</span> <span class="org-operator">=</span> tfq.convert_to_tensor(x_test_circ)
 </pre>
 </div>
 
@@ -333,13 +339,13 @@ x_train_circ = [convert_to_circuit(x) <span class="org-keyword">for</span> x <sp
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">class</span> <span class="org-type">CircuitLayerBuilder</span>():
     <span class="org-keyword">def</span> <span class="org-function-name">__init__</span>(<span class="org-keyword">self</span>, data_qubits, readout):
-        <span class="org-keyword">self</span>.<span class="org-variable-name">data_qubits</span> = data_qubits
-        <span class="org-keyword">self</span>.<span class="org-variable-name">readout</span> = readout
+        <span class="org-keyword">self</span>.<span class="org-variable-name">data_qubits</span> <span class="org-operator">=</span> data_qubits
+        <span class="org-keyword">self</span>.<span class="org-variable-name">readout</span> <span class="org-operator">=</span> readout
 
     <span class="org-keyword">def</span> <span class="org-function-name">add_layer</span>(<span class="org-keyword">self</span>, circuit, gate, prefix):
         <span class="org-keyword">for</span> i, qubit <span class="org-keyword">in</span> <span class="org-builtin">enumerate</span>(<span class="org-keyword">self</span>.data_qubits):
-            <span class="org-variable-name">symbol</span> = sympy.Symbol(prefix + <span class="org-string">'-'</span> + <span class="org-builtin">str</span>(i))
-            circuit.append(gate(qubit, <span class="org-keyword">self</span>.readout)**symbol)
+            <span class="org-variable-name">symbol</span> <span class="org-operator">=</span> sympy.Symbol(prefix <span class="org-operator">+</span> <span class="org-string">'-'</span> <span class="org-operator">+</span> <span class="org-builtin">str</span>(i))
+            circuit.append(gate(qubit, <span class="org-keyword">self</span>.readout)<span class="org-operator">**</span>symbol)
 </pre>
 </div>
 
@@ -349,17 +355,17 @@ x_train_circ = [convert_to_circuit(x) <span class="org-keyword">for</span> x <sp
 
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">demo_builder</span> = CircuitLayerBuilder(data_qubits = cirq.GridQubit.rect(4,1),
-                                   readout=cirq.GridQubit(-1,-1))
+<pre class="src src-python"><span class="org-variable-name">demo_builder</span> <span class="org-operator">=</span> CircuitLayerBuilder(data_qubits <span class="org-operator">=</span> cirq.GridQubit.rect(4,1),
+                                   readout<span class="org-operator">=</span>cirq.GridQubit(<span class="org-operator">-</span>1,<span class="org-operator">-</span>1))
 
-circuit = cirq.Circuit()
-demo_builder.add_layer(circuit, gate = cirq.XX, prefix=<span class="org-string">'xx'</span>)
+<span class="org-variable-name">circuit</span> <span class="org-operator">=</span> cirq.Circuit()
+demo_builder.add_layer(circuit, gate <span class="org-operator">=</span> cirq.XX, prefix<span class="org-operator">=</span><span class="org-string">'xx'</span>)
 SVGCircuit(circuit)
 </pre>
 </div>
 
 
-<figure id="org4e9ffb0">
+<figure id="orgcc121c3">
 <img src="../images/2020/12/output_24_0.svg" alt="output_24_0.svg" class="org-svg" width="480px">
 
 </figure>
@@ -371,17 +377,17 @@ SVGCircuit(circuit)
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">create_quantum_model</span>():
     <span class="org-doc">"""Create a QNN model circuit and readout operation to go along with it."""</span>
-    <span class="org-variable-name">data_qubits</span> = cirq.GridQubit.rect(4, 4)  <span class="org-comment-delimiter"># </span><span class="org-comment">a 4x4 grid.</span>
-    <span class="org-variable-name">readout</span> = cirq.GridQubit(-1, -1)         <span class="org-comment-delimiter"># </span><span class="org-comment">a single qubit at [-1,-1]</span>
-    <span class="org-variable-name">circuit</span> = cirq.Circuit()
+    <span class="org-variable-name">data_qubits</span> <span class="org-operator">=</span> cirq.GridQubit.rect(4, 4)  <span class="org-comment-delimiter"># </span><span class="org-comment">a 4x4 grid.</span>
+    <span class="org-variable-name">readout</span> <span class="org-operator">=</span> cirq.GridQubit(<span class="org-operator">-</span>1, <span class="org-operator">-</span>1)         <span class="org-comment-delimiter"># </span><span class="org-comment">a single qubit at [-1,-1]</span>
+    <span class="org-variable-name">circuit</span> <span class="org-operator">=</span> cirq.Circuit()
 
     <span class="org-comment-delimiter"># </span><span class="org-comment">Prepare the readout qubit.</span>
     circuit.append(cirq.X(readout))
     circuit.append(cirq.H(readout))
 
-    <span class="org-variable-name">builder</span> = CircuitLayerBuilder(
-        data_qubits = data_qubits,
-        readout=readout)
+    <span class="org-variable-name">builder</span> <span class="org-operator">=</span> CircuitLayerBuilder(
+        data_qubits <span class="org-operator">=</span> data_qubits,
+        readout<span class="org-operator">=</span>readout)
 
     <span class="org-comment-delimiter"># </span><span class="org-comment">Then add layers (experiment by adding more).</span>
     builder.add_layer(circuit, cirq.XX, <span class="org-string">"xx1"</span>)
@@ -395,7 +401,7 @@ SVGCircuit(circuit)
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">model_circuit</span>, <span class="org-variable-name">model_readout</span> = create_quantum_model()
+<pre class="src src-python"><span class="org-variable-name">model_circuit</span>, <span class="org-variable-name">model_readout</span> <span class="org-operator">=</span> create_quantum_model()
 </pre>
 </div>
 
@@ -409,7 +415,7 @@ SVGCircuit(circuit)
 </div>
 
 
-<figure id="org2891bd1">
+<figure id="org035c95b">
 <img src="../images/2020/12/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="1024px">
 
 </figure>
@@ -420,9 +426,9 @@ SVGCircuit(circuit)
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Build the Keras model.</span>
-<span class="org-variable-name">model</span> = tf.keras.Sequential([
+<span class="org-variable-name">model</span> <span class="org-operator">=</span> tf.keras.Sequential([
     <span class="org-comment-delimiter"># </span><span class="org-comment">The input is the data-circuit, encoded as a tf.string</span>
-    tf.keras.layers.Input(shape=(), dtype=tf.string),
+    tf.keras.layers.Input(shape<span class="org-operator">=</span>(), dtype<span class="org-operator">=</span>tf.string),
     <span class="org-comment-delimiter"># </span><span class="org-comment">The PQC layer returns the expected value of the readout gate, range [-1,1].</span>
     <span class="org-comment-delimiter"># </span><span class="org-comment">model_readout is operator cirq.Z(readout)</span>
     tfq.layers.PQC(model_circuit, model_readout),
@@ -437,8 +443,8 @@ SVGCircuit(circuit)
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Labels in y_train_nocon/y_test are booleans, convert them to [-1,1]</span>
-<span class="org-variable-name">y_train_hinge</span> = 2.0*y_train_nocon-1.0
-<span class="org-variable-name">y_test_hinge</span> = 2.0*y_test-1.0
+<span class="org-variable-name">y_train_hinge</span> <span class="org-operator">=</span> 2.0<span class="org-operator">*</span>y_train_nocon<span class="org-operator">-</span>1.0
+<span class="org-variable-name">y_test_hinge</span> <span class="org-operator">=</span> 2.0<span class="org-operator">*</span>y_test<span class="org-operator">-</span>1.0
 </pre>
 </div>
 
@@ -448,9 +454,9 @@ SVGCircuit(circuit)
 
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">hinge_accuracy</span>(y_true, y_pred):
-    <span class="org-variable-name">y_true</span> = tf.squeeze(y_true) &gt; 0.0
-    <span class="org-variable-name">y_pred</span> = tf.squeeze(y_pred) &gt; 0.0
-    <span class="org-variable-name">result</span> = tf.cast(y_true == y_pred, tf.float32)
+    <span class="org-variable-name">y_true</span> <span class="org-operator">=</span> tf.squeeze(y_true) <span class="org-operator">&gt;</span> 0.0
+    <span class="org-variable-name">y_pred</span> <span class="org-operator">=</span> tf.squeeze(y_pred) <span class="org-operator">&gt;</span> 0.0
+    <span class="org-variable-name">result</span> <span class="org-operator">=</span> tf.cast(y_true <span class="org-operator">==</span> y_pred, tf.float32)
 
     <span class="org-keyword">return</span> tf.reduce_mean(result)
 </pre>
@@ -462,15 +468,15 @@ SVGCircuit(circuit)
 
 <div class="org-src-container">
 <pre class="src src-python">model.<span class="org-builtin">compile</span>(
-    loss=tf.keras.losses.Hinge(),
-    optimizer=tf.keras.optimizers.Adam(),
-    metrics=[hinge_accuracy])
+    loss<span class="org-operator">=</span>tf.keras.losses.Hinge(),
+    optimizer<span class="org-operator">=</span>tf.keras.optimizers.Adam(),
+    metrics<span class="org-operator">=</span>[hinge_accuracy])
 
 <span class="org-builtin">print</span>(model.summary())
 </pre>
 </div>
 
-<pre class="example" id="org1282d79">
+<pre class="example" id="org99d1b2a">
 Model: "sequential"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -489,8 +495,8 @@ None
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">EPOCHS</span> = 3
-<span class="org-variable-name">BATCH_SIZE</span> = 32
+<pre class="src src-python"><span class="org-variable-name">EPOCHS</span> <span class="org-operator">=</span> 3
+<span class="org-variable-name">BATCH_SIZE</span> <span class="org-operator">=</span> 32
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">Previously defined:</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">x_train_circ = [convert_to_circuit(x) for x in x_train_bin]</span>
@@ -499,7 +505,7 @@ None
 <span class="org-comment-delimiter"># </span><span class="org-comment">x_train_tfcirc = tfq.convert_to_tensor(x_train_circ)</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">x_test_tfcirc = tfq.convert_to_tensor(x_test_circ)</span>
 
-<span class="org-variable-name">NUM_EXAMPLES</span> = <span class="org-builtin">len</span>(x_train_tfcirc)
+<span class="org-variable-name">NUM_EXAMPLES</span> <span class="org-operator">=</span> <span class="org-builtin">len</span>(x_train_tfcirc)
 
 <span class="org-comment-delimiter"># </span><span class="org-comment">Use a smaller subset for shorter training, for example:</span>
 <span class="org-comment-delimiter"># </span><span class="org-comment">NUM_EXAMPLES = 500</span>
@@ -507,21 +513,21 @@ None
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">x_train_tfcirc_sub</span> = x_train_tfcirc[:NUM_EXAMPLES]
-<span class="org-variable-name">y_train_hinge_sub</span> = y_train_hinge[:NUM_EXAMPLES]
+<pre class="src src-python"><span class="org-variable-name">x_train_tfcirc_sub</span> <span class="org-operator">=</span> x_train_tfcirc[:NUM_EXAMPLES]
+<span class="org-variable-name">y_train_hinge_sub</span> <span class="org-operator">=</span> y_train_hinge[:NUM_EXAMPLES]
 
-<span class="org-variable-name">qnn_history</span> = model.fit(
+<span class="org-variable-name">qnn_history</span> <span class="org-operator">=</span> model.fit(
       x_train_tfcirc_sub, y_train_hinge_sub,
-      batch_size=32,
-      epochs=EPOCHS,
-      verbose=1,
-      validation_data=(x_test_tfcirc, y_test_hinge))
+      batch_size<span class="org-operator">=</span>32,
+      epochs<span class="org-operator">=</span>EPOCHS,
+      verbose<span class="org-operator">=</span>1,
+      validation_data<span class="org-operator">=</span>(x_test_tfcirc, y_test_hinge))
 
-qnn_results = model.evaluate(x_test_tfcirc, y_test)
+<span class="org-variable-name">qnn_results</span> <span class="org-operator">=</span> model.evaluate(x_test_tfcirc, y_test)
 </pre>
 </div>
 
-<pre class="example" id="orgc87edb7">
+<pre class="example" id="orgaf77e41">
 Epoch 1/3
 360/360 [==============================] - 260s 724ms/step - loss: 0.5884 - hinge_accuracy: 0.7721 - val_loss: 0.3951 - val_hinge_accuracy: 0.8135
 Epoch 2/3
@@ -546,23 +552,23 @@ Epoch 3/3
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">create_fair_classical_model</span>():
     <span class="org-comment-delimiter"># </span><span class="org-comment">A simple model based off LeNet from https://keras.io/examples/mnist_cnn/</span>
-    <span class="org-variable-name">model</span> = tf.keras.Sequential()
-    model.add(tf.keras.layers.Flatten(input_shape=(4,4,1)))
-    model.add(tf.keras.layers.Dense(2, activation=<span class="org-string">'relu'</span>))
+    <span class="org-variable-name">model</span> <span class="org-operator">=</span> tf.keras.Sequential()
+    model.add(tf.keras.layers.Flatten(input_shape<span class="org-operator">=</span>(4,4,1)))
+    model.add(tf.keras.layers.Dense(2, activation<span class="org-operator">=</span><span class="org-string">'relu'</span>))
     model.add(tf.keras.layers.Dense(1))
     <span class="org-keyword">return</span> model
 
 
-model = create_fair_classical_model()
-model.<span class="org-builtin">compile</span>(loss=tf.keras.losses.BinaryCrossentropy(from_logits=<span class="org-constant">True</span>),
-              optimizer=tf.keras.optimizers.Adam(),
-              metrics=[<span class="org-string">'accuracy'</span>])
+<span class="org-variable-name">model</span> <span class="org-operator">=</span> create_fair_classical_model()
+model.<span class="org-builtin">compile</span>(loss<span class="org-operator">=</span>tf.keras.losses.BinaryCrossentropy(from_logits<span class="org-operator">=</span><span class="org-constant">True</span>),
+              optimizer<span class="org-operator">=</span>tf.keras.optimizers.Adam(),
+              metrics<span class="org-operator">=</span>[<span class="org-string">'accuracy'</span>])
 
 model.summary()
 </pre>
 </div>
 
-<pre class="example" id="orgdf756df">
+<pre class="example" id="org6e86a81">
 Model: "sequential_2"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -582,23 +588,23 @@ _________________________________________________________________
 <div class="org-src-container">
 <pre class="src src-python">model.fit(x_train_bin,
           y_train_nocon,
-          batch_size=128,
-          epochs=20,
-          verbose=0,
-          validation_data=(x_test_bin, y_test))
+          batch_size<span class="org-operator">=</span>128,
+          epochs<span class="org-operator">=</span>20,
+          verbose<span class="org-operator">=</span>0,
+          validation_data<span class="org-operator">=</span>(x_test_bin, y_test))
 
-fair_nn_results = model.evaluate(x_test_bin, y_test)
+<span class="org-variable-name">fair_nn_results</span> <span class="org-operator">=</span> model.evaluate(x_test_bin, y_test)
 </pre>
 </div>
 
-<pre class="example" id="org398b038">
+<pre class="example" id="org87a936f">
 62/62 [==============================] - 0s 511us/step - loss: 0.2666 - accuracy: 0.9141
 </pre>
 
 <div class="org-src-container">
-<pre class="src src-python"><span class="org-variable-name">qnn_accuracy</span> = qnn_results[1]
+<pre class="src src-python"><span class="org-variable-name">qnn_accuracy</span> <span class="org-operator">=</span> qnn_results[1]
 <span class="org-comment-delimiter"># </span><span class="org-comment">cnn_accuracy = cnn_results[1]</span>
-<span class="org-variable-name">fair_nn_accuracy</span> = fair_nn_results[1]
+<span class="org-variable-name">fair_nn_accuracy</span> <span class="org-operator">=</span> fair_nn_results[1]
 
 sns.barplot([<span class="org-string">"Quantum"</span>, <span class="org-string">"Classical, fair"</span>],
             [qnn_accuracy, fair_nn_accuracy])
@@ -606,7 +612,7 @@ sns.barplot([<span class="org-string">"Quantum"</span>, <span class="org-string"
 </div>
 
 
-<figure id="orgf97b375">
+<figure id="orgf7ed365">
 <img src="../images/2020/12/output_45_1.png" alt="output_45_1.png" width="480px">
 
 </figure>
@@ -621,8 +627,7 @@ sns.barplot([<span class="org-string">"Quantum"</span>, <span class="org-string"
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).
     </div>
 </footer>
 </body>

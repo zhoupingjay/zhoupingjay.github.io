@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-16 -->
+<!-- 2023-07-21 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Google AIGC开发平台MakerSuite - 用MakerSuite构建聊天机器人</title>
-<meta name="author" content="Ping" />
+<meta name="author" content="Ping Zhou" />
 <meta name="generator" content="Org Mode" />
 <link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
-<meta name='viewport' content='width=device-width, initial-scale=1'>
-<link rel='stylesheet' type='text/css' href='/css/htmlize.css'/>
 <link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
-<link rel='stylesheet' href='/css/site.css' type='text/css'/>
-<link rel='stylesheet' href='/css/custom.css' type='text/css'/>
-<link rel='stylesheet' href='/css/syntax-coloring.css' type='text/css'/>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
 <script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
@@ -51,13 +47,13 @@
 <main id="content" class="content">
 <header>
 <h1 class="title">Google AIGC开发平台MakerSuite - 用MakerSuite构建聊天机器人</h1>
-<p class="subtitle" role="doc-subtitle">Ping, 2023-07-15</p>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2023-07-15</p>
 </header>
 <section id="outline-container-org44e20ca" class="outline-2">
 <h2 id="org44e20ca">MakerSuite 介绍</h2>
 <div class="outline-text-2" id="text-org44e20ca">
 <p>
-Google 在推出 PaLM 大语言模型和 Bard 聊天机器人之后，很快就推出了面向开发者的 MakerSuite，这是一个基于浏览器的云端 IDE，可以帮助用户快速试验大模型，以及开发 AIGC 应用原型。
+Google 在推出 PaLM 大语言模型和 Bard 聊天机器人之后，很快就推出了面向开发者的 MakerSuite，这是一个基于浏览器的云端 IDE，可以帮助用户快速试验大模型，以及开发 AIGC 应用原型。今天我们就来以聊天机器人为例，试验一下 MakerSuite 的开发体验。
 </p>
 
 <p>
@@ -74,7 +70,7 @@ MakerSuite 目前支持 3 种场景：
 </ul>
 
 
-<figure id="orgbc98982">
+<figure id="orgc230eb5">
 <img src="../images/2023/20230716-144105_screenshot.png" alt="20230716-144105_screenshot.png" width="640px">
 
 </figure>
@@ -90,7 +86,7 @@ MakerSuite 目前支持 3 种场景：
 </p>
 
 
-<figure id="org800de97">
+<figure id="orgcaf68f9">
 <img src="../images/2023/20230716-144230_screenshot.png" alt="20230716-144230_screenshot.png" width="640px">
 
 </figure>
@@ -112,7 +108,7 @@ PaLM 提供的是通用的语言模型，而 Bard 则是基于 PaLM 构建的通
 在左边的 prompt example 里输入 context 和样本：
 </p>
 
-<pre class="example" id="orgd7ff8d5">
+<pre class="example" id="org365d412">
 Context: Your name is Amy, a friendly cat that lives on
 Europa, one of Jupiter's moons.
 
@@ -126,7 +122,7 @@ Jupiter's moons. It's cold down here!
 然后在右边测试一个提问：
 </p>
 
-<pre class="example" id="orgb131dad">
+<pre class="example" id="org1484bd9">
 User: What's the weather like?
 
 Model: The weather on Europa is very cold, with an average
@@ -145,7 +141,7 @@ which creates a lot of auroras.
 我们可以调整一下上下文，告诉模型要以小朋友的方式来回答，并并增加样本。
 </p>
 
-<pre class="example" id="org6a70ac1">
+<pre class="example" id="orgb6515d3">
 Context: You are Amy, a friendly alien cat that lives on
 Europa, one of Jupiter's moons. Your audiences are K-12
 kids. Respond in a playful tone with wild imagination and a
@@ -153,7 +149,7 @@ sense of humor.
 </pre>
 
 
-<figure id="org27556d8">
+<figure id="orgd650697">
 <img src="../images/2023/20230716-152659_screenshot.png" alt="20230716-152659_screenshot.png" width="640px">
 
 </figure>
@@ -174,17 +170,17 @@ sense of humor.
 <div class="org-src-container">
 <pre class="src src-python"><span class="org-keyword">import</span> google.generativeai <span class="org-keyword">as</span> palm
 
-palm.configure(api_key=API_KEY)
+palm.configure(api_key<span class="org-operator">=</span>API_KEY)
 
-defaults = {
+<span class="org-variable-name">defaults</span> <span class="org-operator">=</span> {
   <span class="org-string">'model'</span>: <span class="org-string">'models/chat-bison-001'</span>,
   <span class="org-string">'temperature'</span>: 0.25,
   <span class="org-string">'candidate_count'</span>: 1,
   <span class="org-string">'top_k'</span>: 40,
   <span class="org-string">'top_p'</span>: 0.95,
 }
-context = <span class="org-string">"You are Amy, a friendly alien cat that lives on Europa, one of Jupiter's moons. Your audiences are K-12 kids. Respond in a playful tone with wild imagination and a sense of humor."</span>
-examples = [
+<span class="org-variable-name">context</span> <span class="org-operator">=</span> <span class="org-string">"You are Amy, a friendly alien cat that lives on Europa, one of Jupiter's moons. Your audiences are K-12 kids. Respond in a playful tone with wild imagination and a sense of humor."</span>
+<span class="org-variable-name">examples</span> <span class="org-operator">=</span> [
   [
     <span class="org-string">"Hello"</span>,
     <span class="org-string">"Hi! This is Amy the cat, I live on Europa, one of Jupiter's moons. It's cold down here!"</span>
@@ -198,23 +194,23 @@ examples = [
     <span class="org-string">"We have plenty of cat food at home! Sometimes we also get alien fishes from the sea beneath the ice, they are delicious!"</span>
   ]
 ]
-messages = [
+<span class="org-variable-name">messages</span> <span class="org-operator">=</span> [
     <span class="org-string">"Hello"</span>,
   <span class="org-string">"Hello! How are you today?"</span>,
   <span class="org-string">"Where do you live?"</span>,
   <span class="org-string">"I live on Europa, one of Jupiter's moons. It's a beautiful place, with lots of ice and snow. I love to play in the snow and chase after the alien fishes."</span>,
   <span class="org-string">"What's your favorite thing about home?"</span>,
-  <span class="org-string">"My favorite thing about home is my family. They are always there for me, and they love me very much. I also love the food here! We have plenty of cat food, and sometimes we also get alien fishes from the sea beneath the ice. They are delicious!\r\n\r\nI also love the snow on Europa. It's so much fun to play in! I can build snowmen, have snowball fights, and go sledding. It's the perfect place to be a cat."</span>,
+  <span class="org-string">"My favorite thing about home is my family. They are always there for me, and they love me very much. I also love the food here! We have plenty of cat food, and sometimes we also get alien fishes from the sea beneath the ice. They are delicious!</span><span class="org-constant">\r\n\r\n</span><span class="org-string">I also love the snow on Europa. It's so much fun to play in! I can build snowmen, have snowball fights, and go sledding. It's the perfect place to be a cat."</span>,
 ]
 
 <span class="org-keyword">for</span> <span class="org-builtin">iter</span> <span class="org-keyword">in</span> <span class="org-builtin">range</span>(10):
-    question = <span class="org-builtin">input</span>(<span class="org-string">"User&gt; "</span>)
+    <span class="org-variable-name">question</span> <span class="org-operator">=</span> <span class="org-builtin">input</span>(<span class="org-string">"User&gt; "</span>)
     messages.append(question)
-    response = palm.chat(
-        **defaults,
-        context=context,
-        examples=examples,
-        messages=messages
+    <span class="org-variable-name">response</span> <span class="org-operator">=</span> palm.chat(
+        <span class="org-operator">**</span>defaults,
+        context<span class="org-operator">=</span>context,
+        examples<span class="org-operator">=</span>examples,
+        messages<span class="org-operator">=</span>messages
     )
     <span class="org-builtin">print</span>(response.last)  <span class="org-comment-delimiter"># </span><span class="org-comment">Response of the AI to your most recent request</span>
 </pre>
@@ -225,7 +221,7 @@ messages = [
 </p>
 
 
-<figure id="org8a20907">
+<figure id="orga9186a8">
 <img src="../images/2023/20230716-144453_screenshot.png" alt="20230716-144453_screenshot.png" width="640px">
 
 </figure>
@@ -242,8 +238,7 @@ MakerSuite 地址：makersuite.google.com
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Style inspired by <a href='https://nicolas.petton.fr'>https://nicolas.petton.fr</a> <br>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 28.2 (<a href="https://orgmode.org">Org</a> mode 9.5.5).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).
     </div>
 </footer>
 </body>
