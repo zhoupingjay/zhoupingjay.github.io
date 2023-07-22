@@ -71,7 +71,7 @@ First, I created a “plist” file in my LaunchAgents folder: ~/Library/LaunchA
 Here is an example of the plist file for Emacs server. Assuming Emacs binary is at /Applications/Emacs.app/Contents/MacOS/Emacs and the argument “–daemon” launches Emacs in server (daemon) mode.
 </p>
 
-<pre class="example" id="org3582dc3">
+<pre class="example" id="orgd9437fa">
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
     "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
@@ -146,7 +146,7 @@ Now that Emacs server is up and running, you can launch emacsclient just like an
 One caveat is that if you have multiple emacs installed (e.g. MacOS comes with an old version of Emacs, and you installed Emacs 26.x), you need to make sure client and server are from the same Emacs installation. For example, if Emacs server is at:
 </p>
 
-<pre class="example" id="org5aadd88">
+<pre class="example" id="org31bcaa4">
 /Applications/Emacs.app/Contents/MacOS/Emacs
 </pre>
 
@@ -176,7 +176,8 @@ A note about GUI – By default emacsclient is launched in console. To launch em
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+     "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>
 </body>
