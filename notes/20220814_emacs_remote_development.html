@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-21 -->
+<!-- 2023-07-23 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Emacs集成开发环境和远程开发配置</title>
@@ -57,19 +57,19 @@
 </p>
 
 <p>
-如果 clangd 不够智能，例如有些头文件或者符号找不到，可以用 compile<sub>commands.json</sub> 文件来指导 clangd。compile<sub>commands.json</sub> 文件，你可以把它理解为编译时产生的 trace，记录了整个 project 的编译步骤，通过它 clangd 就能知道每个文件是如何编译的，包括头文件在哪里，链接库在哪里，乃至各个符号的定义等。有了这个，你的 Emacs 基本上就具备了集成开发环境的主要能力。
+如果 clangd 不够智能，例如有些头文件或者符号找不到，可以用 <code>compile_commands.json</code> 文件来指导 clangd。 <code>compile_commands.json</code> 文件，你可以把它理解为编译时产生的 trace，记录了整个 project 的编译步骤，通过它 clangd 就能知道每个文件是如何编译的，包括头文件在哪里，链接库在哪里，乃至各个符号的定义等。有了这个，你的 Emacs 基本上就具备了集成开发环境的主要能力。
 </p>
 
 <p>
-如何生成 compile<sub>commands.json</sub> 文件呢？取决于项目的构建工具。如果是 cmake，ninja 等比较现代的工具，都内置了导出 compile<sub>commands.json</sub> 文件的功能，比如 cmake 里只要加上这个环境变量就行了：
+如何生成 <code>compile_commands.json</code> 文件呢？取决于项目的构建工具。如果是 cmake，ninja 等比较现代的工具，都内置了导出 <code>compile_commands.json</code> 文件的功能，比如 cmake 里只要加上这个环境变量就行了：
 </p>
 
-<pre class="example" id="orgee3afbb">
+<pre class="example" id="org44a3f69">
 CMAKE_EXPORT_COMPILE_COMMANDS
 </pre>
 
 <p>
-如果工具不支持自动导出 compile<sub>commands.json</sub>，可以在编译时用 bear 来记录。bear 相当于一个命令的 wrapper，后面的参数就是你的编译命令。例如：
+如果工具不支持自动导出 <code>compile_commands.json</code> ，可以在编译时用 bear 来记录。bear 相当于一个命令的 wrapper，后面的参数就是你的编译命令。例如：
 </p>
 
 <div class="org-src-container">
@@ -79,7 +79,7 @@ bear make
 </div>
 
 <p>
-<code>bear</code> 会把 <code>make</code> 过程中执行的步骤全都记录在 compile<sub>commands.json</sub> 里。
+<code>bear</code> 会把 <code>make</code> 过程中执行的步骤全都记录在 <code>compile_commands.json</code> 里。
 </p>
 
 <p>
@@ -94,7 +94,7 @@ bear make
 Emacs 内置有远程连接的客户端 tramp，支持 SSH 等多种连接方式。我们可以通过 tramp 来访问远程机器上的文件。例如我们在打开文件时输入这样的地址：
 </p>
 
-<pre class="example" id="org2394795">
+<pre class="example" id="org7fad853">
 /ssh:user@192.168.0.100#1234:/home/user/test.c
 </pre>
 
