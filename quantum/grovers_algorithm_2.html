@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-21 -->
+<!-- 2023-07-28 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>聊聊量子搜索算法(Grover算法) - 2</title>
@@ -68,7 +68,7 @@
 <div id="org-div-home-and-up">
  <a accesskey="h" href="/"> UP </a>
  |
- <a accesskey="H" href="/quantum"> HOME </a>
+ <a accesskey="H" href="/"> HOME </a>
 </div><header id="top" class="status">
 <div class='intro'>
   <h1>
@@ -97,7 +97,7 @@
 </p>
 
 
-<figure id="orgaaa6a98">
+<figure id="org88638ac">
 <img src="../images/Quantum Search - Grover's Algorithm.png" alt="Quantum Search - Grover's Algorithm.png" width="480px">
 
 </figure>
@@ -134,7 +134,7 @@
 这个\(|\psi\rangle\)向量，和\(|\alpha\rangle\)轴之间的夹角，我们记作\(\frac{\theta}{2}\)，如下图所示：
 </p>
 
-<figure id="orgef1dcde">
+<figure id="orgc767ca4">
 <img src="../images/Quantum Search - Grover's Algorithm Visualized1.png" alt="Quantum Search - Grover's Algorithm Visualized1.png" width="480px">
 
 </figure>
@@ -162,7 +162,7 @@ G=(2|\psi\rangle \langle\psi|-I)O
 我们先从O（Oracle）变换看起。O变换干了什么呢？它是把输入的状态\(|x\rangle\)变成\((-1)^{f(x)} |x\rangle\)。如果f(x)=1，那么它就给输出加上一个-1的相位，否则不变。那么这个操作在二维平面图中，实际上就是把输入的向量对\(|\alpha\rangle\)轴做了一个 <b><b>反射</b></b> 。
 </p>
 
-<figure id="org911657a">
+<figure id="org4b1f6a3">
 <img src="../images/Quantum Search - Grover's Algorithm Visualized2.png" alt="Quantum Search - Grover's Algorithm Visualized2.png" width="480px">
 
 </figure>
@@ -249,7 +249,7 @@ G=(2|\psi\rangle \langle\psi|-I)O
 上面这个式子，加号左边就是原向量乘-1，而加号右边的向量，所有分量都相同，都是\(2\langle\alpha\rangle\)，归一化后就是无差别叠加态\(|\psi\rangle\)。两者相加，得到的是什么？看下面的图就可以直观的理解了：
 </p>
 
-<figure id="org3ff5f48">
+<figure id="org2a8c91d">
 <img src="../images/Quantum Search - Grover's Algorithm Visualized3.png" alt="Quantum Search - Grover's Algorithm Visualized3.png" width="480px">
 
 </figure>
@@ -270,7 +270,7 @@ G=(2|\psi\rangle \langle\psi|-I)O
 连续两步反射操作合在一起，其实就是把输入的向量进行了 <b><b>旋转</b></b> 。那么这个旋转角度是多少呢？我们在图里画一下就能明白了：
 </p>
 
-<figure id="orgaad5f29">
+<figure id="orgbd8a511">
 <img src="../images/Quantum Search - Grover's Algorithm Visualized.png" alt="Quantum Search - Grover's Algorithm Visualized.png" width="480px">
 
 </figure>
@@ -383,7 +383,7 @@ k=round(\frac{\pi}{2\theta} - \frac{1}{2}) \approx round(\frac{\pi}{4}\sqrt{\fra
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
      "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>

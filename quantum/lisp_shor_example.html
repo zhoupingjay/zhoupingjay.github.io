@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-21 -->
+<!-- 2023-07-28 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>用Lisp可视化量子因式分解Shor算法的例子</title>
@@ -68,7 +68,7 @@
 <div id="org-div-home-and-up">
  <a accesskey="h" href="/"> UP </a>
  |
- <a accesskey="H" href="/quantum"> HOME </a>
+ <a accesskey="H" href="/"> HOME </a>
 </div><header id="top" class="status">
 <div class='intro'>
   <h1>
@@ -130,7 +130,7 @@
 <code>shor-find-mods</code> 从x=0开始，逐个计算 \(a^x \mod N\) ，把结果记录到一个序列里，直到序列里发现重复，这时候序列的长度就是函数的周期r。另外序列本身也作为副产品返回给调用方。例如在前文的例子中，N=21，a=11 ，返回的序列就是 (1 11 16 8 4 2)，周期是6:
 </p>
 
-<pre class="example" id="org19be889">
+<pre class="example" id="org3773fb5">
 CL-USER&gt; (shor-find-mods 11 21)
 6 (3 bits, #x6, #o6, #b110)
 (1 11 16 8 4 2)
@@ -207,7 +207,7 @@ CL-USER&gt; (shor-find-mods 11 21)
 </div>
 
 
-<figure id="org267590f">
+<figure id="org824e505">
 <img src="../images/shor_example_prob_dist.png" alt="shor_example_prob_dist.png" width="480px">
 
 </figure>
@@ -222,7 +222,7 @@ CL-USER&gt; (shor-find-mods 11 21)
 </div>
 
 
-<figure id="orga902a47">
+<figure id="org213f335">
 <img src="../images/shor_example_prob_dist2.png" alt="shor_example_prob_dist2.png" width="480px">
 
 </figure>
@@ -233,7 +233,7 @@ Lisp真有意思啊！
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
      "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>

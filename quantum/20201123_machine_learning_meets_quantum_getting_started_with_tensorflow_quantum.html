@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-21 -->
+<!-- 2023-07-28 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Machine Learning Meets Quantum: Getting Started with TensorFlow Quantum</title>
@@ -68,7 +68,7 @@
 <div id="org-div-home-and-up">
  <a accesskey="h" href="/"> UP </a>
  |
- <a accesskey="H" href="/quantum"> HOME </a>
+ <a accesskey="H" href="/"> HOME </a>
 </div><header id="top" class="status">
 <div class='intro'>
   <h1>
@@ -166,7 +166,7 @@ Another useful way of representing qubit is using the <b><b>Bloch Sphere</b></b>
 </p>
 
 
-<figure id="orga578cc5">
+<figure id="orgca5ec13">
 <img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px">
 
 </figure>
@@ -292,7 +292,7 @@ We can look at a few examples to validate this conclusion:
 </p>
 
 
-<figure id="orgf98b771">
+<figure id="org315444c">
 <img src="../images/bloch-sphere.svg" alt="bloch-sphere.svg" class="org-svg" width="480px">
 
 </figure>
@@ -327,7 +327,7 @@ But in the real world, our system is <b><b>noisy</b></b>. Therefore the qubits w
 </p>
 
 
-<figure id="org8ba7e04">
+<figure id="org93c95dc">
 <img src="../images/tfq-noisy-circuit.svg" alt="tfq-noisy-circuit.svg" class="org-svg" width="480px">
 
 </figure>
@@ -341,7 +341,7 @@ In order for any quantum computing circuit to run properly, we need to <b><b>cal
 </p>
 
 
-<figure id="orgbb91457">
+<figure id="orgd7c5725">
 <img src="../images/tfq-calibration-circuit.svg" alt="tfq-calibration-circuit.svg" class="org-svg" width="480px">
 
 </figure>
@@ -364,7 +364,7 @@ What we want to achieve is a model that calibrates noisy qubit:
 </p>
 
 
-<figure id="org27d0b5d">
+<figure id="org4a9f338">
 <img src="../images/hello-tfq-circuit.svg" alt="hello-tfq-circuit.svg" class="org-svg" width="560px">
 
 </figure>
@@ -383,7 +383,7 @@ To help you understand the whole picture, I made an architectural diagram of our
 </p>
 
 
-<figure id="org85d7acb">
+<figure id="org22d8083">
 <img src="../images/hello-tfq-1.svg" alt="hello-tfq-1.svg" class="org-svg" width="560px">
 
 </figure>
@@ -571,7 +571,7 @@ Print out the noisy circuit. We can see that the &ldquo;perfect&rdquo; qubit has
 </pre>
 </div>
 
-<pre class="example" id="orgc0dd96c">
+<pre class="example" id="orgb7dbd24">
 [3.84902356 3.3647054  3.03737137]
 (0, 0): ───Rx(1.23π)───Ry(1.07π)───Rz(0.967π)───
 </pre>
@@ -648,7 +648,7 @@ SVGCircuit(model_circuit)
 </div>
 
 
-<figure id="orgf97366b">
+<figure id="org71d4ee5">
 <img src="../images/output_29_0.svg" alt="output_29_0.svg" class="org-svg" width="480px">
 
 </figure>
@@ -700,7 +700,7 @@ A little visualization of our model&#x2026;
 </div>
 
 
-<figure id="org372520b">
+<figure id="orgfba091a">
 <img src="../images/output_35_0.png" alt="output_35_0.png" width="560px">
 
 </figure>
@@ -741,7 +741,7 @@ plt.show()
 </div>
 
 
-<figure id="orgf5589e0">
+<figure id="org702dbc2">
 <img src="../images/output_39_0.png" alt="output_39_0.png" width="480px">
 
 </figure>
@@ -760,7 +760,7 @@ We can verify our model by calling it with commands 0 and 1:
 </pre>
 </div>
 
-<pre class="example" id="org37fb535">
+<pre class="example" id="org1ef5e92">
 &lt;tf.Tensor: shape=(2, 1), dtype=float32, numpy=
     array([[ 0.9891974],
            [-0.9958328]], dtype=float32)&gt;
@@ -796,7 +796,7 @@ In the next step, I&rsquo;ll expand this example into a more generic case where 
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
      "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>

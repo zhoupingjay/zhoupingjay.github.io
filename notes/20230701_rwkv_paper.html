@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-21 -->
+<!-- 2023-07-28 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>颠覆Transformer？新语言模型算法RWKV解读</title>
@@ -68,7 +68,7 @@
 <div id="org-div-home-and-up">
  <a accesskey="h" href="/"> UP </a>
  |
- <a accesskey="H" href="/notes"> HOME </a>
+ <a accesskey="H" href="/"> HOME </a>
 </div><header id="top" class="status">
 <div class='intro'>
   <h1>
@@ -85,7 +85,7 @@ RWKV 是 Peng Bo 提出的一个新的语言模型算法，它融合了 Transfor
 </p>
 
 
-<figure id="orgc4aee55">
+<figure id="org7935a7b">
 <img src="../images/2023/20230707-171611_screenshot.png" alt="20230707-171611_screenshot.png" width="640px">
 
 </figure>
@@ -145,7 +145,7 @@ Transformer 的成功，我认为关键是两点：一是 Transformer 的注意�
 </p>
 
 
-<figure id="org17bf0fc">
+<figure id="org36fde18">
 <img src="../images/2023/20230702-122855_screenshot.png" alt="20230702-122855_screenshot.png" width="480px">
 
 </figure>
@@ -243,7 +243,7 @@ RNN/LSTM 的工作方式跟状态机有点类似，它内部有个隐状态（hi
 </p>
 
 
-<figure id="org21b9cd7">
+<figure id="orgd40dcaf">
 <img src="../images/2023/20230702-164256_screenshot.png" alt="20230702-164256_screenshot.png" width="320px">
 
 </figure>
@@ -260,7 +260,7 @@ RNN/LSTM 的工作方式跟状态机有点类似，它内部有个隐状态（hi
 </p>
 
 
-<figure id="org4349326">
+<figure id="orgc5e9fb6">
 <img src="../images/2023/20230704-161915_screenshot.png" alt="20230704-161915_screenshot.png" width="640px">
 
 </figure>
@@ -272,7 +272,7 @@ RNN/LSTM 的工作方式跟状态机有点类似，它内部有个隐状态（hi
 <p>
 再看个简单的例子，假如我们的序列有 4 个输入 x1, x2, x3, x4，每个位置的隐状态就是当前输入的累加，也就是上一个隐状态与当前输入之和：
 </p>
-<pre class="example" id="org204ee5b">
+<pre class="example" id="orgd2a0552">
 h0 = 0
 h1 = h0 + x1 = x1
 h2 = h1 + x2 = x1 + x2
@@ -283,7 +283,7 @@ h4 = h3 + x4 = x1 + x2 + x3 + x4
 <p>
 这种情况，前后状态之间是线性依赖，我们只需要构造一个下三角矩阵：
 </p>
-<pre class="example" id="org03c8358">
+<pre class="example" id="orgab01225">
 1 0 0 0
 1 1 0 0
 1 1 1 0
@@ -296,7 +296,7 @@ h4 = h3 + x4 = x1 + x2 + x3 + x4
 <p>
 但是，如果我们的隐状态和上一个状态是非线性依赖的，例如 <code>h(t) = sigmoid(h(t-1)) + x(t)</code> :
 </p>
-<pre class="example" id="orgae8745f">
+<pre class="example" id="org0f2f930">
 h0 = 0
 h1 = sigmoid(h0) + x1
 h2 = sigmoid(h1) + x2
@@ -317,7 +317,7 @@ Transformer 的注意力机制可以用下面这个公式来表达（关于 Tran
 </p>
 
 
-<figure id="orgfb18f59">
+<figure id="org044a840">
 <img src="../images/2023/20230702-164432_screenshot.png" alt="20230702-164432_screenshot.png" width="320px">
 
 </figure>
@@ -327,7 +327,7 @@ Transformer 的注意力机制可以用下面这个公式来表达（关于 Tran
 </p>
 
 
-<figure id="org6ac05a1">
+<figure id="org42ef372">
 <img src="../images/2023/20230702-164600_screenshot.png" alt="20230702-164600_screenshot.png" width="360px">
 
 </figure>
@@ -342,7 +342,7 @@ RWKV 的灵感来自于 2021 年 Apple 的一篇论文『Attention Free Transfor
 </p>
 
 
-<figure id="orgdbbd63c">
+<figure id="org32baf76">
 <img src="../images/2023/20230702-164618_screenshot.png" alt="20230702-164618_screenshot.png" width="360px">
 
 </figure>
@@ -374,7 +374,7 @@ RWKV 模型的架构，和 Transformer 非常类似，也是由多个 RWKV block
 </p>
 
 
-<figure id="org1fd9998">
+<figure id="org9d218e8">
 <img src="../images/2023/20230702-164959_screenshot.png" alt="20230702-164959_screenshot.png" width="480px">
 
 </figure>
@@ -384,7 +384,7 @@ RWKV block 内部的 Time Mixing 和 Channel Mixing 模块：
 </p>
 
 
-<figure id="orge32afc8">
+<figure id="org568d742">
 <img src="../images/2023/20230702-165032_screenshot.png" alt="20230702-165032_screenshot.png" width="480px">
 
 </figure>
@@ -399,7 +399,7 @@ RWKV block 的 Time Mixing 模块，可以用下面的一组公式来描述：
 </p>
 
 
-<figure id="org5b708b6">
+<figure id="orgcd67c06">
 <img src="../images/2023/20230702-165233_screenshot.png" alt="20230702-165233_screenshot.png" width="360px">
 
 </figure>
@@ -419,7 +419,7 @@ WKV 的计算有点类似于 Softmax，但是在分子和分母上分别加了�
 </p>
 
 
-<figure id="org8793eb7">
+<figure id="orgcbff53b">
 <img src="../images/2023/20230704-204127_screenshot.png" alt="20230704-204127_screenshot.png" width="400px">
 
 </figure>
@@ -438,7 +438,7 @@ Channel Mixing 模块就简单多了，R和 K 同前面的 Time Mixing 一样，
 </p>
 
 
-<figure id="org861a8bc">
+<figure id="orgafce221">
 <img src="../images/2023/20230702-165253_screenshot.png" alt="20230702-165253_screenshot.png" width="360px">
 
 </figure>
@@ -465,7 +465,7 @@ Time Mixing 部分，核心是 WKV 计算（公式 14)。
 </p>
 
 
-<figure id="org5faaede">
+<figure id="orga94423b">
 <img src="../images/2023/20230705-183250_screenshot.png" alt="20230705-183250_screenshot.png" width="360px">
 
 </figure>
@@ -475,7 +475,7 @@ Time Mixing 部分，核心是 WKV 计算（公式 14)。
 </p>
 
 
-<figure id="org96bc5b7">
+<figure id="org6ddcd13">
 <img src="../images/2023/20230706-185301_screenshot.png" alt="20230706-185301_screenshot.png" width="800px">
 
 </figure>
@@ -498,7 +498,7 @@ RWKV 算法可以写成 RNN 那样的递归形式，因此也具有 RNN 推理�
 </p>
 
 
-<figure id="org7ff07b7">
+<figure id="org5199b97">
 <img src="../images/2023/20230706-212343_screenshot.png" alt="20230706-212343_screenshot.png" width="280px">
 
 </figure>
@@ -508,7 +508,7 @@ RWKV 算法可以写成 RNN 那样的递归形式，因此也具有 RNN 推理�
 </p>
 
 
-<figure id="orgde6598f">
+<figure id="org82823b8">
 <img src="../images/2023/20230706-212634_screenshot.png" alt="20230706-212634_screenshot.png" width="400px">
 
 </figure>
@@ -518,7 +518,7 @@ RWKV 算法可以写成 RNN 那样的递归形式，因此也具有 RNN 推理�
 </p>
 
 
-<figure id="org754648f">
+<figure id="org7f71667">
 <img src="../images/2023/20230702-165512_screenshot.png" alt="20230702-165512_screenshot.png" width="480px">
 
 </figure>
@@ -558,7 +558,7 @@ RWKV 的缺点：和 RNN 一样，历史信息是靠隐状态（WKV）来记忆�
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.0.92 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
      "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>
