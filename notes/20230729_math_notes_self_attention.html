@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-28 -->
+<!-- 2023-07-29 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Some Math Notes About Self-Attention</title>
@@ -81,11 +81,11 @@
 <h1 class="title">Some Math Notes About Self-Attention</h1>
 <p class="subtitle" role="doc-subtitle">Ping Zhou, 2023-07-29</p>
 </header><p>
-If you are familiar with the recent frenzy about ChatGPT, Bard and other large language models, you probably already know about Transformer, the key building block behind these models.
+If you are familiar with the recent frenzy about <a href="https://chat.openai.com">ChatGPT</a>, <a href="https://bard.google.com">Bard</a> and other large language models, you probably already know about <a href="https://arxiv.org/abs/1706.03762">Transformer</a>, the key building block behind these models.
 </p>
 
 <p>
-The key algorithm inside Transformer block is Self Attention, which is commonly described as the following equation:
+The key algorithm inside Transformer block is <a href="https://en.wikipedia.org/wiki/Self-attention">Self Attention</a>, which is commonly described as the following equation:
 </p>
 
 \begin{matrix}
@@ -105,7 +105,7 @@ Attn(Q, K, V)_t = \frac{\sum_{i=1}^T e^{Q_t \cdot K_i} V_i}{\sum_{i=1}^T e^{Q_t 
 \end{matrix}
 
 <p>
-The above equation gives the &ldquo;attention&rdquo; vector at position <code>t</code> of the sequence. On the first glance, it seems pretty straightforward to map from the first equation to the second, given the definition of <code>softmax</code>:
+The above equation gives the &ldquo;attention&rdquo; vector at position <code>t</code> of the sequence. On the first glance, it seems pretty straightforward to map from the first equation to the second, given the definition of <a href="https://en.wikipedia.org/wiki/Softmax_function">softmax</a>:
 </p>
 
 \begin{matrix}
@@ -125,7 +125,7 @@ Let&rsquo;s start with the basics.
 </p>
 
 
-<figure id="orgaf75817">
+<figure id="org7991ed4">
 <img src="../images/2023/20230728_self_attention.png" alt="20230728_self_attention.png" width="640px">
 
 </figure>
@@ -245,7 +245,7 @@ So the values in row <code>t</code> will look like this:
 </p>
 
 
-<figure id="org5773f90">
+<figure id="orgd9a1463">
 <img src="../images/2023/20230728-144524_screenshot.png" alt="20230728-144524_screenshot.png" width="640px">
 
 </figure>
@@ -256,7 +256,7 @@ So we can do a little reorganization and transform the expression as follows:
 </p>
 
 
-<figure id="orgdd7b039">
+<figure id="org12c6204">
 <img src="../images/2023/20230728-144951_screenshot.png" alt="20230728-144951_screenshot.png" width="700px">
 
 </figure>
@@ -290,7 +290,7 @@ This is the iterative form of the Self Attention equation.
 </p>
 
 <p>
-So what did we learn? We started from the basics of Self Attention, went through every step of the computation and figured out how we map the equation&rsquo;s matrix form into its iterative form. This is particularly useful if you would like to compare it with other RNN-like algorithms (in fact, I went through this when I studied the RWKV algorithm). I decided to write down my journey so I can revisit it some time, and I hope it will be somewhat helpful to you as well.
+So what did we learn? We started from the basics of Self Attention, went through every step of the computation and figured out how we map the equation&rsquo;s matrix form into its iterative form. This is particularly useful if you would like to compare it with other RNN-like algorithms (in fact, I went through this <a href="https://zhoupingjay.github.io/notes/20230701_rwkv_paper.html">when I studied the RWKV algorithm</a>). I decided to write down my journey so I can revisit it some time, and I hope it will be somewhat helpful to you as well.
 </p>
 </main>
 <footer id="postamble" class="status">
