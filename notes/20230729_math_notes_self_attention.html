@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 2023-07-28 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Some Math Notes About Self-Attention</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<header>
+<h1 class="title">Some Math Notes About Self-Attention</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2023-07-29</p>
+</header><p>
+If you are familiar with the recent frenzy about ChatGPT, Bard and other large language models, you probably already know about Transformer, the key building block behind these models.
+</p>
+
+<p>
+The key algorithm inside Transformer block is Self Attention, which is commonly described as the following equation:
+</p>
+
+\begin{matrix}
+Attn(Q, K, V) = softmax(QK^T)V
+\end{matrix}
+
+<p>
+(NOTE: the scaling part in the softmax is omitted for brevity.)
+</p>
+
+<p>
+Sometimes this equation is also written in an iterative way like this:
+</p>
+
+\begin{matrix}
+Attn(Q, K, V)_t = \frac{\sum_{i=1}^T e^{Q_t \cdot K_i} V_i}{\sum_{i=1}^T e^{Q_t \cdot K_i}}
+\end{matrix}
+
+<p>
+The above equation gives the &ldquo;attention&rdquo; vector at position <code>t</code> of the sequence. On the first glance, it seems pretty straightforward to map from the first equation to the second, given the definition of <code>softmax</code>:
+</p>
+
+\begin{matrix}
+softmax(z)_j = \frac{e^{z_j}}{\sum_{i=1}^T e^{z_i}}
+\end{matrix}
+
+<p>
+But wait&#x2026; how about the \(v_i\) in the 2nd equation?
+</p>
+
+<p>
+To understanding the Self Attention mechanism deeper, I find it useful by looking into a bit more details into the math, especially how the first equation is mapped to the 2nd one.
+</p>
+
+<p>
+Let&rsquo;s start with the basics.
+</p>
+
+
+<figure id="orgaf75817">
+<img src="../images/2023/20230728_self_attention.png" alt="20230728_self_attention.png" width="640px">
+
+</figure>
+
+<ol class="org-ol">
+<li>The input (sequence of tokens) is turned into a sequence of embeddings through the embedding layer. Each embedding is a vector size of D, and if the sequence length is T, we&rsquo;ll have T vectors each of size D. This is why the output of the embedding layer is a TxD matrix.</li>
+<li>The embeddings of the input are then fed into three linear layers, which transform it into three matrices Q, K and V. Similarly, each row of the matrix is a vector corresponding to one token (position) in the input sequence. The size of the vector is called &ldquo;channel&rdquo;, which is denoted as C here. Both Q, K matrices are of shape TxC. The V matrix must have T rows, but the size of each vector could be different than Q and K. For ease of discussion, we assume V is also in shape of TxC.</li>
+<li>Multiply the Q and K matrices. To make this possible, we must first transpose the K matrix to make it in CxT shape. Then multiplying a TxC matrix with a CxT matrix will give us a TxT matrix.
+What does this TxT matrix mean? Remember that each row in Q and K corresponds to one token (position) in the input sequence. So multiplying Q and K means we let every token in the sequence &ldquo;interact&rdquo; with every token. In the resulting TxT matrix, the value at row i and column j is the result of interaction between the i-th token and j-th token.</li>
+<li>Next we’ll do a softmax on this TxT matrix. The softmax function takes a vector (list of values) as input, and outputs a vector of the same size. Each item in its output vector is a positive value that describes the &ldquo;distribution&rdquo; or &ldquo;probability&rdquo; of the corresponding item in the input. Again, please be noted that we omit the scaling part in the original Self Attention equation for brevity.</li>
+</ol>
+
+\begin{matrix}
+softmax(z)_j = \frac{e^{z_j}}{\sum_{i=1}^T e^{z_i}}
+\end{matrix}
+
+<p>
+In this definition, \(softmax_j\) gives you the distribution/probability of the <code>j-th</code> item. Since there are T items, the entire softmax function will give you a vector size of T.
+</p>
+
+<p>
+So how does this work on a matrix? It&rsquo;s simple - you apply softmax to each row of the matrix (each being a vector size of T). Since the matrix is TxT, the resulting matrix is also TxT.
+</p>
+
+<ol class="org-ol">
+<li>The last step is to multiply the TxT matrix with V, which is assumed to be a TxC matrix, and the result will also be a TxC matrix. My understanding is that \(softmax(QK^T)\) tells the attention between every token pair in the sequence, and V works like a &ldquo;gate&rdquo; to filter out those insignificant interactions.</li>
+</ol>
+
+<p>
+Now how do these steps map to the iterative form of the Self Attention equation?
+</p>
+
+\begin{matrix}
+Attn(Q, K, V)_t = \frac{\sum_{i=1}^T e^{Q_t \cdot K_i} V_i}{\sum_{i=1}^T e^{Q_t \cdot K_i}}
+\end{matrix}
+
+<p>
+Let&rsquo;s take a closer look at the TxT matrix from step 3 (multiply Q and K).
+</p>
+
+<p>
+Each row of this \(QK^T\) matrix has T values. From the definition of matrix multiplication, the <code>i-th</code> value in row <code>t</code> is the product of t-th row of Q and i-th column of K, which can be denoted as <b><b>dot product</b></b> of \(Q_t\) and \(K_i\). So the \(QK^T\) matrix will look like this:
+</p>
+
+\begin{matrix}
+Q_1 \cdot K_1 && Q_1 \cdot K_2 && ... && Q_1 \cdot K_T \\
+Q_2 \cdot K_1 && Q_2 \cdot K_2 && ... && Q_2 \cdot K_T \\
+... \\
+Q_t \cdot K_1 && Q_t \cdot K_2 && ... && Q_t \cdot K_T \\
+... \\
+Q_T \cdot K_1 && Q_T \cdot K_T && ... && Q_T \cdot K_T \\
+\end{matrix}
+
+<p>
+Then in step 4, we run softmax on each row of this matrix. Suppose we are running softmax on row <code>t</code>. According to the definition of softmax, the result should look like this:
+</p>
+
+\begin{matrix}
+\frac{e^{Q_t \cdot K_1}}{S_t} && \frac{e^{Q_t \cdot K_2}}{S_t} && ... && \frac{e^{Q_t \cdot K_T}}{S_t} \\
+\end{matrix}
+
+<p>
+Here \(S_t = \sum_{i=1}^T e^{Q_t \cdot K_i}\) is the sum of the row <code>t</code>. So the matrix after softmax will look like this:
+</p>
+
+\begin{matrix}
+\frac{e^{Q_1 \cdot K_1}}{S_1} && \frac{e^{Q_1 \cdot K_2}}{S_1} && ... && \frac{e^{Q_1 \cdot K_T}}{S_1} \\
+\frac{e^{Q_2 \cdot K_1}}{S_2} && \frac{e^{Q_2 \cdot K_2}}{S_2} && ... && \frac{e^{Q_2 \cdot K_T}}{S_2} \\
+... \\
+\frac{e^{Q_t \cdot K_1}}{S_t} && \frac{e^{Q_t \cdot K_2}}{S_t} && ... && \frac{e^{Q_t \cdot K_T}}{S_t} \\
+... \\
+\frac{e^{Q_T \cdot K_1}}{S_T} && \frac{e^{Q_T \cdot K_2}}{S_T} && ... && \frac{e^{Q_T \cdot K_T}}{S_T} \\
+\end{matrix}
+
+<p>
+So for row <code>t</code>, softmax gives us a vector of T values. The <code>j-th</code> value of row <code>t</code> can be expressed like this:
+</p>
+
+\begin{matrix}
+softmax(QK^T)_{t, j} = \frac{e^{Q_t \cdot K_j}}{\sum_{i=1}^T e^{Q_t \cdot K_i}}
+\end{matrix}
+
+<p>
+Now let&rsquo;s do step 5, multiply the softmax output with V.
+</p>
+
+<p>
+For ease of discussion, let&rsquo;s denote the softmax value at row <code>t</code> and column <code>j</code> to be \(M_{t,j}\). So what we are trying to do is:
+</p>
+
+\begin{matrix}
+\begin{bmatrix}
+M_{1,1} && M{1,2} && ... && M_{1,T} \\
+M_{2,1} && M{2,2} && ... && M_{2,T} \\
+... \\
+M_{T,1} && M{T,2} && ... && M_{T,T} \\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+V_{1,1} && V_{1,2} && ... && V_{1,C} \\
+V_{2,1} && V_{2,2} && ... && V_{2,C} \\
+... \\
+V_{T,1} && V_{T,2} && ... && V_{T,C} \\
+\end{bmatrix}
+\end{matrix}
+
+<p>
+Looking at row <code>t</code> of the resulting matrix, the <code>j-th</code> column would be:
+</p>
+
+\begin{matrix}
+M_{t,1}V_{1,j} + M_{t,2}V_{2,j} + ... + M_{t,T}V_{T,j}
+\end{matrix}
+
+<p>
+So the values in row <code>t</code> will look like this:
+</p>
+
+
+<figure id="org5773f90">
+<img src="../images/2023/20230728-144524_screenshot.png" alt="20230728-144524_screenshot.png" width="640px">
+
+</figure>
+
+<p>
+Remember V is a TxC matrix, so <code>V(i)</code> (the i-th row of V) is a vector of size C: <code>V(i,1), V(i,2), ... V(i,C)</code>.
+So we can do a little reorganization and transform the expression as follows:
+</p>
+
+
+<figure id="orgdd7b039">
+<img src="../images/2023/20230728-144951_screenshot.png" alt="20230728-144951_screenshot.png" width="700px">
+
+</figure>
+
+<p>
+So the values in row <code>t</code> can be expressed as a weighted sum of every vectors in V.
+</p>
+
+\begin{matrix}
+Attn(Q,K,V)_t = \sum_{j=1}^T M_{t,j}V_{j} \\
+\end{matrix}
+
+<p>
+And because \(M_{t,j}\) is denoted as:
+</p>
+
+\begin{matrix}
+M_{t,j} = \frac{e^{Q_t \cdot K_j}}{\sum_{i=1}^T e^{Q_t \cdot K_i}}
+\end{matrix}
+
+<p>
+Put this back into the equation above:
+</p>
+
+\begin{matrix}
+Attn(Q,K,V)_t =  \frac{\sum_{j=1}^Te^{Q_t \cdot K_j}V_{j}}{\sum_{i=1}^T e^{Q_t \cdot K_i}} 
+\end{matrix}
+
+<p>
+This is the iterative form of the Self Attention equation.
+</p>
+
+<p>
+So what did we learn? We started from the basics of Self Attention, went through every step of the computation and figured out how we map the equation&rsquo;s matrix form into its iterative form. This is particularly useful if you would like to compare it with other RNN-like algorithms (in fact, I went through this when I studied the RWKV algorithm). I decided to write down my journey so I can revisit it some time, and I hope it will be somewhat helpful to you as well.
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+     "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
+    </div>
+</footer>
+</body>
+</html>
