@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 2023-09-24 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>三国GPT (SanGuo GPT)  v0.1</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<header>
+<h1 class="title">三国GPT (SanGuo GPT)  v0.1</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2023-09-24</p>
+</header>
+<section id="outline-container-orga0cd6b1" class="outline-2">
+<h2 id="orga0cd6b1">Overview</h2>
+<div class="outline-text-2" id="text-orga0cd6b1">
+<p>
+SanGuo GPT is a Large Language Model trained on 三国演义 (San1 Guo2 Yan3 Yi4, Romance of the Three Kindoms), an ancient Chinese novel based on historical events happened ~1800 years ago during the late Han dynasty. It is a Transformer-based model with about 13.778M parameters in current version.
+</p>
+
+<p>
+I created this project for learning and exploration purpose.
+</p>
+<ul class="org-ul">
+<li>I&rsquo;d like to try out the LLM application building process end-to-end, including major steps like data ingestion &amp; preprocessing, shuffling/sampling, model building &amp; training, visualization, model checkpointing and model serving.</li>
+<li>I want to explore the idea of &ldquo;书读千遍，其义自现&rdquo; (something like &ldquo;if you read a book a thousand times, the meaning and implications will emerge by itself&rdquo;). This idea popped up when I chat with a friend, and I found it very interesting. What if I train the model with data from just one book and iterate many steps? How would the model behave after intensive training on a single book?</li>
+</ul>
+
+<p>
+I also plan to use this project as a vehicle for playing with other new ideas - stay tuned!
+</p>
+
+
+<p>
+A little background about 三国演义 (Romance of the Three Kingdoms)&#x2026;
+</p>
+
+<p>
+It is one of the &ldquo;four prominent classics&rdquo; of ancient Chinese literature, and is so influential that I believe almost every Chinese know some quotes from it. It&rsquo;s also one of the favorite inspirations for 穿越小说 (&ldquo;time travel fictions&rdquo;), in which main character changed significant events such as the death of 关羽 (Guan Yu). I&rsquo;ve read a quite few good ones. :-)
+</p>
+</div>
+</section>
+
+
+<section id="outline-container-org3c67e21" class="outline-2">
+<h2 id="org3c67e21">Changelog</h2>
+<div class="outline-text-2" id="text-org3c67e21">
+<ul class="org-ul">
+<li>v0.1: Initial version</li>
+</ul>
+</div>
+</section>
+
+<section id="outline-container-orgffc88d2" class="outline-2">
+<h2 id="orgffc88d2">Quickstart</h2>
+<div class="outline-text-2" id="text-orgffc88d2">
+<p>
+Install prerequisites (assuming you are using conda, pip steps are similar):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">conda install pytorch torchvision -c pytorch
+conda install matplotlib tensorboard
+conda install jupyter
+conda install streamlit
+conda activate base
+<span class="org-comment-delimiter"># </span><span class="org-comment">to resolve the "no module streamlit.cli" error</span>
+pip install --upgrade streamlit
+</pre>
+</div>
+
+<p>
+You may also want to install TensorFlow as TensorBoard might miss some features without it.
+</p>
+
+<p>
+Prepare the dataset:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">conda install pytorch torchvision -c pytorch
+./prepare_data.sh
+</pre>
+</div>
+
+<p>
+Train the model:
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">python train.py --num_iters 5000 <span class="org-sh-escaped-newline">\</span>
+    --eval_interval 100 --eval_iters 10 <span class="org-sh-escaped-newline">\</span>
+    --batch_size 32 --block_size 256 --dropout 0.01 <span class="org-sh-escaped-newline">\</span>
+    -o sanguogpt.pth
+</pre>
+</div>
+
+<p>
+Serving the model with Web UI:
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">streamlit run generate.py -- --model sanguogpt.pth -l 100 --webui
+</pre>
+</div>
+
+<p>
+Here is an example of the UI:
+</p>
+
+
+<figure id="orgc8eec41">
+<img src="../images/2023/sanguo-gpt-imgs/generate-v0.1.png" alt="generate-v0.1.png" width="500px">
+
+</figure>
+</div>
+</section>
+
+
+<section id="outline-container-org46a42b4" class="outline-2">
+<h2 id="org46a42b4">Dataset</h2>
+<div class="outline-text-2" id="text-org46a42b4">
+<p>
+The text of 三国演义 is widely available. The one I used is from this repo:
+<a href="https://github.com/naosense/Yiya.git">https://github.com/naosense/Yiya.git</a>
+</p>
+
+<p>
+To download the raw text file:
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">wget https://raw.githubusercontent.com/naosense/Yiya/master/book/%E4%B8%89%E5%9B%BD%E6%BC%94%E4%B9%89.txt -O sanguo.txt
+</pre>
+</div>
+</div>
+</section>
+
+<section id="outline-container-orgeefc752" class="outline-2">
+<h2 id="orgeefc752">Preprocessing</h2>
+<div class="outline-text-2" id="text-orgeefc752">
+<p>
+The raw text is GBK (or GB2312?) encoded, so I had to convert it to UTF-8 for Python. This can be done using the `iconv` tool.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">iconv -f GBK -t UTF-8 sanguo.txt &gt; sanguo-utf8.txt
+</pre>
+</div>
+
+<p>
+Remove the irrelevant contents from the text (e.g. seperators between chapters):
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">sed -i <span class="org-string">'/^=/,/^=/d'</span> sanguo-utf8.txt
+</pre>
+</div>
+
+<p>
+Or if using Mac:
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">sed -i <span class="org-string">""</span> <span class="org-string">'/^=/,/^=/d'</span> sanguo-utf8.txt
+</pre>
+</div>
+
+<p>
+I&rsquo;ve included downloading and preprocessing steps in the `prepare<sub>data.sh</sub>` script.
+</p>
+</div>
+</section>
+
+<section id="outline-container-org5c9c4f4" class="outline-2">
+<h2 id="org5c9c4f4">Tokenization</h2>
+<div class="outline-text-2" id="text-org5c9c4f4">
+<p>
+Each Chinease character in the text is regarded as a token, so I don&rsquo;t use a tokenizer in this project. IMHO, a Chinese character is not a &ldquo;letter&rdquo; - it&rsquo;s more like a word or subword. Therefore, each Chinese character should be treated as a token.
+</p>
+</div>
+</section>
+
+<section id="outline-container-org6b5099b" class="outline-2">
+<h2 id="org6b5099b">Shuffling &amp; Sampling</h2>
+<div class="outline-text-2" id="text-org6b5099b">
+<p>
+Each training example is a sequence of tokens, so it can be represented using its starting position in the source text.
+</p>
+
+<p>
+E.g. if the source text has 60,000 tokens and the block size is 200, then every training example must start from a position between 0 and 59799 (inclusive). We can use each example&rsquo;s start position to represent it. So the entire dataset can be represented as a collection of starting positions (numbers from 0 to 59799).
+</p>
+
+<p>
+When generating the datasets for training and validation, I don&rsquo;t actually store sequences in these datasets. Instead I just store their representations (starting positions). This saves me lots of memory in shuffling and sampling.
+</p>
+
+<p>
+Just like regular ML jobs, I need to split the dataset into training and validation.
+I first generate a random permutation of start positions (0, 1, 2, &#x2026;, 59799), then assign the first 90% of the resulting list to be the training set and rest being the validation set. The ratio 90% is a hyperparameter that can be tuned by command line argument. In this way, both training set and validation set are randomly shuffled and there won&rsquo;t be any duplicates between the two sets.
+</p>
+
+<p>
+## The Model
+</p>
+
+<p>
+Instead of calling the existing libraries, this version used Transformer blocks that were purely hand written.
+Model implementation was based on Andrej Karpathy&rsquo;s [&ldquo;Building a GPT&rdquo;](<a href="https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing">https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing</a>) notebook, with some modifications/customizations.
+</p>
+
+<p>
+In this version, my model has 13.778M parameters. It&rsquo;s a typical GPT model with 6 identical Transformer blocks, each having 8 attention heads. I used internal dimension of 384 and block size of 256. Batch size of 32 was used in training. All hyperparameters are tunable using command line arguments. 
+</p>
+
+<p>
+Here is a visualization of the model architecture using TensorBoard.
+</p>
+
+
+<figure id="org030240b">
+<img src="../images/2023/sanguo-gpt-imgs/model_arch4.png" alt="model_arch4.png" width="800px">
+
+</figure>
+</div>
+</section>
+
+<section id="outline-container-orgd8b1328" class="outline-2">
+<h2 id="orgd8b1328">Training</h2>
+<div class="outline-text-2" id="text-orgd8b1328">
+<p>
+The training loop is fairly straightforward. In each step, I generate a batch of examples, feed them into the model and optimize the parameters using SGD.
+</p>
+
+<p>
+I trained the model with 40000 iterations (steps). What does it mean? Let&rsquo;s do a simple math.
+</p>
+
+<ul class="org-ul">
+<li>The source text has 606051 tokens in total.</li>
+<li>Assuming `block<sub>size</sub>` is 256, the entire dataset (containing all examples) will have `606051-256=605795` examples.</li>
+<li>Assuming 90% are training set, then the training set will contain 545215 examples.</li>
+<li>`batch<sub>size</sub>` is 32, then we&rsquo;ll need about 17038 iterations (steps) to go through the training set once.</li>
+<li>So a training loop of 40000 iterations means about 2.35 epochs. Or in other words, the model will read the whole book about 2.35 times.</li>
+</ul>
+
+<p>
+Apparently this is far from &ldquo;reading the book a thousand times&rdquo;, but since this is just the first version I decided to give it a try.
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgd9ab4c1" class="outline-2">
+<h2 id="orgd9ab4c1">Visualization</h2>
+<div class="outline-text-2" id="text-orgd9ab4c1">
+<p>
+I used TensorBoard to visualize the training process.
+</p>
+
+<p>
+Training loss over steps:
+</p>
+
+
+<figure id="org2c05795">
+<img src="../images/2023/sanguo-gpt-imgs/train_loss.png" alt="train_loss.png" width="400px">
+
+</figure>
+
+<p>
+Both training and validation losses are below 0.1 after 40000 steps.
+</p>
+
+<p>
+Embeddings at step 0:
+</p>
+
+
+<figure id="org4ebf4be">
+<img src="../images/2023/sanguo-gpt-imgs/embedding-step0.png" alt="embedding-step0.png" width="800px">
+
+</figure>
+
+<p>
+Embeddings at step 999:
+</p>
+
+
+<figure id="org8876ab2">
+<img src="../images/2023/sanguo-gpt-imgs/embedding-step999.png" alt="embedding-step999.png" width="800px">
+
+</figure>
+</div>
+</section>
+
+<section id="outline-container-orgf827469" class="outline-2">
+<h2 id="orgf827469">Generating &amp; Serving</h2>
+<div class="outline-text-2" id="text-orgf827469">
+<p>
+The script `generate.py` supports both command line and Web App mode.
+By default it runs in command line mode, for example:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">python generate.py -m &lt;model_checkpoint&gt; -l 100 --prompt <span class="org-string">'&lt;your_prompt&gt;'</span>
+</pre>
+</div>
+
+<p>
+The drawback is that you&rsquo;ll need to specify the prompt (Chinese characters) from the command line.
+</p>
+
+<p>
+I used <a href="https://github.com/streamlit/streamlit">streamlit</a> to build a simple Web App for serving the model.
+</p>
+
+<p>
+To run the script in Web UI mode, just add the `&#x2013;webui` argument and run it with streamlit.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">streamlit run generate.py -- --model &lt;model_checkpoint&gt; -l 100 --webui
+</pre>
+</div>
+</div>
+</section>
+
+<section id="outline-container-org2a3fa1d" class="outline-2">
+<h2 id="org2a3fa1d">Future Works</h2>
+<div class="outline-text-2" id="text-org2a3fa1d">
+<p>
+Lots of stuff I&rsquo;m thinking about! Just to name a few:
+</p>
+
+<ul class="org-ul">
+<li>Try the more optimized Transformer blocks</li>
+<li>Use DataLoader from PyTorch</li>
+<li>Build a larger model</li>
+<li>Visualize the embeddings</li>
+<li>Split the text into chapters, so that the model can generate &ldquo;end of chapter&rdquo; instead of specifying a max length.</li>
+<li>Generate text in a streaming way to improve responsiveness.</li>
+<li>Optimize the inference part to speed up generation.</li>
+<li>&#x2026;</li>
+</ul>
+</div>
+</section>
+
+<section id="outline-container-org1e147b9" class="outline-2">
+<h2 id="org1e147b9">Contact</h2>
+<div class="outline-text-2" id="text-org1e147b9">
+<p>
+Interested in discussion? Just connect with me and let&rsquo;s chat!
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+     "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
+    </div>
+</footer>
+</body>
+</html>
