@@ -68,6 +68,9 @@ I created this project for learning and exploration purpose.
 I also plan to use this project as a vehicle for playing with other new ideas - stay tuned!
 </p>
 
+<p>
+Code repo here: <a href="https://github.com/zhoupingjay/sanguo-gpt">https://github.com/zhoupingjay/sanguo-gpt</a>
+</p>
 
 <p>
 A little background about 三国演义 (Romance of the Three Kingdoms)&#x2026;
@@ -145,7 +148,7 @@ Here is an example of the UI:
 </p>
 
 
-<figure id="orgc8eec41">
+<figure id="org947269e">
 <img src="../images/2023/sanguo-gpt-imgs/generate-v0.1.png" alt="generate-v0.1.png" width="500px">
 
 </figure>
@@ -175,7 +178,7 @@ To download the raw text file:
 <h2 id="orgeefc752">Preprocessing</h2>
 <div class="outline-text-2" id="text-orgeefc752">
 <p>
-The raw text is GBK (or GB2312?) encoded, so I had to convert it to UTF-8 for Python. This can be done using the `iconv` tool.
+The raw text is GBK (or GB2312?) encoded, so I had to convert it to UTF-8 for Python. This can be done using the <code>iconv</code> tool.
 </p>
 
 <div class="org-src-container">
@@ -201,7 +204,7 @@ Or if using Mac:
 </div>
 
 <p>
-I&rsquo;ve included downloading and preprocessing steps in the `prepare<sub>data.sh</sub>` script.
+I&rsquo;ve included downloading and preprocessing steps in the <code>prepare_data.sh</code> script.
 </p>
 </div>
 </section>
@@ -234,14 +237,15 @@ When generating the datasets for training and validation, I don&rsquo;t actually
 Just like regular ML jobs, I need to split the dataset into training and validation.
 I first generate a random permutation of start positions (0, 1, 2, &#x2026;, 59799), then assign the first 90% of the resulting list to be the training set and rest being the validation set. The ratio 90% is a hyperparameter that can be tuned by command line argument. In this way, both training set and validation set are randomly shuffled and there won&rsquo;t be any duplicates between the two sets.
 </p>
+</div>
+</section>
 
-<p>
-## The Model
-</p>
-
+<section id="outline-container-orgf5f5985" class="outline-2">
+<h2 id="orgf5f5985">The Model</h2>
+<div class="outline-text-2" id="text-orgf5f5985">
 <p>
 Instead of calling the existing libraries, this version used Transformer blocks that were purely hand written.
-Model implementation was based on Andrej Karpathy&rsquo;s [&ldquo;Building a GPT&rdquo;](<a href="https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing">https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing</a>) notebook, with some modifications/customizations.
+Model implementation was based on Andrej Karpathy&rsquo;s <a href="https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing">Building a GPT</a> notebook, with some modifications/customizations.
 </p>
 
 <p>
@@ -253,7 +257,7 @@ Here is a visualization of the model architecture using TensorBoard.
 </p>
 
 
-<figure id="org030240b">
+<figure id="orgb34464b">
 <img src="../images/2023/sanguo-gpt-imgs/model_arch4.png" alt="model_arch4.png" width="800px">
 
 </figure>
@@ -273,9 +277,9 @@ I trained the model with 40000 iterations (steps). What does it mean? Let&rsquo;
 
 <ul class="org-ul">
 <li>The source text has 606051 tokens in total.</li>
-<li>Assuming `block<sub>size</sub>` is 256, the entire dataset (containing all examples) will have `606051-256=605795` examples.</li>
+<li>Assuming <code>block_size</code> is 256, the entire dataset (containing all examples) will have <code>606051-256=605795</code> examples.</li>
 <li>Assuming 90% are training set, then the training set will contain 545215 examples.</li>
-<li>`batch<sub>size</sub>` is 32, then we&rsquo;ll need about 17038 iterations (steps) to go through the training set once.</li>
+<li><code>batch_size</code> is 32, then we&rsquo;ll need about 17038 iterations (steps) to go through the training set once.</li>
 <li>So a training loop of 40000 iterations means about 2.35 epochs. Or in other words, the model will read the whole book about 2.35 times.</li>
 </ul>
 
@@ -297,7 +301,7 @@ Training loss over steps:
 </p>
 
 
-<figure id="org2c05795">
+<figure id="org396eb63">
 <img src="../images/2023/sanguo-gpt-imgs/train_loss.png" alt="train_loss.png" width="400px">
 
 </figure>
@@ -311,7 +315,7 @@ Embeddings at step 0:
 </p>
 
 
-<figure id="org4ebf4be">
+<figure id="orgcdbaf8c">
 <img src="../images/2023/sanguo-gpt-imgs/embedding-step0.png" alt="embedding-step0.png" width="800px">
 
 </figure>
@@ -321,7 +325,7 @@ Embeddings at step 999:
 </p>
 
 
-<figure id="org8876ab2">
+<figure id="org7c8c097">
 <img src="../images/2023/sanguo-gpt-imgs/embedding-step999.png" alt="embedding-step999.png" width="800px">
 
 </figure>
@@ -332,7 +336,7 @@ Embeddings at step 999:
 <h2 id="orgf827469">Generating &amp; Serving</h2>
 <div class="outline-text-2" id="text-orgf827469">
 <p>
-The script `generate.py` supports both command line and Web App mode.
+The script <code>generate.py</code> supports both command line and Web App mode.
 By default it runs in command line mode, for example:
 </p>
 
@@ -350,7 +354,7 @@ I used <a href="https://github.com/streamlit/streamlit">streamlit</a> to build a
 </p>
 
 <p>
-To run the script in Web UI mode, just add the `&#x2013;webui` argument and run it with streamlit.
+To run the script in Web UI mode, just add the <code>--webui</code> argument and run it with streamlit.
 </p>
 
 <div class="org-src-container">
