@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 2023-10-29 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lisp里的延迟执行</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<header>
+<h1 class="title">Lisp里的延迟执行</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2021-07-31</p>
+</header><p>
+在图计算和协程里经常会用到的“延迟执行”，在Lisp里，只需要十几行代码就能实现！
+</p>
+
+<section id="outline-container-org4c77f3d" class="outline-2">
+<h2 id="org4c77f3d">创建和使用延迟执行对象</h2>
+<div class="outline-text-2" id="text-org4c77f3d">
+<p>
+首先我们来定义一个宏 <code>defer</code> ，它的作用是把输入的代码块变成一个延迟执行的对象（其实是一个闭包）：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(<span class="org-keyword">defmacro</span> <span class="org-function-name">defer</span> (<span class="org-type">&amp;body</span> body)
+  (<span class="org-keyword">let</span> ((executed (gensym))
+        (result (gensym)))
+    `(<span class="org-keyword">let</span> ((,executed nil)
+           (,result nil))
+       (<span class="org-keyword">lambda</span> ()
+         (<span class="org-keyword">unless</span> ,executed
+           (setf ,result (<span class="org-keyword">progn</span> ,@body))
+           (setf ,executed t))
+         ,result))))
+</pre>
+</div>
+
+<p>
+而如果要执行之前被推迟的代码，可以用这个函数：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">defer-execute</span> (deferred)
+  (funcall deferred))
+</pre>
+</div>
+
+<p>
+例如，我们有这样一块代码：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(princ <span class="org-string">"Hello, world."</span>)
+(princ (1+ 2))
+</pre>
+</div>
+
+<p>
+用 <code>defer</code> 来包装它：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(defer
+  (princ <span class="org-string">"Hello, world."</span>)
+  (princ (1+ 2)))
+</pre>
+</div>
+
+<p>
+<code>defer</code> 会把输入的代码块包装成一个 <b>闭包</b> 返回给我们。所以通常我们要把这个闭包存在一个变量里：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(<span class="org-keyword">defvar</span> <span class="org-variable-name">*deferred-hello*</span>
+  (defer
+    (princ <span class="org-string">"Hello, world."</span>)
+    (princ (1+ 2))))
+</pre>
+</div>
+
+<p>
+等我们想要执行这个代码块的时候，只需要用 <code>defer-execute</code> 来调用这个闭包：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(defer-execute *deferred-hello*)
+</pre>
+</div>
+
+<p>
+输出结果：
+</p>
+<pre class="example" id="org0616055">
+Hello, world.3
+3 (2 bits, #x3, #o3, #b11)
+</pre>
+
+<p>
+怎么理解这个 <code>defer</code> 宏？我们把它展开一下就明白了：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(macroexpand
+ '(defer
+   (princ <span class="org-string">"Hello, World."</span>)
+   (princ (1+ 2))))
+</pre>
+</div>
+
+<p>
+展开后得到这样的一段代码：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(<span class="org-keyword">LET</span> ((<span class="org-builtin">#:G659</span> NIL) (<span class="org-builtin">#:G660</span> NIL))
+  (<span class="org-keyword">LAMBDA</span> ()
+    (<span class="org-keyword">UNLESS</span> <span class="org-builtin">#:G659</span>
+      (SETF <span class="org-builtin">#:G660</span> (<span class="org-keyword">PROGN</span> (PRINC <span class="org-string">"Hello, World."</span>) (PRINC (1+ 2))))
+      (SETF <span class="org-builtin">#:G659</span> T))
+    <span class="org-builtin">#:G660</span>))
+</pre>
+</div>
+
+<p>
+<code>defer</code> 首先用 <code>gensym</code> 产生两个临时变量，分别用来记录该代码块是否被执行过，以及运行后的返回值（通常是代码块中最后一个求值表达式的结果）。如果该代码块没有执行过，它就把输入的代码块放到一个 <code>progn</code> 块里顺序执行，然后把返回值记录下来。下次再执行这个闭包的话，就直接返回记录下来的值。
+</p>
+
+<p>
+而 <code>defer-execute</code> 就是用 <code>funcall</code> 来执行这个闭包。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org0b8bac0" class="outline-2">
+<h2 id="org0b8bac0">一个例子：“延迟”列表</h2>
+<div class="outline-text-2" id="text-org0b8bac0">
+<p>
+我们可以用 <code>defer</code> 来包装一组列表的API。
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(<span class="org-keyword">defmacro</span> <span class="org-function-name">deferred-cons</span> (a b)
+  `(defer (cons ,a ,b)))
+
+(<span class="org-keyword">defun</span> <span class="org-function-name">deferred-car</span> (x)
+  (car (defer-execute x)))
+
+(<span class="org-keyword">defun</span> <span class="org-function-name">deferred-cdr</span> (x)
+  (cdr (defer-execute x)))
+
+(<span class="org-keyword">defun</span> <span class="org-function-name">deferred-nil</span> ()
+  (defer nil))
+
+(<span class="org-keyword">defun</span> <span class="org-function-name">deferred-null</span> (x)
+  (not (defer-execute x)))
+</pre>
+</div>
+
+<p>
+这些API就相当于列表API（ <code>car, cdr, cons</code> ）的“延迟执行”版本。
+</p>
+
+<p>
+然后呢，我们可以用递归的办法把普通列表转换成一个“延迟执行列表”：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">make-deferred-list</span> (lst)
+  (defer (<span class="org-keyword">when</span> lst
+           (cons (car lst) (make-deferred-list (cdr lst))))))
+</pre>
+</div>
+
+<p>
+是不是就有点绕了？我们用简单的例子来分析一下。假如我们有个列表 (1 2 3) ，把它转换成延迟执行列表：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(<span class="org-keyword">defvar</span> <span class="org-variable-name">*dlist*</span>
+  (make-deferred-list '(1 2 3)))
+</pre>
+</div>
+
+<p>
+我们会得到一个闭包：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">#&lt;CLOSURE (<span class="org-keyword">LAMBDA</span> () <span class="org-builtin">:IN</span> MAKE-DEFERRED-LIST) {10036DC8CB}&gt;
+</pre>
+</div>
+
+<p>
+这其实是一个构造列表 (1 2 3) 的函数的闭包。如果我们把参数 (1 2 3) 代入 <code>make-deferred-list</code> 的实现，并展开宏：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(macroexpand
+ '(defer (<span class="org-keyword">when</span> '(1 2 3)
+           (cons (car '(1 2 3)) (make-deferred-list (cdr '(1 2 3)))))))
+</pre>
+</div>
+
+<p>
+得到展开后的代码：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(<span class="org-keyword">LET</span> ((<span class="org-builtin">#:G665</span> NIL) (<span class="org-builtin">#:G666</span> NIL))
+  (<span class="org-keyword">LAMBDA</span> ()
+    (<span class="org-keyword">UNLESS</span> <span class="org-builtin">#:G665</span>
+      (SETF <span class="org-builtin">#:G666</span>
+              (<span class="org-keyword">PROGN</span>
+               (<span class="org-keyword">WHEN</span> '(1 2 3)
+                 (CONS (CAR '(1 2 3)) (MAKE-DEFERRED-LIST (CDR '(1 2 3)))))))
+      (SETF <span class="org-builtin">#:G665</span> T))
+    <span class="org-builtin">#:G666</span>))
+</pre>
+</div>
+<p>
+这段代码包含的这个lambda函数，返回的是一个cons对（类似于Python里的二元组）：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(CONS (CAR '(1 2 3)) (MAKE-DEFERRED-LIST (CDR '(1 2 3))))
+</pre>
+</div>
+<p>
+其中第一个元素是 <code>car '(1 2 3)</code> ，也就是1 ，第二个元素调用是 <code>make-deferred-list</code> 形成的另一个闭包，而这个闭包产生的是 (2 3) 的延迟列表。
+</p>
+
+<p>
+所以如果我们执行这个闭包：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(defer-execute *dlist*)
+</pre>
+</div>
+
+<p>
+得到的是这样一个东西：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(1 . #&lt;CLOSURE (<span class="org-keyword">LAMBDA</span> () <span class="org-builtin">:IN</span> MAKE-DEFERRED-LIST) {100840F14B}&gt;
+</pre>
+</div>
+
+<p>
+我们如果对它作car操作，得到的是列表的第一个元素1，而如果我们想要后续的元素，就需要进一步执行后面那个闭包来得到。
+</p>
+
+<p>
+这个过程可以这么理解：我这个闭包假装是一个列表，其实我具体只有第一个元素，后面的元素都在另一个闭包里，你问我要第一个元素，我马上就可以给你，但如果你问我要第2或第3个元素，我就去执行后面的闭包来给你。
+</p>
+
+<p>
+类似的，还可以给这个延迟列表API加上 <code>mapcar</code> 的延迟版本，等等。
+</p>
+</div>
+</section>
+
+<section id="outline-container-org98bb4a9" class="outline-2">
+<h2 id="org98bb4a9">另一个有趣的例子：“无限”整数列表</h2>
+<div class="outline-text-2" id="text-org98bb4a9">
+<p>
+接下来看一个有趣的例子：我们可以用前面的“延迟列表”API，创建一个包含1到无穷大的“无限”整数列表！
+</p>
+
+<p>
+所需要的代码就这几行：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(<span class="org-keyword">defparameter</span> <span class="org-variable-name">*ints*</span>
+  (<span class="org-keyword">labels</span> ((f (n)
+             (deferred-cons n (f (1+ n)))))
+    (f 1)))
+</pre>
+</div>
+
+<p>
+这个 <code>*ints*</code> 变量，也是一个闭包，里面是我们定义的这个内部函数f，而这个内部函数f，返回的就是一个生成延迟列表（二元组）的闭包：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(deferred-cons n (f (1+ n)))
+</pre>
+</div>
+
+<p>
+这里 <code>deferred-cons</code> 返回的这个闭包，会产生一个与前面类似的二元组，第一个元素是参数n，第二个元素则是递归调用f的闭包。所以如果我们执行这个 <code>*ints*</code> 对象：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(defer-execute *ints*)
+</pre>
+</div>
+
+<p>
+得到的是这样一个二元组：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(1 . #&lt;CLOSURE (<span class="org-keyword">LAMBDA</span> () <span class="org-builtin">:IN</span> F) {100855314B}&gt;)
+</pre>
+</div>
+
+<p>
+同样，如果我们用 <code>deferred-cdr</code> 取二元组的后面项，然后执行它：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(defer-execute (deferred-cdr *ints*))
+</pre>
+</div>
+
+<p>
+得到的时候以2开头的一个二元组：
+</p>
+<div class="org-src-container">
+<pre class="src src-lisp">(2 . #&lt;CLOSURE (<span class="org-keyword">LAMBDA</span> () <span class="org-builtin">:IN</span> F) {100899D1EB}&gt;)
+</pre>
+</div>
+
+<p>
+以此类推，可以一直这样 <code>car, cdr</code> 下去，看起来就好象得到了一个从1开始到无穷大的“无限”整数列表。
+</p>
+
+<p>
+这个无穷列表可以这么想象：表面上看，我这个“列表”从1开始包含了到无穷大的数，你可以不停的 <code>car, cdr</code> 从我这里取数。其实呢，我这里只有第一个数1，后面的是一个闭包，你要第2个数，我就去执行闭包得到2；你要第三个数，我就继续执行2后面的闭包，给你3……
+</p>
+</div>
+</section>
+
+<section id="outline-container-orgaec9958" class="outline-2">
+<h2 id="orgaec9958">进一步讨论</h2>
+<div class="outline-text-2" id="text-orgaec9958">
+<p>
+从这个 <code>defer</code> 宏的实现可以看出，它保证输入的代码块只会被执行一次，如果这个延迟执行闭包被多次调用，后续的调用只会返回相同的返回值，而不会真的执行里面的代码块。所以我前面的例子里用 <code>princ</code> 其实并不是最恰当，因为如果你再次执行闭包的话，会发现它不会再打印&ldquo;Hello, World&rdquo;了。
+</p>
+
+<p>
+另一个考虑， <code>defer</code> 包装出的闭包如果要用在图计算里，那么势必要有输入输出（例如某个节点从前一节点输入，经过计算输出结果，作为下一节点的输入）。我初步的想法是随着计算图创建各个闭包，并且把图中节点的连接性也打包进闭包，例如在创建某个节点的闭包时，引用它的输入节点闭包，作为代码块的一部分一起打包到闭包里。下次有空试试这个应用。
+</p>
+
+<p>
+最后还是感叹一下，Lisp真有意思啊！
+</p>
+
+<p>
+注：部分示例参考Land of Lisp（landoflisp.com）
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+     "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
+    </div>
+</footer>
+</body>
+</html>
