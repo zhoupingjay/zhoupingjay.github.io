@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 2023-12-12 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>My Little Reflections on Optane</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<header>
+<h1 class="title">My Little Reflections on Optane</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2023-12-10</p>
+</header><p>
+In early 2023, Intel <a href="https://www.intel.com/content/www/us/en/support/articles/000091826/memory-and-storage.html">announced the discontinuity of Optane products</a> (including SSD and memory). While not quite surprising considering their business environment, it’s still a bit of disappointment to me. As we are closing to the end of 2023, I decided to take some time and write down some of my reflections on Optane’s journey.
+</p>
+
+<p>
+<b>[Disclaimer]</b> All contents &amp; discussions in this article are just my personal opinions and do not represent any organization or institution.
+</p>
+
+<p>
+Having been working in this area for 10+ years, including working on Optane, I believe it was a marvelous achievement, an unprecedented product that had the potential to disrupt computer architecture. Technology wise, I believe it was a huge success: It’s blazingly fast,  offers large capacity, and rolled out two product lines (memory and SSD), both of which were deployed in major hyperscalers (e.g. <a href="https://developer.aliyun.com/article/72465">Alibaba</a>, <a href="https://cloud.google.com/blog/topics/partners/available-first-on-google-cloud-intel-optane-dc-persistent-memory">Google</a>).
+</p>
+
+<p>
+So why didn&rsquo;t it achieve what was expected (e.g. widely adopted like NAND Flash)? What could’ve been done differently?
+</p>
+
+<p>
+From my point of view, there are four pillars (or key factors) for a new memory technology to prevail and get into the mainstream.
+</p>
+
+<ol class="org-ol">
+<li>The <b>technology</b>, of course. It needs to have the performance, density/capacity, power, cost, interface/interconnect that makes it competent.</li>
+<li><b>Software</b> support, for users/developers to make best use of the new technology. The <a href="https://pmem.io/pmdk/">Persistent Memory Development Kit</a> is a good example of this.</li>
+<li>An <b>ecosystem</b> with multiple vendors. This is especially important for big customers like the hyperscalers &#x2013; if a product or technology only has one single source, it will be too risky in terms of supply.</li>
+<li>A good product <b>positioning</b>. This is more of a non-technical thing - how will this new technology be used in computer systems? This essentially determines what this new technology will compete with.</li>
+</ol>
+
+
+<figure id="orga8d97af">
+<img src="../images/2023/20231212-143806_screenshot.png" alt="20231212-143806_screenshot.png" width="640px">
+
+</figure>
+
+<p>
+In the case of Optane, #1 and #2 went pretty well IMHO. The technology was amazing, and with software support like PMDK, users/developers can use the Optane memory quite easily.
+</p>
+
+<p>
+But it didn’t seem to go well with #3 and #4… On the ecosystem side, there wasn’t a multi-vendor ecosystem (like what NAND Flash has achieved) where customers can buy (somewhat) standard products from multiple sources. Customers are hesitant to use products/technologies with a single source, which limits the volume of deployment. This in turn results in higher cost, further slowing down the adoption.
+</p>
+
+<p>
+And regarding #4, my long held opinion is that 3D XPoint technology (the media used in Optane) is <b>best used as memory</b> instead of block storage.
+</p>
+<ul class="org-ul">
+<li>When used in memory, Optane competes with DRAM and has the advantage of much larger capacity, low power as well as its non-volatility. This makes Optane an attractive option for large persistent memory.</li>
+<li>When used as block storage, on the other hand, Optane SSD needs to compete with NAND SSD which is larger in capacity and much lower in cost. What’s worse is that the interface (NVMe/PCIe) has made Optane’s superior performance much less significant - if you look at the specs of Optane SSD and NAND SSD, the performance gap is not that big (not magnitudes faster like DRAM vs SSD). From the customer’s point of view, this is clearly not a cost effective choice.</li>
+</ul>
+
+<p>
+In my opinion, Optane might have a better chance if it prioritizes memory products first. Although getting Optane into memory has a lot more challenges (e.g. memory interface, interconnect), its advantage over DRAM is big and clear. With new interconnect technologies like CXL, Optane memory could be one of the best options for large memory pools.
+</p>
+
+<p>
+The discontinuity of Optane, though disappointing, is not the end of emerging memory technologies. The quest for better, transformational memory technologies will continue. I foresee many new opportunities and I believe emerging memory technologies will still play an important role in the AI/ML era.
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+     "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
+    </div>
+</footer>
+</body>
+</html>
