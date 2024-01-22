@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 2024-01-22 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>谨慎使用C语言里的联合(union)和位域(bit field)！</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<header>
+<h1 class="title">谨慎使用C语言里的联合(union)和位域(bit field)！</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2024-01-21</p>
+</header><p>
+对于内核、驱动、嵌入式系统等底层开发来说，C语言的bit field（位域）和union（联合）都是常用的特性。
+位域可以让我们在结构体中指定某些成员占多少位，这在同硬件打交道的时候特别有用。例如硬件要求某个32位的消息里，第31位是flag，其余是value，用位域定义的数据结构：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-keyword">typedef</span> <span class="org-keyword">struct</span> <span class="org-type">msg_t</span> {
+&#8203;
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">flag</span> : 1;
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">value</span> : 31;
+} <span class="org-type">msg_t</span>;
+</pre>
+</div>
+
+<p>
+在程序里可以直接操作结构体成员那样访问flag和value，而不用手动去对32位消息进行位操作，这些编译器都给我们做了。
+我们还可以加上联合（union），使得我们既可以访问里面的成员，也可以按照一个32位数访问整个消息：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-keyword">typedef</span> <span class="org-keyword">struct</span> <span class="org-type">msg_fields_t</span> {
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">flag</span> : 1;
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">value</span> : 31;
+} <span class="org-type">msg_fields_t</span>;
+&#8203;
+<span class="org-keyword">typedef</span> <span class="org-keyword">struct</span> <span class="org-type">msg_t</span> {
+  <span class="org-keyword">union</span> {
+    <span class="org-type">uint32_t</span> <span class="org-variable-name">raw</span>;
+    <span class="org-type">msg_fields_t</span> <span class="org-variable-name">fields</span>;
+  };
+} <span class="org-type">msg_t</span>;
+</pre>
+</div>
+
+<p>
+union告诉编译器，raw和fields这两个成员在结构体里占用同样的内存地址。因为这两个成员都是32位，因此raw就是整个32位的消息，而通过fields可以访问该消息的flags和value。
+但是，在同时使用union和bit field的时候要注意，union和bit field如果互相套在一起，编译器产生的内存排列可能和你想的不一样！
+</p>
+
+<p>
+考虑这个例子，有时候硬件定义的消息里面，有些位域是多用途的，比如某个32-bit里面，有8-bit既可以当作v1，也可以当作v2，如果能用union给同样的8-bit安排2个成员v1, v2，它们占用相同的内存地址，又可以用不同的名字访问，岂不美哉？
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-keyword">typedef</span> <span class="org-keyword">struct</span> {
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">f1</span> : 8;
+  <span class="org-keyword">union</span> {
+    <span class="org-type">uint32_t</span> <span class="org-variable-name">v1</span> : 8;
+    <span class="org-type">uint32_t</span> <span class="org-variable-name">v2</span> : 8;
+  };
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">f2</span> : 16;
+} <span class="org-type">u1_t</span>;
+</pre>
+</div>
+
+<p>
+在上面这个例子里，32-bit的消息，0-7位是f1，然后是8位的v1/v2，用union共用，剩下16位是f2。看起来不错？
+</p>
+
+<p>
+但是实际跑起来，你用sizeof打印一下这个结构体的大小就发现不对了：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-keyword">sizeof</span>(u1_t)=12
+</pre>
+</div>
+
+<p>
+用了gcc和clang，都是同样的结果。显然编译器并没有按照我们设想的，把f1, v1/v2, f2这几个成员按照8位，8位，16位这样排列在一个32位的结构里。相反，编译器给他们分别排了32位，也就是f1占了32位，v1/v2共同32位，f2也是32位，整个结构体是3个32位，也就是12字节。
+</p>
+
+<p>
+有人可能会问，给结构体加上packed属性，是否能解决这个问题？并不能，我们看一下：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-keyword">typedef</span> <span class="org-keyword">struct</span> <span class="org-keyword">__attribute__</span>((packed)) <span class="org-type">u1p_t</span> {
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">f1</span> : 8;
+  <span class="org-keyword">union</span> {
+    <span class="org-type">uint32_t</span> <span class="org-variable-name">v1</span> : 8;
+    <span class="org-type">uint32_t</span> <span class="org-variable-name">v2</span> : 8;
+  };
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">f2</span> : 16;
+} <span class="org-type">u1p_t</span>;
+&#8203;
+<span class="org-comment-delimiter">// </span><span class="org-comment">sizeof(u1p_t)=7</span>
+</pre>
+</div>
+
+<p>
+加了packed属性后，编译器给它排成了7字节，为什么呢？
+通过把结构体在内存里的数据打印出来，我发现，u1p<sub>t在内存里是这么排列的</sub>（加了packed属性后）：
+</p>
+<ul class="org-ul">
+<li>f1分配1个字节（8位）</li>
+<li>v1/v2分配了4个字节（32位）</li>
+<li>f2分配2个字节（16位）</li>
+</ul>
+
+<p>
+于是整个结构体加了packed属性后，大小变成了7字节。
+</p>
+
+<p>
+显然，编译器对于union里面套的这两个v1/v2，没有按照我们的预期分配8-bit，而是按照它们的类型给了个4字节（32位），然后因为packed属性，这4个字节紧接着f1后面。
+</p>
+
+<p>
+那如果把union里的v1/v2换成uint8<sub>t呢</sub>？似乎可以解决这个问题：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-keyword">typedef</span> <span class="org-keyword">struct</span> <span class="org-keyword">__attribute__</span>((packed)) <span class="org-type">u1p2_t</span> {
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">f1</span> : 8;
+  <span class="org-keyword">union</span> {
+    <span class="org-type">uint8_t</span> <span class="org-variable-name">v1</span> : 8;
+    <span class="org-type">uint8_t</span> <span class="org-variable-name">v2</span> : 8;
+  };
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">f2</span> : 16;
+} <span class="org-type">u1p2_t</span>;
+&#8203;
+<span class="org-comment-delimiter">// </span><span class="org-comment">sizeof(u1p2_t)=4</span>
+</pre>
+</div>
+
+<p>
+但是，这是因为v1/v2正好是8位，也就是1个uint8，如果我们要union里的位域不是8-bit，比如这样：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span class="org-keyword">typedef</span> <span class="org-keyword">struct</span> <span class="org-keyword">__attribute__</span>((packed)) <span class="org-type">u3p2_t</span> {
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">f1</span> : 8;
+  <span class="org-keyword">union</span> {
+    <span class="org-type">uint8_t</span> <span class="org-variable-name">v1</span> : 4;
+    <span class="org-type">uint8_t</span> <span class="org-variable-name">v2</span> : 4;
+  };
+  <span class="org-type">uint32_t</span> <span class="org-variable-name">f2</span> : 20;
+} <span class="org-type">u3p2_t</span>;
+&#8203;
+<span class="org-comment-delimiter">// </span><span class="org-comment">sizeof(u3p2_t)=5</span>
+</pre>
+</div>
+
+<p>
+这个结构体排列又不对了。还是刚才的问题，编译器按照v1/v2的类型，给了8-bit，排在f1后面，然后f2按照20-bit，分配了3个字节，于是整个结构体变成了5字节。
+</p>
+
+<p>
+总结一下：
+</p>
+
+<ul class="org-ul">
+<li>union里面套bit field要小心，尤其是如果union外面还有bit field，导致union本身开始的地址不一定对齐</li>
+<li>如果union开始的地址不是对齐的，加上packed属性可以让编译器将它紧跟在前面的成员后，避免产生额外的空洞</li>
+<li>如果可能，尽量避免union和bit field互相嵌套，对于多用途的成员，可以在成员名或者注释里体现</li>
+<li>和硬件打交道的结构体，一定要对它的layout进行测试，确保它在内存里的排布是符合预期的</li>
+</ul>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+     "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
+    </div>
+</footer>
+</body>
+</html>
