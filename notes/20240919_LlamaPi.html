@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2024-09-19 -->
+<!-- 2024-09-20 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>LlamaPi Robot - Voice chatbot with LLM and robot arm</title>
@@ -47,7 +47,7 @@
 <main id="content" class="content">
 <header>
 <h1 class="title">LlamaPi Robot - Voice chatbot with LLM and robot arm</h1>
-<p class="subtitle" role="doc-subtitle">Ping Zhou, 2024-09-19</p>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2024-09-20</p>
 </header>
 <section id="outline-container-org04cd227" class="outline-2">
 <h2 id="org04cd227">Intro</h2>
@@ -71,7 +71,7 @@ Project code available on GitHub: <a href="https://github.com/zhoupingjay/LlamaP
 </p>
 
 
-<figure id="org8632a94">
+<figure id="orgc8b0f7e">
 <img src="../images/2024/LlamaPi_demo.png" alt="LlamaPi_demo.png" width="400px">
 
 </figure>
@@ -227,7 +227,7 @@ The resulting directory structure would look like this:
 <pre class="example">
 LlamaPi
 ├── llm
-|   └── meta-llama-3.1-8b-instruct-q4_k_m.gguf
+|   └── (model .gguf file)
 └── tts
     ├── piper
     |   └── (piper binaries)
@@ -304,11 +304,11 @@ Several techniques (or tricks) were used to mitigate the impact to user experien
 
 <li>I also temporarily disabled the conversation history in local LLM version to reduce the prefill time.</li>
 
-<li>Use streaming mode in generation, and detect &ldquo;end of sentence&rdquo; on the fly. Once a sentence is finished, I call TTS immediately to speak to the user. This makes it sound more responsive than waiting for the entire generation is finished.</li>
+<li>Use streaming mode in generation, and detect &ldquo;end of sentence&rdquo; on the fly. Once a sentence is finished, I call TTS immediately to speak to the user. This allows it to sound more responsive than waiting for the entire generation to be finished.</li>
 </ul>
 
 <p>
-However, I need a solution that can truly resolve the performance issue running LLM locally on Raspberry Pi. My target is to achieve 10 tokens/second.
+However, I need a more foundamental solution that can resolve the performance issue running LLM locally on Raspberry Pi. My target is to achieve 10 tokens/second.
 </p>
 
 <p>
@@ -346,7 +346,7 @@ The VideoCore GPU on Raspberry Pi does not have enough memory for the entire mod
 </p>
 
 <p>
-Unfortunately, llama.cpp got stuck after loading the model. After some research, I tried disabling loop unrolling (by setting the <code>V3D_DEBUG</code> environment) and it seemed to go through:
+Unfortunately, llama.cpp got stuck running the model. After some research, I tried disabling loop unrolling (by setting the <code>V3D_DEBUG</code> environment) and it seemed to go through:
 </p>
 
 <div class="org-src-container">
@@ -363,7 +363,7 @@ I did some research and the hypothesis is that it might be something to do with 
 </p>
 
 <p>
-So this is the current status. I didn&rsquo;t have time to look further into this, and I&rsquo;m not familiar with Vulkan programming either. This route might eventually work, but I have no idea how much time will be needed to get it work.
+So this is the current status. I didn&rsquo;t have time to look further into this, and I&rsquo;m not familiar with Vulkan programming either. This route might eventually work, but I have no idea how much time will be needed.
 </p>
 
 <p>
@@ -384,7 +384,7 @@ I plan to look further into this direction and try to adopt this idea in my proj
 </p>
 
 <p>
-I don&rsquo;t prefer this&#x2026; If you look at the help of llama.cpp&rsquo;s quantization tool, you&rsquo;ll see that Q2 will add significant more ppl than Q4.
+I don&rsquo;t prefer this&#x2026; If you look at the help of llama.cpp&rsquo;s quantization tool, you&rsquo;ll see that Q2 will add a lot more ppl than Q4.
 </p>
 
 <pre class="example">
@@ -404,7 +404,7 @@ I don&rsquo;t prefer this&#x2026; If you look at the help of llama.cpp&rsquo;s q
 <h2 id="orgc4ae354">Conclusion and Future Work</h2>
 <div class="outline-text-2" id="text-orgc4ae354">
 <p>
-Despite the challenges, the project successfully demonstrated the potential of <b><b>Voice + LLM + Robotics</b></b> on a low-power edge device. Lots of work need to be done to unleash the performance on Raspberry Pi. My target is to achieve 10 tokens/second with the 8B model. If you have any ideas or suggestions, please let me know!
+Despite the challenges, the project successfully demonstrated the potential of <b><b>Voice + LLM + Robotics</b></b> on a low-power edge device. Lots of work still need to be done to unleash the performance on Raspberry Pi. My target is to achieve 10 tokens/second with the 8B model. If you have any ideas or suggestions, please let me know!
 </p>
 </div>
 </section>
