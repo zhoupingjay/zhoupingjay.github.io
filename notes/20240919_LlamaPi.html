@@ -49,9 +49,9 @@
 <h1 class="title">LlamaPi Robot - Voice chatbot with LLM and robot arm</h1>
 <p class="subtitle" role="doc-subtitle">Ping Zhou, 2024-09-20</p>
 </header>
-<section id="outline-container-org1eef3f3" class="outline-2">
-<h2 id="org1eef3f3">Intro</h2>
-<div class="outline-text-2" id="text-org1eef3f3">
+<section id="outline-container-org04cd227" class="outline-2">
+<h2 id="org04cd227">Intro</h2>
+<div class="outline-text-2" id="text-org04cd227">
 <p>
 Recently I built a prototype demonstrating the possibilities of <b><b>Voice + LLM + Robotics</b></b>. It is a voice chatbot running on Raspberry Pi 5 backed by the latest LLM (e.g. Llama-3.1), allowing the user to control robot arm gestures through voice interactions.
 </p>
@@ -71,7 +71,7 @@ Project code available on GitHub: <a href="https://github.com/zhoupingjay/LlamaP
 </p>
 
 
-<figure id="orgb246c0c">
+<figure id="orgcc54fcc">
 <img src="../images/2024/LlamaPi_demo.png" alt="LlamaPi_demo.png" width="400px">
 
 </figure>
@@ -79,9 +79,9 @@ Project code available on GitHub: <a href="https://github.com/zhoupingjay/LlamaP
 </section>
 
 
-<section id="outline-container-orgb32c087" class="outline-2">
-<h2 id="orgb32c087">System Setup</h2>
-<div class="outline-text-2" id="text-orgb32c087">
+<section id="outline-container-org6a51027" class="outline-2">
+<h2 id="org6a51027">System Setup</h2>
+<div class="outline-text-2" id="text-org6a51027">
 <p>
 Hardware:
 </p>
@@ -101,13 +101,13 @@ Software:
 </div>
 </section>
 
-<section id="outline-container-org8ada18f" class="outline-2">
-<h2 id="org8ada18f">Install</h2>
-<div class="outline-text-2" id="text-org8ada18f">
+<section id="outline-container-orga80ec47" class="outline-2">
+<h2 id="orga80ec47">Install</h2>
+<div class="outline-text-2" id="text-orga80ec47">
 </div>
-<div id="outline-container-org9a67c03" class="outline-3">
-<h3 id="org9a67c03">Dependencies</h3>
-<div class="outline-text-3" id="text-org9a67c03">
+<div id="outline-container-org16c3275" class="outline-3">
+<h3 id="org16c3275">Dependencies</h3>
+<div class="outline-text-3" id="text-org16c3275">
 <p>
 Create a virtual environment:
 </p>
@@ -164,9 +164,9 @@ Checkout the demo code:
 </div>
 </div>
 
-<div id="outline-container-org095b74a" class="outline-3">
-<h3 id="org095b74a">Setup the LLM</h3>
-<div class="outline-text-3" id="text-org095b74a">
+<div id="outline-container-org6d7744b" class="outline-3">
+<h3 id="org6d7744b">Setup the LLM</h3>
+<div class="outline-text-3" id="text-org6d7744b">
 <p>
 Local LLM (<a href="https://huggingface.co/meta-llama/Meta-Llama-3.1-8B-Instruct">Llama-3.1 8B Instruct</a>)
 </p>
@@ -192,18 +192,18 @@ Cloud-based LLM
 </div>
 </div>
 
-<div id="outline-container-org4236ed1" class="outline-3">
-<h3 id="org4236ed1">ASR</h3>
-<div class="outline-text-3" id="text-org4236ed1">
+<div id="outline-container-org43d76a6" class="outline-3">
+<h3 id="org43d76a6">ASR</h3>
+<div class="outline-text-3" id="text-org43d76a6">
 <p>
 Use <code>[[https://github.com/SYSTRAN/faster-whisper][faster_whisper]]</code> installed from pip. It will download the ASR model on the first run. Subsequent runs will be all local.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgd061322" class="outline-3">
-<h3 id="orgd061322">TTS</h3>
-<div class="outline-text-3" id="text-orgd061322">
+<div id="outline-container-org3f1b455" class="outline-3">
+<h3 id="org3f1b455">TTS</h3>
+<div class="outline-text-3" id="text-org3f1b455">
 <ul class="org-ul">
 <li>Use <a href="https://github.com/rhasspy/piper">piper</a> for TTS.</li>
 <li>Create a <code>tts</code> folder under LlamaPi, download and extract piper in this folder.</li>
@@ -238,9 +238,9 @@ LlamaPi
 </div>
 </section>
 
-<section id="outline-container-orgcf5025b" class="outline-2">
-<h2 id="orgcf5025b">Usage</h2>
-<div class="outline-text-2" id="text-orgcf5025b">
+<section id="outline-container-org528fe97" class="outline-2">
+<h2 id="org528fe97">Usage</h2>
+<div class="outline-text-2" id="text-org528fe97">
 <p>
 In your virtual environment, run the LlamaPi.py script:
 </p>
@@ -288,9 +288,9 @@ These simple commands will result in different gestures from the robot arm.
 </div>
 </section>
 
-<section id="outline-container-orge520d5e" class="outline-2">
-<h2 id="orge520d5e">Challenges and Takeaways</h2>
-<div class="outline-text-2" id="text-orge520d5e">
+<section id="outline-container-org9747a31" class="outline-2">
+<h2 id="org9747a31">Challenges and Takeaways</h2>
+<div class="outline-text-2" id="text-org9747a31">
 <p>
 The biggest challenge is the performance of running an 8B model on a low-power edge device like Raspberry Pi. With 4-bit quantization, I was able to fit Llama-3.1 8B on the device, but the generation speed was about 1.8 tokens/second (using llama.cpp + OpenBLAS).
 </p>
@@ -400,9 +400,9 @@ I don&rsquo;t prefer this&#x2026; If you look at the help page of llama.cpp&rsqu
 </section>
 
 
-<section id="outline-container-orgbb6644b" class="outline-2">
-<h2 id="orgbb6644b">Conclusion and Future Work</h2>
-<div class="outline-text-2" id="text-orgbb6644b">
+<section id="outline-container-orgc4ae354" class="outline-2">
+<h2 id="orgc4ae354">Conclusion and Future Work</h2>
+<div class="outline-text-2" id="text-orgc4ae354">
 <p>
 Despite the challenges, the project successfully demonstrated the potential of <b><b>Voice + LLM + Robotics</b></b> on a low-power edge device. Lots of work still need to be done to unleash the performance on Raspberry Pi. My target is to achieve 10 tokens/second with the 8B model. If you have any ideas or suggestions, please let me know!
 </p>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2024-05-08 -->
+<!-- 2024-09-20 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>[论文解读] DistServe分离式架构优化大模型推理服务性能</title>
@@ -93,7 +93,7 @@ maximum request rate that can be served adhering to the SLO attainment goal (say
 </p>
 
 
-<figure id="orgb5b46d1">
+<figure id="org2858488">
 <img src="../images/2024/20240505-162112_screenshot.png" alt="20240505-162112_screenshot.png" width="640px">
 
 </figure>
@@ -124,7 +124,7 @@ prefill和decode这两个阶段，对计算的需求是很不一样的：
 </ul>
 
 
-<figure id="orgb8104d7">
+<figure id="org14b59c7">
 <img src="../images/2024/20240505-162359_screenshot.png" alt="20240505-162359_screenshot.png" width="400px">
 
 </figure>
@@ -138,7 +138,7 @@ prefill和decode互相干扰：当一个GPU同时处理batch里的多个请求�
 </p>
 
 
-<figure id="org3020b43">
+<figure id="org10b0d71">
 <img src="../images/2024/20240505-162204_screenshot.png" alt="20240505-162204_screenshot.png" width="800px">
 
 </figure>
@@ -153,7 +153,7 @@ prefill和decode放在一起，另一个问题是导致它们的资源分配和�
 
 
 
-<figure id="orgbe1fffe">
+<figure id="orgfabb722">
 <img src="../images/2024/20240505-162439_screenshot.png" alt="20240505-162439_screenshot.png" width="480px">
 
 </figure>
@@ -169,7 +169,7 @@ prefill和decode放在一起，另一个问题是导致它们的资源分配和�
 
 
 
-<figure id="org9064380">
+<figure id="org4d59489">
 <img src="../images/2024/20240505-162507_screenshot.png" alt="20240505-162507_screenshot.png" width="640px">
 
 </figure>
@@ -192,7 +192,7 @@ References:
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.4 (<a href="https://orgmode.org">Org</a> mode 9.6.15).<br>
      "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>

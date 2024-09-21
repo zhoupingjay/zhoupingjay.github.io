@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-28 -->
+<!-- 2024-09-20 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>用Cirq模拟量子隐形传态过程</title>
@@ -96,7 +96,7 @@
 </p>
 
 
-<figure id="orgee9ed70">
+<figure id="orgcc6e523">
 <img src="../images/Entanglement.svg" alt="Entanglement.svg" class="org-svg" width="320px">
 
 </figure>
@@ -137,7 +137,7 @@
 </pre>
 </div>
 
-<pre class="example" id="org3a01950">
+<pre class="example" id="org9a428bd">
 𝜙0: ───E───
        │
 𝜙1: ───E───
@@ -157,7 +157,7 @@
 </p>
 
 
-<figure id="org761f4f8">
+<figure id="orgf1d2bff">
 <img src="../images/Quantum Teleportation.svg" alt="Quantum Teleportation.svg" class="org-svg" width="600px">
 
 </figure>
@@ -216,7 +216,7 @@ Cirq里面量子比特初始状态都是 \(|0\rangle\) ，所以Alice这边 \(|\
 </pre>
 </div>
 
-<pre class="example" id="orgf437ffd">
+<pre class="example" id="org07c291d">
 [0.707+0.j    0.   -0.707j]
 </pre>
 
@@ -245,7 +245,7 @@ SVGCircuit(circuit)
 </div>
 
 
-<figure id="org3517847">
+<figure id="org5440c78">
 <img src="../images/quantum_teleportation_output_11_0.svg" alt="quantum_teleportation_output_11_0.svg" class="org-svg">
 
 </figure>
@@ -262,7 +262,7 @@ Alice运行这个电路，得到 \(|\psi\phi_0\rangle\) 的测量值：
 </pre>
 </div>
 
-<pre class="example" id="orgefe24b0">
+<pre class="example" id="orgc4ae112">
 Alice: Measure(𝜓) = 0, Measure(𝜙0) = 0
 </pre>
 </div>
@@ -311,7 +311,7 @@ Bob这里有一个量子比特 \(|\phi_1\rangle\) ，当Bob得到Alice发来的�
 </pre>
 </div>
 
-<pre class="example" id="orgf53edcf">
+<pre class="example" id="orged78d9c">
 Alice: Measure(𝜓) = 0, Measure(𝜙0) = 0
 </pre>
 
@@ -490,7 +490,7 @@ begin{pmatrix}
 </pre>
 </div>
 
-<pre class="example" id="org8302425">
+<pre class="example" id="org2bf3d3d">
 Bob     |𝜙1⟩: [0.707+0.j    0.   -0.707j]
 Alice   |𝜓⟩:  [0.707+0.j    0.   -0.707j]
 </pre>
@@ -522,7 +522,7 @@ a_{1m}B & \cdots & a_{mn}B \\
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.4 (<a href="https://orgmode.org">Org</a> mode 9.6.15).<br>
      "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>

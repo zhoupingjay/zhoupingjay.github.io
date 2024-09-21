@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-28 -->
+<!-- 2024-09-20 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>超长上下文+无分词器，新一代大模型架构？Meta最新论文MegaByte解读</title>
@@ -95,7 +95,7 @@
 例如在下面这个会话里，如果我们把上下文窗口的长度设为 10 个 token，可以看到模型就不能记住之前对话的内容了：
 </p>
 
-<pre class="example" id="org3184ccc">
+<pre class="example" id="org161b904">
 User&gt; Hi, my name is Ping
 AI&gt; Hello Ping, it's nice to meet you! My name is OpenAI.
     How can I assist you today?
@@ -170,7 +170,7 @@ AI&gt; I'm sorry, I don't have access to that information.
 </p>
 
 
-<figure id="orga17459f">
+<figure id="org2578de3">
 <img src="../images/2023/20230609-204323_screenshot.png" alt="20230609-204323_screenshot.png" width="480px">
 
 </figure>
@@ -190,7 +190,7 @@ MegaByte 的总体思路很简单，用几句话或者一张图就能概括：
 </ul>
 
 
-<figure id="org5c9592c">
+<figure id="org89eee7e">
 <img src="../images/2023/20230609-204532_screenshot.png" alt="20230609-204532_screenshot.png" width="400px">
 
 </figure>
@@ -218,7 +218,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<figure id="org1df5508">
+<figure id="org5885d6b">
 <img src="../images/2023/20230613-094634_screenshot.png" alt="20230613-094634_screenshot.png" width="400px">
 
 </figure>
@@ -228,7 +228,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<figure id="orge349c58">
+<figure id="orgf46b764">
 <img src="../images/2023/20230612-230850_screenshot.png" alt="20230612-230850_screenshot.png" width="400px">
 
 </figure>
@@ -246,7 +246,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 </p>
 
 
-<figure id="org1fd5e95">
+<figure id="orgda9089e">
 <img src="../images/2023/20230612-231040_screenshot.png" alt="20230612-231040_screenshot.png" width="400px">
 
 </figure>
@@ -257,7 +257,7 @@ MegaByte 的关键模块有这样几个，我们结合上面的图逐个分析�
 <h3 id="org072b355">Global Model</h3>
 <div class="outline-text-3" id="text-org072b355">
 
-<figure id="org6250974">
+<figure id="org3d3d609">
 <img src="../images/2023/20230613-100248_screenshot.png" alt="20230613-100248_screenshot.png" width="400px">
 
 </figure>
@@ -267,7 +267,7 @@ Global Model 就是一个普通的 Transformer decoder，它的输入序列长�
 </p>
 
 
-<figure id="orgf108162">
+<figure id="orgf12b398">
 <img src="../images/2023/20230613-093845_screenshot.png" alt="20230613-093845_screenshot.png" width="400px">
 
 </figure>
@@ -282,7 +282,7 @@ Gobal Model 的输出，是 K 个 patch 的表征（representation）向量，�
 <h3 id="org1a76849">Local Model</h3>
 <div class="outline-text-3" id="text-org1a76849">
 
-<figure id="orga1ab127">
+<figure id="org0269575">
 <img src="../images/2023/20230613-102342_screenshot.png" alt="20230613-102342_screenshot.png" width="400px">
 
 </figure>
@@ -304,7 +304,7 @@ Gobal Model 的输出是 K 个 patch 向量，每个 patch 向量的大小（维
 </p>
 
 
-<figure id="org75ff1b7">
+<figure id="org6eb52f2">
 <img src="../images/2023/20230613-102942_screenshot.png" alt="20230613-102942_screenshot.png" width="640px">
 
 </figure>
@@ -314,7 +314,7 @@ K 个 Local Model 副本，在 K 个 patch 上独立运行，因此在推理和�
 </p>
 
 
-<figure id="org8a45fb3">
+<figure id="orgc707588">
 <img src="../images/2023/20230613-101813_screenshot.png" alt="20230613-101813_screenshot.png" width="400px">
 
 </figure>
@@ -324,7 +324,7 @@ K 个 Local Model 副本，在 K 个 patch 上独立运行，因此在推理和�
 </p>
 
 
-<figure id="orgc87559e">
+<figure id="org46a5afe">
 <img src="../images/2023/20230613-102226_screenshot.png" alt="20230613-102226_screenshot.png" width="400px">
 
 </figure>
@@ -423,7 +423,7 @@ MegaByte 依赖 Global Model 来提取长距离依赖，但是我们也可以在
 </p>
 
 
-<figure id="org819705e">
+<figure id="org922d554">
 <img src="../images/2023/20230613-135610_screenshot.png" alt="20230613-135610_screenshot.png" width="480px">
 
 </figure>
@@ -550,7 +550,7 @@ MegaByte 是一个可扩展的架构，它使 Transformer 大模型能够支持�
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.4 (<a href="https://orgmode.org">Org</a> mode 9.6.15).<br>
      "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>

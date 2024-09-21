@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-28 -->
+<!-- 2024-09-20 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Emacs集成开发环境和远程开发配置</title>
@@ -64,7 +64,7 @@
 如何生成 <code>compile_commands.json</code> 文件呢？取决于项目的构建工具。如果是 cmake，ninja 等比较现代的工具，都内置了导出 <code>compile_commands.json</code> 文件的功能，比如 cmake 里只要加上这个环境变量就行了：
 </p>
 
-<pre class="example" id="org98bf5f9">
+<pre class="example" id="orgbe2a8b7">
 CMAKE_EXPORT_COMPILE_COMMANDS
 </pre>
 
@@ -94,7 +94,7 @@ bear make
 Emacs 内置有远程连接的客户端 tramp，支持 SSH 等多种连接方式。我们可以通过 tramp 来访问远程机器上的文件。例如我们在打开文件时输入这样的地址：
 </p>
 
-<pre class="example" id="org86a806c">
+<pre class="example" id="orgf88d5a6">
 /ssh:user@192.168.0.100#1234:/home/user/test.c
 </pre>
 
@@ -159,7 +159,7 @@ tramp 还有个方便的功能：如果当前文件是远程的，那么当我�
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.4 (<a href="https://orgmode.org">Org</a> mode 9.6.15).<br>
      "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>

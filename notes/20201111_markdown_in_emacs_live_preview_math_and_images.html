@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-28 -->
+<!-- 2024-09-20 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Markdown in Emacs: Live Preview, Math and Images</title>
@@ -235,7 +235,7 @@ The filter will insert MathJax script in the generated HTML so that math symbols
 You can point it to any URL that hosts MathJax (if you trust the source), but I decide to host MathJax locally in simple-httpd:
 </p>
 
-<pre class="example" id="orgbf00617">
+<pre class="example" id="orgf9cad1d">
 &lt;script src=\"/mathjax/es5/tex-chtml-full.js\"&gt;&lt;/script&gt;
 </pre>
 
@@ -275,7 +275,7 @@ The CSS file is also hosted locally in simple-httpd.
 <p>
 Add this line to my filter:
 </p>
-<pre class="example" id="org0d4eeb8">
+<pre class="example" id="org5e5a9b3">
 &lt;link rel=\"stylesheet\" href = \"/github-markdown.css\"/&gt;
 </pre>
 
@@ -309,7 +309,7 @@ Now the filter is like this:
 Open a Markdown file, and then start live preview:
 </p>
 
-<pre class="example" id="org890ebdc">
+<pre class="example" id="orgcd6afbd">
 M-x markdown-live-preview
 </pre>
 
@@ -348,7 +348,7 @@ This relative path works for impatient-mode too (i.e. it will look for test.png 
 Try math equations in Markdown:
 </p>
 
-<pre class="example" id="org4aee329">
+<pre class="example" id="org1ef7659">
 $$
 \begin{pmatrix}
 aa &amp; bb \\
@@ -387,7 +387,7 @@ Looking good!
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.4 (<a href="https://orgmode.org">Org</a> mode 9.6.15).<br>
      "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>

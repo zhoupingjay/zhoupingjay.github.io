@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2023-07-28 -->
+<!-- 2024-09-20 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>How to Run GUI Application in Windows Subsystem for Linux (WSL)</title>
@@ -116,7 +116,7 @@ Try running some GUI application from WSL. For example, “xeye”, or launching
 If you see authorization error like this, it means need to configure xauth for WSL. See following section for steps.
 </p>
 
-<pre class="example" id="org1913624">
+<pre class="example" id="org5c08c40">
 Authorization required, but no authorization protocol specified
 Error: Can't open display: :0
 </pre>
@@ -133,14 +133,14 @@ There are two options to solve this problem. First one is to copy the “.Xautho
 <p>
 Source file:
 </p>
-<pre class="example" id="orgcfbfaae">
+<pre class="example" id="org857fa6c">
 C:\cygwin64\home\&lt;CYGWIN_USER&gt;
 </pre>
 
 <p>
 Destination file:
 </p>
-<pre class="example" id="orgee9ea6d">
+<pre class="example" id="orgb0eb853">
 C:\Users\&lt;WINDOWS_USER&gt;\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\&lt;WSL_USER&gt;
 </pre>
 
@@ -167,7 +167,7 @@ Done! Now you should be able to run GUI applications in WSL. For example, Emacs 
 </p>
 
 
-<figure id="org4b60387">
+<figure id="orgf97a30d">
 <img src="../images/2019/08/image.png" alt="image.png" width="480px">
 
 </figure>
@@ -176,7 +176,7 @@ Done! Now you should be able to run GUI applications in WSL. For example, Emacs 
 </main>
 <footer id="postamble" class="status">
 <div class='footer'>
-    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.1 (<a href="https://orgmode.org">Org</a> mode 9.6.6).<br>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.4 (<a href="https://orgmode.org">Org</a> mode 9.6.15).<br>
      "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
     </div>
 </footer>
