@@ -71,7 +71,7 @@ Project code available on GitHub: <a href="https://github.com/zhoupingjay/LlamaP
 </p>
 
 
-<figure id="orgc8b0f7e">
+<figure id="org46e65f2">
 <img src="../images/2024/LlamaPi_demo.png" alt="LlamaPi_demo.png" width="400px">
 
 </figure>
@@ -363,7 +363,7 @@ I did some research and the hypothesis is that it might be something to do with 
 </p>
 
 <p>
-So this is the current status. I didn&rsquo;t have time to look further into this, and I&rsquo;m not familiar with Vulkan programming either. This route might eventually work, but I have no idea how much time will be needed.
+So far I didn&rsquo;t have time to look further into this. Vulkan is new to me, so debugging this issue will be a bit challenging (and fun too!). Any advice will be appreciated.
 </p>
 
 <p>
@@ -371,12 +371,12 @@ So this is the current status. I didn&rsquo;t have time to look further into thi
 </p>
 
 <p>
-Idea inspired by the recent <a href="https://github.com/microsoft/T-MAC">T-MAC paper</a>, which uses LUTs (look-up tables) to replace arithmetic ops. This is especially useful for low-bit quantized models like the one I&rsquo;m using. E.g. consider a multiplication between 8-bit and 4-bit numbers. We can pre-compute all possible combinations and save the results in a 256x16 table. Multiplication will then be replaced by memory accesses.
+Idea inspired by the recent <a href="https://github.com/microsoft/T-MAC">T-MAC paper</a>, which uses LUTs (look-up tables) to replace arithmetic ops. This could be especially useful for low-bit quantized models. E.g. consider a multiplication between 8-bit and 4-bit numbers. If we pre-compute all possible combinations and save the results in a 256x16 table, then multiplication can be replaced by memory accesses.
 </p>
 
 <p>
-I think this LUT idea makes a lot of sense and might achieve significant performance boost on Raspberry Pi. In fact, the T-MAC paper showed some promising results on Raspberry Pi 5 already.
-I plan to look further into this direction and try to adopt this idea in my project.
+I think this LUT idea makes a lot sense and might achieve significant performance boost on Raspberry Pi. In fact, the T-MAC paper showed some promising results on Raspberry Pi 5 already.
+Adopting this idea in my project will also be a direction that I&rsquo;d be interested in looking into.
 </p>
 
 <p>
@@ -384,7 +384,7 @@ I plan to look further into this direction and try to adopt this idea in my proj
 </p>
 
 <p>
-I don&rsquo;t prefer this&#x2026; If you look at the help of llama.cpp&rsquo;s quantization tool, you&rsquo;ll see that Q2 will add a lot more ppl than Q4.
+I don&rsquo;t prefer this&#x2026; If you look at the help page of llama.cpp&rsquo;s quantization tool, you&rsquo;ll see that Q2 adds a lot more ppl than Q4.
 </p>
 
 <pre class="example">
