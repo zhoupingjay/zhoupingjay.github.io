@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 2024-10-27 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LlamaPi Update - Gemini Support</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<header>
+<h1 class="title">LlamaPi Update - Gemini Support</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2024-10-27</p>
+</header><p>
+LlamaPi now supports Gemini as its backing LLM, in addition to local LLM and Coze.
+</p>
+
+
+<figure id="orgf03cf6f">
+<img src="../images/2024/2024-10-27_22-35-35_screenshot.png" alt="2024-10-27_22-35-35_screenshot.png" width="640px">
+
+</figure>
+
+<p>
+On Gemini side:
+</p>
+<ul class="org-ul">
+<li>Test the prompt (system instruction) for using with LlamaPi.</li>
+<li>Create an API key (may need to create a project first).</li>
+</ul>
+
+<p>
+On LlamaPi side:
+</p>
+<ul class="org-ul">
+<li>Create a wrapper using Gemini Python SDK.</li>
+</ul>
+
+<p>
+In order to support multiple backing LLMs, major refactor was done to the LlamaPi code.
+</p>
+<ul class="org-ul">
+<li>Create a common base class <code>LlamaPiBase</code> for all three scenarios (local, Coze, Gemini). The base class includes the common functionalities like the UI, audio, ASR, etc.</li>
+<li>Created subclasses for local LLM, Coze and Gemini respectively. They extend the base class and implement the logic for interacting with backing LLMs.</li>
+</ul>
+
+<p>
+With this refactor, it will be easier for me to add support for other LLMs in the furture.
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.4 (<a href="https://orgmode.org">Org</a> mode 9.6.15).<br>
+     "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 2024-10-27 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LlamaPi Update - Llama-3.2 3B</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<header>
+<h1 class="title">LlamaPi Update - Llama-3.2 3B</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2024-10-01</p>
+</header><p>
+I just updated LlamaPi with Llama-3.2 3B as its default local LLM.
+</p>
+
+<p>
+Similar to Llama-3.1, I need to convert the model into gguf format, and then quantize it into different sizes. For 5-bit quantization, memory usage was reduced to ~2.7GB and generation speed reached 3.3 tokens/second. Compared to Llama-3.1 8B (4-bit quantized), the speedup is 1.83x.
+</p>
+
+<p>
+Here is a comparison using llama.cpp CLI:
+</p>
+
+<table>
+
+
+<colgroup>
+<col  class="org-left">
+
+<col  class="org-right">
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">&#xa0;</th>
+<th scope="col" class="org-right">tokens/second</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Llama-3.1 8B (4-bit quantized)</td>
+<td class="org-right">1.8</td>
+</tr>
+
+<tr>
+<td class="org-left">Llama-3.2 3B (8-bit quantized)</td>
+<td class="org-right">2.5</td>
+</tr>
+
+<tr>
+<td class="org-left">Llama-3.2 3B (5-bit quantized)</td>
+<td class="org-right">3.3</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Generation quality seemed to be similar as Llama-3.1 8B, but I haven&rsquo;t had time to compare them extensively yet.
+</p>
+
+<p>
+3.3 tokens/second is still a bit far from my target (10 tokens/second), but it&rsquo;s definitely a good start. Maybe I should spend some time to get Vulkan working?
+</p>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.4 (<a href="https://orgmode.org">Org</a> mode 9.6.15).<br>
+     "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
+    </div>
+</footer>
+</body>
+</html>
