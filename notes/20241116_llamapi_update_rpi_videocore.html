@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 2024-11-16 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LlamaPi: Experiments with VideoCore GPU</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<header>
+<h1 class="title">LlamaPi: Experiments with VideoCore GPU</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2024-11-16</p>
+</header><p>
+As mentioned in my previous posts, I&rsquo;ve been trying to get LlamaPi to run with VideoCore GPU on Raspberry Pi, hoping to further boost generation speed.
+</p>
+
+<p>
+Well, that effort might have just came to a conclusion&#x2026; TL;DR is that VideoCore on Raspberry Pi is not well suited for such computation - in fact, it is even much slower than the ARM CPUs on Raspberry Pi.
+</p>
+
+<p>
+In case I need them again, here are some of the records of my experiments.
+</p>
+
+<section id="outline-container-org4895544" class="outline-2">
+<h2 id="org4895544">llama.cpp on VideoCore (through Vulkan)</h2>
+<div class="outline-text-2" id="text-org4895544">
+<p>
+Build <code>llama.cpp</code> with debug options:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">cmake -B build -DGGML_VULKAN=ON -DGGML_VULKAN_DEBUG=ON -DGGML_VULKAN_SHADER_DEBUG_INFO=ON -DGGML_VULKAN_RUN_TESTS=ON
+</pre>
+</div>
+
+<p>
+Run <code>llama.cpp</code> with runtime debug options. I ran this on a Raspberry Pi 4 with 4GB RAM, so I used <code>TinyLlama</code> and only offloaded 1 layer to the GPU.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./build/bin/llama-cli -m ~/llm_models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf -p <span class="org-string">"Hello"</span> -n 8 -t 1 -b 1 -c 12 -ngl 1
+</pre>
+</div>
+
+<p>
+After a long time, it crashed with something like this:
+</p>
+<pre class="example">
+STAGING
+ggml_vk_sync_buffers()
+ggml_vk_ctx_end(0x556746a600, 1)
+ggml_vk_submit(0x556746a600, 0x5565a23820)
+TEST F16_F32_ALIGNED_L m=32000 n=512 k=4096 batch=2 split_k=1 matmul 978352ms 0.000274375 TFLOPS avg_err=0
+ggml_vk_queue_cleanup()
+ggml_vk_queue_cleanup()
+~vk_buffer_struct(0x5565c46c70, 524288000)
+~vk_buffer_struct(0x5565146c60, 16777216)
+~vk_buffer_struct(0x5565c46b20, 131072000)
+ggml_pipeline_cleanup(matmul_f16_f32_aligned_l)
+ggml_pipeline_cleanup(split_k_reduce)
+
+/home/rpi/git/llama.cpp/ggml/src/ggml-vulkan.cpp:5701: fatal error
+</pre>
+
+<p>
+Looking at the code, it turned out that the <code>GGML_VULKAN_RUN_TEST</code> option caused this crash:
+</p>
+<div class="org-src-container">
+<pre class="src src-c++">GGML_ABORT(<span class="org-string">"fatal error"</span>);
+</pre>
+</div>
+
+<p>
+I then disable the <code>GGML_VULKAN_RUN_TEST</code> option along with other debug options, and <code>llama.cpp</code> can run.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span class="org-comment-delimiter"># </span><span class="org-comment">offload only 1 layer to the GPU (ngl is 1)</span>
+./build/bin/llama-cli -m ~/llm_models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf -p <span class="org-string">"Hello"</span> -n 8 -t 1 -b 1 -c 12 -ngl 1
+</pre>
+</div>
+
+<p>
+However, it generated garbage data at a very low speed:
+</p>
+
+<pre class="example">
+ Hellooure freoglivekionooureánicodocumentclass
+
+llama_perf_sampler_print:    sampling time =       1.13 ms /    10 runs   (    0.11 ms per token,  8833.92 tokens per second)
+llama_perf_context_print:        load time =    1596.87 ms
+llama_perf_context_print: prompt eval time =    1814.35 ms /     2 tokens (  907.17 ms per token,     1.10 tokens per second)
+llama_perf_context_print:        eval time =    6431.51 ms /     7 runs   (  918.79 ms per token,     1.09 tokens per second)
+llama_perf_context_print:       total time =    8257.32 ms /     9 tokens
+</pre>
+
+<p>
+If I disable the GPU usage (by setting the <code>ngl</code> argument to 0), it generated normal at a much higher speed:
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">./build/bin/llama-cli -m ~/llm_models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf -p <span class="org-string">"Hello"</span> -n 8 -t 1 -b 1 -c 12 -ngl 0
+</pre>
+</div>
+
+<pre class="example">
+ Hello, world! [end of text]
+
+
+llama_perf_sampler_print:    sampling time =       0.41 ms /     6 runs   (    0.07 ms per token, 14527.85 tokens per second)
+llama_perf_context_print:        load time =     990.88 ms
+llama_perf_context_print: prompt eval time =     955.18 ms /     2 tokens (  477.59 ms per token,     2.09 tokens per second)
+llama_perf_context_print:        eval time =    1438.12 ms /     3 runs   (  479.37 ms per token,     2.09 tokens per second)
+llama_perf_context_print:       total time =    2398.69 ms /     5 tokens
+</pre>
+
+<p>
+As you can see, offloading even 1 layer to the GPU can slow down the generation by almost half!
+</p>
+
+<p>
+I tried diffent <code>ngl</code> arguments (1, 2, 3) and it got slower when more layers are offloaded to GPU:
+</p>
+
+<table>
+
+
+<colgroup>
+<col  class="org-right">
+
+<col  class="org-right">
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right"># of layers offload (<code>ngl</code>)</th>
+<th scope="col" class="org-right">TPS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">0</td>
+<td class="org-right">2.09</td>
+</tr>
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">1.10</td>
+</tr>
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-right">0.73</td>
+</tr>
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-right">0.56</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+This made me doubt whether I should offload computation to VidoeCore GPU at all&#x2026;
+</p>
+</div>
+</section>
+
+<section id="outline-container-org5e732f1" class="outline-2">
+<h2 id="org5e732f1">Performance tests of VideoCore</h2>
+<div class="outline-text-2" id="text-org5e732f1">
+<p>
+Fortunately, there is a nice tool that can compare the computation performance of VideoCore GPU against CPU: <a href="https://github.com/Idein/py-videocore6">https://github.com/Idein/py-videocore6</a>
+</p>
+
+<p>
+It&rsquo;s a Python package that directly communicates with the V3D hardware (<code>/dev/dri/card0</code>). After installation, I ran the example program of SGEMM:
+</p>
+
+<pre class="example">
+==== sgemm example (1024x1024 times 1024x1024) ====
+numpy: 0.1013 sec, 21.23 Gflop/s
+QPU:   0.5935 sec, 3.624 Gflop/s
+Minimum absolute error: 0.0
+Maximum absolute error: 0.0003814697265625
+Minimum relative error: 0.0
+Maximum relative error: 0.13134673237800598
+</pre>
+
+<p>
+SGEMM is ~5.86 times faster on CPU (numpy) than VideoCore (QPU).
+</p>
+
+<p>
+My experiments were done on Raspberry Pi 4. How about Raspberry Pi 5 (using VideoCore 7)?
+</p>
+
+<p>
+Not looking good either according to this repo:
+<a href="https://github.com/Towdo/py-videocore7">https://github.com/Towdo/py-videocore7</a>
+</p>
+
+<p>
+According to the author:
+</p>
+<blockquote>
+<p>
+Disclaimer: I&rsquo;m currently not actively working on this anymore since there doesn&rsquo;t seem to be any performance to be gained over the CPU. In fact, it seems to be challenging enough to just beat a single core of the CPU using the whole GPU in any real world task.
+</p>
+</blockquote>
+</div>
+</section>
+
+<section id="outline-container-org85ba413" class="outline-2">
+<h2 id="org85ba413">Conclusion</h2>
+<div class="outline-text-2" id="text-org85ba413">
+<p>
+As far as I can tell, Raspberry Pi&rsquo;s VideoCore GPU does not accelerate the generation speed of <code>llama.cpp</code> (no considering the garbage data it generates, which could be some issue with GGML/Vulkan implementation). In fact, it is even much slower than CPU. A little sad but it seems to be true&#x2026;
+</p>
+</div>
+</section>
+
+<section id="outline-container-org4e11e9f" class="outline-2">
+<h2 id="org4e11e9f">Appendix</h2>
+<div class="outline-text-2" id="text-org4e11e9f">
+<p>
+NOTE: the VideoCore revision on my Raspberry Pi 4 seems to be 4.2:
+</p>
+<pre class="example">
+cat /sys/kernel/debug/dri/0/v3d_ident
+
+Revision:   4.2.14.0
+MMU:        yes
+TFU:        yes
+TSY:        yes
+MSO:        yes
+L3C:        no (0kb)
+Core 0:
+  Revision:     4.2
+  Slices:       2
+  TMUs:         2
+  QPUs:         8
+  Semaphores:   0
+  BCG int:      0
+</pre>
+
+<p>
+Is this correct? I thought Raspberry Pi 4 should be using VideoCore 6?
+</p>
+
+<p>
+Another related config is the boot argument (<code>/boot/firmware/config.txt</code>). 
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.4 (<a href="https://orgmode.org">Org</a> mode 9.6.15).<br>
+     "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
+    </div>
+</footer>
+</body>
+</html>
