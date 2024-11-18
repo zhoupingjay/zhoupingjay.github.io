@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- 2024-11-16 -->
+<!-- 2024-11-18 -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>LlamaPi: Experiments with VideoCore GPU</title>
@@ -53,7 +53,7 @@ As mentioned in my previous posts, I&rsquo;ve been trying to get LlamaPi to run 
 </p>
 
 <p>
-Well, that effort might have just came to a conclusion&#x2026; TL;DR is that VideoCore on Raspberry Pi is not well suited for such computation - in fact, it is even much slower than the ARM CPUs on Raspberry Pi.
+Well, that effort might have just come to a conclusion&#x2026; TL;DR is that VideoCore on Raspberry Pi is not well suited for such computation - in fact, it is even much slower than the ARM CPUs on Raspberry Pi.
 </p>
 
 <p>
@@ -136,7 +136,7 @@ llama_perf_context_print:       total time =    8257.32 ms /     9 tokens
 </div>
 
 <p>
-If I disable the GPU usage (by setting the <code>ngl</code> argument to 0), it generated normal at a much higher speed:
+If I disable the GPU usage (by setting the <code>ngl</code> argument to 0), it generated normal text at a much higher speed:
 </p>
 <div class="org-src-container">
 <pre class="src src-shell">./build/bin/llama-cli -m ~/llm_models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf -p <span class="org-string">"Hello"</span> -n 8 -t 1 -b 1 -c 12 -ngl 0
@@ -160,7 +160,7 @@ As you can see, offloading even 1 layer to the GPU can slow down the generation 
 </p>
 
 <p>
-I tried diffent <code>ngl</code> arguments (1, 2, 3) and it got slower when more layers are offloaded to GPU:
+I tried diffent <code>ngl</code> arguments (1, 2, 3) and it got slower as more layers are offloaded to GPU:
 </p>
 
 <table>
@@ -233,7 +233,7 @@ SGEMM is ~5.86 times faster on CPU (numpy) than VideoCore (QPU).
 </p>
 
 <p>
-My experiments were done on Raspberry Pi 4. How about Raspberry Pi 5 (using VideoCore 7)?
+These experiments were done on Raspberry Pi 4. How about Raspberry Pi 5 (using VideoCore 7)?
 </p>
 
 <p>
@@ -256,7 +256,7 @@ Disclaimer: I&rsquo;m currently not actively working on this anymore since there
 <h2 id="org85ba413">Conclusion</h2>
 <div class="outline-text-2" id="text-org85ba413">
 <p>
-As far as I can tell, Raspberry Pi&rsquo;s VideoCore GPU does not accelerate the generation speed of <code>llama.cpp</code> (no considering the garbage data it generates, which could be some issue with GGML/Vulkan implementation). In fact, it is even much slower than CPU. A little sad but it seems to be true&#x2026;
+As far as I can tell, Raspberry Pi&rsquo;s VideoCore GPU does not accelerate the generation speed of <code>llama.cpp</code> (not mentioning the garbage data problem, which could be some issue with GGML/Vulkan implementation). In fact, it is even much slower than CPU. A little sad but it seems to be true&#x2026;
 </p>
 </div>
 </section>
