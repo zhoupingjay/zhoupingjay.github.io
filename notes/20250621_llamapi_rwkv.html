@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- 2025-06-21 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LlamaPi 初步试用 RWKV, Ollama</title>
+<meta name="author" content="Ping Zhou" />
+<meta name="generator" content="Org Mode" />
+<link rel='icon' type='image/x-icon' href='/images/favicon.ico'/>
+<link rel='stylesheet' href='https://code.cdn.mozilla.net/fonts/fira.css'>
+<link rel='stylesheet' href='/css/comfy_inline.css' type='text/css'/>
+<script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6678218894641313' crossorigin='anonymous'></script>
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="/"> UP </a>
+ |
+ <a accesskey="H" href="/"> HOME </a>
+</div><header id="top" class="status">
+<div class='intro'>
+  <h1>
+    <span class='gray'>Ping's Tech Notes</span>
+  </h1>
+</div>
+</header>
+<main id="content" class="content">
+<header>
+<h1 class="title">LlamaPi 初步试用 RWKV, Ollama</h1>
+<p class="subtitle" role="doc-subtitle">Ping Zhou, 2025-06-21</p>
+</header><p>
+最近RWKV有不少进展，RWKV-7出了思考模型 <code>rwkv-7-world-g1</code> ，RWKV-8也即将发布。
+</p>
+
+<p>
+RWKV的模型架构，在计算量和内存上相比Transformer有很大的优势，对于LlamaPi这种在边缘设备上运行的应用很有吸引力。因此尝试在LlamaPi上适配RWKV，看看效果如何。
+</p>
+
+<p>
+目前初步尝试，总的来说不太成功，可能是使用方法或适配上还有些问题，模型始终不能很好的遵循系统指令，生成符合要求的响应。
+</p>
+
+<section id="outline-container-org72675ec" class="outline-2">
+<h2 id="org72675ec">llama.cpp运行</h2>
+<div class="outline-text-2" id="text-org72675ec">
+<p>
+按照<a href="https://rwkv.cn/tutorials/intermediate/llamacpp">文档</a>步骤：
+</p>
+<ul class="org-ul">
+<li>编译最新的llama.cpp</li>
+<li>下载 <code>rwkv7-g1-1.5b-20250429-ctx4096</code> ，转换成gguf，Q8<sub>0量化</sub></li>
+</ul>
+
+<p>
+用 <code>llama-cli</code> 命令行运行，提示词参考LlamaPi：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">./build/bin/llama-cli -m models/rwkv7-g1-1.5b-20250429-ctx4096-Q8_0.gguf -p <span class="org-string">"Your name is Skyler. You are a helpful assistant.\n\n"</span> -cnv -t 4 -ngl 99 -n 500
+</pre>
+</div>
+
+<p>
+启动后本来应该就进入对话的，但它先进入了自嗨模式，输出了一大通不相关的东西，然后才停下进入提示符。这可能还是因为我设了n=500的参数，否则不知道它什么时候会停下：
+</p>
+
+
+<figure id="orge737af8">
+<img src="../images/2025/2025-06-21_14-37-03_screenshot.png" alt="2025-06-21_14-37-03_screenshot.png" width="640px">
+
+</figure>
+
+<p>
+然后检查一下提示词的有效性，结果是完全没用：
+</p>
+
+<pre class="example" id="orgfa6886c">
+&gt; hello, what's your name?
+ My name is [My name]
+
+&gt; who are you?
+ My name is [My name]
+
+&gt; 
+</pre>
+
+
+<p>
+命令行不行，那试试Web界面？
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">/build/bin/llama-server -m models/rwkv7-g1-1.5b-20250429-ctx4096-Q8_0.gguf 
+</pre>
+</div>
+
+<p>
+先设置一下系统提示：
+</p>
+
+
+<figure id="org523bf01">
+<img src="../images/2025/2025-06-21_14-43-42_screenshot.png" alt="2025-06-21_14-43-42_screenshot.png" width="640px">
+
+</figure>
+
+<p>
+试一下，这次系统提示词似乎有效了。
+</p>
+
+
+<figure id="orgd414b82">
+<img src="../images/2025/2025-06-21_14-45-16_screenshot.png" alt="2025-06-21_14-45-16_screenshot.png" width="640px">
+
+</figure>
+
+<p>
+试试LlamaPi的完整提示词：
+</p>
+
+
+<figure id="orgfeddd6f">
+<img src="../images/2025/2025-06-21_14-47-58_screenshot.png" alt="2025-06-21_14-47-58_screenshot.png" width="640px">
+
+</figure>
+
+<p>
+复杂一点的提示词，就不行了，不能按照要求输出。
+</p>
+
+
+<figure id="org7f3df7b">
+<img src="../images/2025/2025-06-21_14-52-24_screenshot.png" alt="2025-06-21_14-52-24_screenshot.png" width="640px">
+
+</figure>
+</div>
+</section>
+
+<section id="outline-container-orgcd46ee8" class="outline-2">
+<h2 id="orgcd46ee8">Ollama运行</h2>
+<div class="outline-text-2" id="text-orgcd46ee8">
+<p>
+Ollama可以运行在Raspberry Pi上，最新版的Ollama也支持RWKV，并且Ollama服务器兼容OpenAI API，理论上可以直接用作LlamaPi的后端。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">ollama run mollysama/rwkv-7-g1:2.9b
+</pre>
+</div>
+
+<p>
+设置系统提示：
+</p>
+<pre class="example" id="org205eb93">
+&gt;&gt;&gt; /set system """
+... You are Skyler, a friendly AI assistant. Keep your response in 50 words using spoken language.
+... Keep your response short in 50 words using spoken language.
+... At the end of your answer, always append a command according these rules:
+... - If the user says hello, append a command "$greet".
+... - If the user sounds happen, append command "$smile".
+... - If the user requests to retrieve or hand over something, append command "$retrieve".
+... - In all other cases or if you are unsure, append command "$idle".
+... 
+... """
+Set system message.
+</pre>
+
+<p>
+然后输入hello，模型就陷入了反复thinking的循环，直到我Ctrl-C中断。
+</p>
+
+
+<figure id="org3d59b7a">
+<img src="../images/2025/2025-06-21_14-59-50_screenshot.png" alt="2025-06-21_14-59-50_screenshot.png" width="640px">
+
+</figure>
+
+<p>
+用 <code>/set nothink</code> 关闭思考模式，不会陷入循环了，但是输出也没有按照提示词的要求：
+</p>
+
+<pre class="example" id="org9762b33">
+&gt;&gt;&gt; hello
+&lt;answer&gt;
+Hello! How can I assist you today?
+&lt;/answer&gt;
+</pre>
+</div>
+</section>
+
+<section id="outline-container-org6177c3a" class="outline-2">
+<h2 id="org6177c3a">下一步</h2>
+<div class="outline-text-2" id="text-org6177c3a">
+<p>
+目前RWKV输出不符合要求，可能是使用或适配上还有些问题，需要进一步研究。这些问题解决后，才能接入LlamaPi并跑在树莓派上。
+</p>
+</div>
+</section>
+</main>
+<footer id="postamble" class="status">
+<div class='footer'>
+    Generated using <a href="https://www.gnu.org/software/emacs/">Emacs</a> 29.4 (<a href="https://orgmode.org">Org</a> mode 9.6.15).<br>
+     "Comfy" style from <a href='https://gitlab.com/OlMon/org-themes.git'>gitlab.com/OlMon/org-themes.git</a>
+    </div>
+</footer>
+</body>
+</html>
